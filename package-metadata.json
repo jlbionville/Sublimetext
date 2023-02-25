@@ -1,0 +1,12 @@
+{
+    "url": "https://github.com/jlbionville/Sublimetext.git",
+    "description": "Sublime Text 2/3 plugin From Alfaco",
+    "sublime_text": ">=3000",
+    "version": "0.1.0",
+    "platforms":
+    [
+        "*"
+    ],
+    "dependencies":
+    []
+}

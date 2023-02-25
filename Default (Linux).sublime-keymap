@@ -1,0 +1,79 @@
+[
+    {
+        "keys":
+        [
+            "ctrl+alt+t"
+        ],
+        "command": "text_to_table",
+        "context":
+        [
+            {
+                "key": "selection_empty",
+                "operator": "equal",
+                "operand": false
+            }
+        ]
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+s+b"
+        ],
+        "command": "select_between_markers"
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+t+s"
+        ],
+        "command": "insert_tag",
+        "args":
+        {
+            "text": "<start>"
+        }
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+t+e"
+        ],
+        "command": "insert_tag",
+        "args":
+        {
+            "text": "<end>"
+        }
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+d"
+        ],
+        "command": "remove_tag",
+        "args":
+        {
+            "text": "<end>,<start>"
+        }
+    },
+    {
+        "keys":
+        [
+            "ctrl+j"
+        ],
+        "command": "insert_snippet",
+        "args":
+        {
+            "name": "Packages/User/jira.sublime-snippet"
+        }
+    },
+    {
+        "keys":
+        [
+            "f2"
+        ],
+        "command": "run_macro_file",
+        "args":
+        {
+            "file": "Packages/User/addjira.sublime-macro"
+        }
+    }
+]

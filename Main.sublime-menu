@@ -1,0 +1,38 @@
+[
+    {
+        "mnemonic": "n", 
+        "caption": "Preferences", 
+        "id": "preferences", 
+        "children": [
+            {
+                "mnemonic": "P", 
+                "caption": "Package Settings", 
+                "id": "package-settings", 
+                "children": [
+                    {
+                        "caption": "Alfaco", 
+                        "children": [
+                            {
+                                "caption": "Settings – Default", 
+                                "args": {
+                                    "file": "${packages}/Alfaco/alfaco.sublime-settings"
+                                }, 
+                                "command": "open_file"
+                            }, 
+                            {
+                                "caption": "Settings – User", 
+                                "args": {
+                                    "file": "${packages}/User/alfaco.sublime-settings"
+                                }, 
+                                "command": "open_file"
+                            }, 
+                            {
+                                "caption": "-"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

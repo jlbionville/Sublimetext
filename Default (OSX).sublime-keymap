@@ -1,0 +1,57 @@
+[
+{
+        "keys":
+        [
+            "ctrl+super+t"
+        ],
+        "command": "text_to_table",
+        "context":
+        [
+            {
+                "key": "selection_empty",
+                "operator": "equal",
+                "operand": false
+            }
+        ]
+    },
+    {
+        "keys":
+        [
+            "ctrl+super+s+b"
+        ],
+        "command": "select_between_markers"
+    },
+    {
+        "keys":
+        [
+            "ctrl+super+t+s"
+        ],
+        "command": "insert_tag",
+        "args":
+        {
+            "text": "<start>"
+        }
+    },
+    {
+        "keys":
+        [
+            "ctrl+super+t+e"
+        ],
+        "command": "insert_tag",
+        "args":
+        {
+            "text": "<end>"
+        }
+    },
+    {
+        "keys":
+        [
+            "ctrl+super+d"
+        ],
+        "command": "remove_tag",
+        "args":
+        {
+            "text": "<end>,<start>"
+        }
+    }
+]
