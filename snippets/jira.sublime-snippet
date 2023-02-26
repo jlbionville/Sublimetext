@@ -1,0 +1,31 @@
+<snippet>
+	<content><![CDATA[
+{
+    "summary": "${1:$SELECTION}",
+    "description": "$2",
+    "duedate": "2022-02-23",
+    "issuetype":
+    {
+        "name": "Task",
+        "subtask": false
+    },
+    "project":
+    {
+        "key": "INFO"
+    },
+    "priority":
+    {
+        "name": "High"
+    },
+    "labels":
+    [
+        "formation",
+        "wordpress"
+    ]
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>issue</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>

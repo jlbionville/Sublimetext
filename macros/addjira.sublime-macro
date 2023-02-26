@@ -1,0 +1,38 @@
+[
+    {
+        "command": "expand_selection",
+        "args":
+        {
+            "to": "line"
+        }
+    },
+    {
+        "args":
+        {
+            "name": "Packages/User/jira.sublime-snippet"
+        },
+        "command": "insert_snippet"
+    },
+    {
+        "command": "move_to",
+        "args":
+        {
+            "to": "eof",
+            "extend": false
+        }
+    },
+    {
+        "command": "insert",
+        "args":
+        {
+            "characters": ","
+        }
+    },
+    {
+        "command": "insert",
+        "args":
+        {
+            "characters": "\n"
+        }
+    }
+]
