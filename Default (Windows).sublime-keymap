@@ -53,5 +53,27 @@
         {
             "text": "<end>,<start>"
         }
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+j"
+        ],
+        "command": "pretty_json"
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+a"
+        ],
+        "command": "date_selection"
+    }
+    ,
+        {
+        "keys":
+        [
+            "ctrl+alt+m"
+        ],
+        "command": "modify_setting_from_selection"
     }
 ]
