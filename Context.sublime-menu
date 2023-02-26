@@ -1,0 +1,12 @@
+[
+    {
+        "caption": "Alfaco",
+        "children":
+        [
+            {
+                "caption": "format json",
+                "command": "pretty_json"
+            }
+        ]
+    }
+]
