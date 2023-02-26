@@ -1,0 +1,13 @@
+{
+	"alfaco_delimiter" :"##",
+	"jira":{
+
+	 "default_project" :"BUS",
+	 "default_tags":"alfaco",
+	 "default_date_end":"10",
+	 "default_priority":"normal",
+	 "default_category":"normal",
+	}
+
+
+}
