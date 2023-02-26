@@ -1,37 +1,63 @@
 [
     {
-        "mnemonic": "n", 
-        "caption": "Preferences", 
-        "id": "preferences", 
-        "children": [
+        "mnemonic": "n",
+        "caption": "Preferences",
+        "id": "preferences",
+        "children":
+        [
             {
-                "mnemonic": "P", 
-                "caption": "Package Settings", 
-                "id": "package-settings", 
-                "children": [
+                "mnemonic": "P",
+                "caption": "Package Settings",
+                "id": "package-settings",
+                "children":
+                [
                     {
-                        "caption": "Alfaco", 
-                        "children": [
+                        "caption": "Alfaco",
+                        "children":
+                        [
                             {
-                                "caption": "Settings – Default", 
-                                "args": {
+                                "caption": "Settings – Default",
+                                "args":
+                                {
                                     "file": "${packages}/Alfaco/alfaco.sublime-settings"
-                                }, 
+                                },
                                 "command": "open_file"
-                            }, 
+                            },
                             {
-                                "caption": "Settings – User", 
-                                "args": {
+                                "caption": "Settings – User",
+                                "args":
+                                {
                                     "file": "${packages}/User/alfaco.sublime-settings"
-                                }, 
+                                },
                                 "command": "open_file"
-                            }, 
+                            },
                             {
                                 "caption": "-"
                             }
                         ]
                     }
                 ]
+            }
+        ]
+    },
+    {
+        "mnemonic": "A",
+        "caption": "Alfaco",
+        "id": "Alfaco",
+        "children":
+        [
+            {
+                "mnemonic": "J",
+                "caption": "Jira",
+                "id": "jira",
+                            "children":[{
+
+              
+            "caption": "open list projects",    
+            "command":"open_jira_projects"
+            }
+                
+            ]
             }
         ]
     }
