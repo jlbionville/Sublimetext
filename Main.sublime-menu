@@ -1,33 +1,14 @@
 [
-    {        
+    {
         "id": "tools",
         "children":
         [
             {
-                
                 "caption": "Alfaco",
                 "id": "alfaco",
                 "children":
                 [
-                    {
-                        "caption": "Settings – Default",
-                        "args":
-                        {
-                            "file": "${packages}/Alfaco/alfaco.sublime-settings"
-                        },
-                        "command": "open_file"
-                    },
-                    {
-                        "caption": "Settings – User",
-                        "args":
-                        {
-                            "file": "${packages}/User/alfaco.sublime-settings"
-                        },
-                        "command": "open_file"
-                    },
-                    {
-                        "caption": "-"
-                    },
+
                     {
                         "mnemonic": "J",
                         "caption": "Jira",
@@ -37,6 +18,41 @@
                             {
                                 "caption": "open list projects",
                                 "command": "open_jira_projects"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "preferences",
+        "children":
+        [
+            {
+                "id": "package-settings",
+                "children":
+                [
+                    {
+                        "caption": "Alfaco",
+                        "id": "alfaco",
+                        "children":
+                        [
+                            {
+                                "caption": "Settings – Default",
+                                "args":
+                                {
+                                    "file": "${packages}/Alfaco/alfaco.sublime-settings"
+                                },
+                                "command": "open_file"
+                            },
+                            {
+                                "caption": "Settings – User",
+                                "args":
+                                {
+                                    "file": "${packages}/User/alfaco.sublime-settings"
+                                },
+                                "command": "open_file"
                             }
                         ]
                     }
