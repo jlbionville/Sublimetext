@@ -1,13 +1,31 @@
 {
-	"alfaco_delimiter" :"##",
-	"jira":{
-
-	 "default_project" :"BUS",
-	 "default_tags":"alfaco",
-	 "default_date_end":"10",
-	 "default_priority":"normal",
-	 "default_category":"normal",
-	}
-
-
+    "alfaco_delimiter": "##",
+    "jira":
+    {
+        "default_project": "BUS",
+        "default_tags": "alfaco",
+        "default_date_end": "10",
+        "default_priority": "normal",
+        "default_category": "normal",
+        "jira_login": "username",
+        "instances":
+        {
+            "business":
+            {
+                "jira_server": "https://business-projects.atlassian.net/",
+                "jira_default_project_key": "ALFA"
+            },
+            "training":
+            {
+                "jira_server": "https://trainings-projects.atlassian.net/",
+                "jira_default_project_key": "WT"
+            },
+            "personnel":
+            {
+                "jira_server": "https://myproject2020.atlassian.net/",
+                "jira_default_project_key": "ORGA"
+            }
+        }
+    },
+    "path_json_files_folder": "H:\\Mon Drive\\jira"
 }
