@@ -6,6 +6,10 @@
             {
                 "caption": "format json",
                 "command": "pretty_json"
+            },
+                        {
+                "caption": "default jira",
+                "command": "open_jira_projects"
             }
         ]
     }
