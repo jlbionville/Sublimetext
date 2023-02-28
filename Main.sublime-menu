@@ -1,11 +1,10 @@
 [
-    {
-        "mnemonic": "n",
+    {        
         "id": "tools",
         "children":
         [
             {
-                "mnemonic": "P",
+                
                 "caption": "Alfaco",
                 "id": "alfaco",
                 "children":
