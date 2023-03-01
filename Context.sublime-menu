@@ -7,10 +7,14 @@
                 "caption": "format json",
                 "command": "pretty_json"
             },
-                        {
+            {
                 "caption": "default jira",
                 "command": "open_jira_projects"
+            },{
+                "caption": "call rest api",
+                "command": "appel_rest_api"
             }
+            
         ]
     }
 ]
