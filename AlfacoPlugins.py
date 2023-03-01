@@ -1,8 +1,10 @@
 import sublime
 import sublime_plugin
 import os
-
+import requests
 from datetime import datetime, timedelta
+import webbrowser
+import time
 
 settings = None
 def plugin_loaded():
@@ -10,14 +12,12 @@ def plugin_loaded():
 	# this file contains the tags that will be indented/unindented, etc.
 	settings =  sublime.load_settings('alfaco.sublime-settings')
 class OpenJiraProjectsCommand(sublime_plugin.TextCommand):
-	def run(self, edit):
-	# Récupère la sélection de l'utilisateur
-		selection = self.view.substr(self.view.sel()[0])
-		jira_conf=settings.get("jira")
-		print(jira_conf)
-		#sublime.message_dialog()
-		# for region in self.view.sel():
-		# 	self.view.insert(edit, region.begin(), settings.get('alfaco_delimiter'))
+    def run(self, edit):
+        selection = self.view.substr(self.view.sel()[0])
+        jira_conf=settings.get("jira")
+        settings_sublime = sublime.load_settings('Preferences.sublime-settings')
+        jira_password = settings_sublime.get('jira_password')
+        print("login : {} password :{}".format(jira_conf["login"],jira_password))
 		
 class DonneNomFichierCommand(sublime_plugin.TextCommand):
     def run(self, edit):
@@ -29,7 +29,8 @@ class DonneNomFichierCommand(sublime_plugin.TextCommand):
 
         # Si le nom du fichier est disponible, l'affiche dans le widget
         if file_name:
-            message = "Le fichier ouvert dans la vue actuelle est : " + os.path.basename(file_name)
+            message = "Le fichier ouvert dans la vue actuelle est : " + file_name
+            # message = "Le fichier ouvert dans la vue actuelle est : " + os.path.basename(file_name)
         else:
             message = "Aucun fichier ouvert dans la vue actuelle"
         print(message)
@@ -93,6 +94,57 @@ class DateSelectionCommand(sublime_plugin.TextCommand):
         # Display output in a new buffer
         new_view = self.view.window().new_file()
         new_view.run_command("insert", {"characters": output})
+class AppelRestApiCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+
+        jira_conf=settings.get("jira")
+        settings_sublime = sublime.load_settings('Preferences.sublime-settings')
+        jira_password = settings_sublime.get('jira_password')
+        # print("login : {} password :{}".format(jira_conf["login"],jira_password))        
+        active_view = sublime.active_window().active_view()
+
+        # Récupère le nom du fichier associé à la vue active
+        file_name = active_view.file_name()   
+        print(file_name)     
+        with open(file_name, 'r') as f:
+            contenu = f.read()
+        url = 'https://business-projects.atlassian.net/rest/api/2/issue/'
+
+        # Définir les en-têtes d'authentification pour JIRA
+        headers = {'Content-type': 'application/json'}
+        username = jira_conf["login"]
+        password = jira_password
+        auth = (username, password)
+
+        # Envoyer la requête POST à JIRA pour créer un ticket
+        response = requests.post(url, headers=headers, auth=auth, data = contenu,verify=False)
+        # response = requests.post(url, headers=headers, auth=auth, files = {'file': open(file_name, 'rb')},verify=False)
+        # response = requests.post(url, headers=headers, auth=auth, files = {'file': open(file_name, 'rb')},cert='G:\\Mon Drive\\business\\atlassian.net.crt')
+        # Vérification de la réponse de la requête
+        if response.status_code == 200:
+            # Affichage de la réponse de la requête
+            print("Le code de statut de la réponse est :", response.status_code)
+            print("Les en-têtes de la réponse sont :", response.headers)
+            print("Le corps de la réponse est :", response.content)
+        else:
+            # print("Erreur lors de la requête : " + response.text)
+            new_view = self.view.window().new_file()
+            new_view.run_command("insert", {"characters": response.text})  
+            # Obtenir l'heure actuelle pour créer un nom de fichier unique  
+            timestamp = time.strftime('%Y%m%d-%H%M%S')
+
+
+
+            # Définir le nom de fichier à utiliser (avec l'horodatage)
+            filename = "error_api_call.html"
+
+            # Écrire le contenu HTML dans le fichier
+            with open(filename, 'w') as f:
+                f.write(response.text)
+
+            # Ouvrir le fichier dans un navigateur
+            webbrowser.open(os.path.abspath(filename))           
+
 class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         # Get selected text
