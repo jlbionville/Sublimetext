@@ -7,7 +7,7 @@
         "default_date_end": "10",
         "default_priority": "normal",
         "default_category": "normal",
-        "jira_login": "username",
+        "login": "jlbionville@alfaco.fr",
         "instances":
         {
             "business":
