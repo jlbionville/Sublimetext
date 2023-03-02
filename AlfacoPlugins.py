@@ -12,6 +12,7 @@ from os.path import dirname
 sys.path.insert(0, dirname(__file__))
 import modules.tools
 from modules.configuration import addSetting
+from modules.tools import callApiRest
 
 settings_alfaco= None
 settings_atlassian = None
@@ -36,6 +37,11 @@ def getSetting(key):
         return settings_sublime.get(key)
     if settings_atlassian.has(key):
         return settings_atlassian.get(key)
+def getConfigurationForApiRestCall():
+    return {"auth" : (getSetting("jira_login"), getSetting('jira_password')),
+    "headers" : {'Content-type': 'application/json'},
+    "url" : 'https://business-projects.atlassian.net/rest/api/2/issue/'
+    }        
 class OpenJiraProjectsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         selection = self.view.substr(self.view.sel()[0])
@@ -122,51 +128,23 @@ class DateSelectionCommand(sublime_plugin.TextCommand):
         new_view.run_command("insert", {"characters": output})
 class AppelRestApiCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-
-        jira_conf=settings.get("jira")
-        settings_sublime = sublime.load_settings('Preferences.sublime-settings')
-        jira_password = settings_sublime.get('jira_password')
-        # print("login : {} password :{}".format(jira_conf["login"],jira_password))        
         active_view = sublime.active_window().active_view()
+        region = sublime.Region(0, self.view.size())
+        contenu = self.view.substr(region)
+        texte=callApiRest(contenu,getConfigurationForApiRestCall())
 
-        # Récupère le nom du fichier associé à la vue active
-        file_name = active_view.file_name()   
-        print(file_name)     
-        with open(file_name, 'r') as f:
-            contenu = f.read()
-        url = 'https://business-projects.atlassian.net/rest/api/2/issue/'
 
-        # Définir les en-têtes d'authentification pour JIRA
-        headers = {'Content-type': 'application/json'}
-        username = jira_conf["login"]
-        password = jira_password
-        auth = (username, password)
-
-        # Envoyer la requête POST à JIRA pour créer un ticket
-        response = requests.post(url, headers=headers, auth=auth, data = contenu,verify=False)
-        # response = requests.post(url, headers=headers, auth=auth, files = {'file': open(file_name, 'rb')},verify=False)
-        # response = requests.post(url, headers=headers, auth=auth, files = {'file': open(file_name, 'rb')},cert='G:\\Mon Drive\\business\\atlassian.net.crt')
-        # Vérification de la réponse de la requête
-        if response.status_code == 200:
-            # Affichage de la réponse de la requête
-            print("Le code de statut de la réponse est :", response.status_code)
-            print("Les en-têtes de la réponse sont :", response.headers)
-            print("Le corps de la réponse est :", response.content)
-        else:
-            # print("Erreur lors de la requête : " + response.text)
             new_view = self.view.window().new_file()
-            new_view.run_command("insert", {"characters": response.text})  
+        new_view.run_command("insert", {"characters": texte})  
             # Obtenir l'heure actuelle pour créer un nom de fichier unique  
             timestamp = time.strftime('%Y%m%d-%H%M%S')
 
-
-
             # Définir le nom de fichier à utiliser (avec l'horodatage)
-            filename = "error_api_call.html"
+        filename = 'error_api_call_{timestamp}.html'
 
             # Écrire le contenu HTML dans le fichier
             with open(filename, 'w') as f:
-                f.write(response.text)
+            f.write(texte)
 
             # Ouvrir le fichier dans un navigateur
             webbrowser.open(os.path.abspath(filename))           
