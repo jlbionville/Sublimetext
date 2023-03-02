@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
 import os
+import re
 import requests
 from datetime import datetime, timedelta
 import webbrowser
@@ -156,3 +157,27 @@ class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
         #sublime.save_settings("Preferences.sublime-settings")
         for region in self.view.sel():
             self.view.insert(edit, region.begin(), settings.get('alfaco_delimiter'))
+
+
+
+class MyContextMenuCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        self.view.show_popup_menu(['Item 1', 'Item 2', 'Item 3'], self.on_done)
+
+    def on_done(self, index):
+        if index == 0:
+            self.view.run_command('insert_text', {'args': {'text': 'Item 1'}})
+        elif index == 1:
+            self.view.run_command('insert_text', {'args': {'text': 'Item 2'}})
+        elif index == 2:
+            self.view.run_command('insert_text', {'args': {'text': 'Item 3'}})
+
+class InsertTextCommand(sublime_plugin.TextCommand):
+    def run(self, edit, args):
+        region = sublime.Region(0, self.view.size())
+        content = self.view.substr(region)
+
+        pattern = r'"key"\s*:\s*(""|\'\')'
+        content = re.sub(pattern, r'"key": "{}"'.format(args['text']), content)
+
+        self.view.replace(edit, region, content)
