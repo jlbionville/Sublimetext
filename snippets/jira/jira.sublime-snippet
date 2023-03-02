@@ -1,6 +1,7 @@
 <snippet>
 	<content><![CDATA[
 {
+"fields":{
     "summary": "${1:$SELECTION}",
     "description": "$2",
     "duedate": "2022-02-23",
@@ -11,7 +12,7 @@
     },
     "project":
     {
-        "key": "INFO"
+        "key": "$3"
     },
     "priority":
     {
@@ -22,6 +23,7 @@
         "formation",
         "wordpress"
     ]
+}
 }
 ]]></content>
 	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
