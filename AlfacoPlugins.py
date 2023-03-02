@@ -6,19 +6,44 @@ import requests
 from datetime import datetime, timedelta
 import webbrowser
 import time
+import sys
 
-settings = None
+from os.path import dirname
+sys.path.insert(0, dirname(__file__))
+import modules.tools
+from modules.configuration import addSetting
+
+settings_alfaco= None
+settings_atlassian = None
+settings_sublime = None
+
 def plugin_loaded():
-	global settings
+    global settings_alfaco
+    global settings_sublime
+    global settings_atlassian
 	# this file contains the tags that will be indented/unindented, etc.
-	settings =  sublime.load_settings('alfaco.sublime-settings')
+    settings_alfaco =  sublime.load_settings('alfaco.sublime-settings')    
+    settings_sublime = sublime.load_settings('Preferences.sublime-settings')
+    settings_atlassian = sublime.load_settings('alfaco-atlassian.sublime-settings')
+def getSetting(key):
+    '''
+    charge les différents fichiers settings nécessaires pour le package
+    renvoie un setting qui est une aggrégation des différents fichiers
+    '''
+    if settings_alfaco.has(key):
+        return settings_alfaco.get(key)
+    if settings_sublime.has(key):
+        return settings_sublime.get(key)
+    if settings_atlassian.has(key):
+        return settings_atlassian.get(key)
 class OpenJiraProjectsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         selection = self.view.substr(self.view.sel()[0])
-        jira_conf=settings.get("jira")
-        settings_sublime = sublime.load_settings('Preferences.sublime-settings')
-        jira_password = settings_sublime.get('jira_password')
-        print("login : {} password :{}".format(jira_conf["login"],jira_password))
+        # jira_login=settings_sublime.get("jira_login")
+        # settings_sublime = sublime.load_settings('Preferences.sublime-settings')
+        # jira_password = settings_sublime.get('jira_password')
+        print(getSetting('jira_password'))
+        print(getSetting('jira_login'))
 		
 class DonneNomFichierCommand(sublime_plugin.TextCommand):
     def run(self, edit):
