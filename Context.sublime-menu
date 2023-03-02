@@ -10,10 +10,16 @@
             {
                 "caption": "default jira",
                 "command": "open_jira_projects"
-            },{
+            },
+            {
                 "caption": "call rest api",
                 "command": "appel_rest_api"
-            }
+            },
+            
+                {
+                    "caption": "My Command",
+                    "command": "my_context_menu"
+                }
             
         ]
     }
