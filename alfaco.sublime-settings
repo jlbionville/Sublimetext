@@ -27,5 +27,74 @@
             }
         }
     },
+    "atlassian":
+    {
+        "organisations":
+        [
+            {
+                "business-projects":
+                {
+                    "jira": true,
+                    "confluence": true
+                }
+            },
+            {
+                "cloud-shopping":
+                {
+                    "jira": true,
+                    "confluence": false
+                }
+            },
+            {
+                "myproject2020":
+                {
+                    "jira": true,
+                    "confluence": true
+                }
+            },
+            {
+                "nana-immobilier":
+                {
+                    "jira": true,
+                    "confluence": false
+                }
+            },
+            {
+                "projets-immobilier":
+                {
+                    "jira": true,
+                    "confluence": false
+                }
+            },
+            {
+                "alfaco-applications":
+                {
+                    "jira": true,
+                    "confluence": false
+                }
+            },
+            {
+                "trainings-projects":
+                {
+                    "jira": true,
+                    "confluence": true
+                }
+            },
+            {
+                "cercleimmobilier":
+                {
+                    "jira": true,
+                    "confluence": true
+                }
+            },
+            {
+                "alfaco-missions":
+                {
+                    "jira": true,
+                    "confluence": false
+                }
+            }
+        ]
+    },
     "path_json_files_folder": "H:\\Mon Drive\\jira"
 }
