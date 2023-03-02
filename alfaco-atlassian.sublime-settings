@@ -1,14 +1,6 @@
 {
-    "alfaco_delimiter": "##",
-    "jira":
-    {
-        "default_project": "BUS",
-        "default_tags": "alfaco",
-        "default_date_end": "10",
-        "default_priority": "normal",
-        "default_category": "normal",
-        "login": "jlbionville@alfaco.fr"
-    },
+    "jira_login": "jlbionville@alfaco.fr",
+    
     "atlassian":
     {
         "organisations":
@@ -16,7 +8,8 @@
             {
                 "business-projects":
                 {
-                    "jira": true,
+                    "jira":
+                    [],
                     "confluence": true
                 }
             },
