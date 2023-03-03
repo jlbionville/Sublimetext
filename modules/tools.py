@@ -1,9 +1,19 @@
 import requests
-def saveFichier(content, nomFichier):
-	'''
-	appeller par les plugin pour sauvegarder le fichier courant
-	'''
-	print("saveFichier")
+
+def getOrganisationUrl(organisation):
+        return 'https://{}.atlassian.net/rest/api/2/issue/'.format(organisation)
+
+# def getListJiraProjetForOrganisation(organisation):
+        
+
+def saveFichier(contenu, nomFichier):
+        with open(nomFichier, 'w') as f:
+            f.write(contenu)
+def readFichier(nomFichier):
+        with open(nomFichier, 'w') as f:
+            contenu=f.read()
+            return contenu
+
 def callApiRest(contenu, configuration):
         # Envoyer la requête POST à JIRA pour créer un ticket
         print(contenu)
