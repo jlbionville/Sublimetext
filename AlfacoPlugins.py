@@ -2,7 +2,7 @@ import sublime
 import sublime_plugin
 import os
 import re
-import requests
+import json
 from datetime import datetime, timedelta
 import webbrowser
 import time
@@ -163,17 +163,15 @@ class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
 
 
 
-class MyContextMenuCommand(sublime_plugin.TextCommand):
+class MyJiraOrganisationCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        self.view.show_popup_menu(['Item 1', 'Item 2', 'Item 3'], self.on_done)
+        organisations=getSetting("atlassian")
+        keys = [list(org.keys())[0] for org in organisations['organisations']]
+        self.view.show_popup_menu(keys, self.on_done)
 
     def on_done(self, index):
-        if index == 0:
-            self.view.run_command('insert_text', {'args': {'text': 'Item 1'}})
-        elif index == 1:
-            self.view.run_command('insert_text', {'args': {'text': 'Item 2'}})
-        elif index == 2:
-            self.view.run_command('insert_text', {'args': {'text': 'Item 3'}})
+        valeurs=["ALFA","BUS","ELUN"]
+        self.view.run_command('insert_text', {'args': {'text': valeurs[index]}})
 
 class InsertTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, args):
