@@ -12,7 +12,7 @@ from os.path import dirname
 sys.path.insert(0, dirname(__file__))
 import modules.tools
 from modules.configuration import addSetting
-from modules.tools import callApiRest
+from modules.tools import callApiRest,getOrganisationUrl
 
 settings_alfaco= None
 settings_atlassian = None
@@ -133,21 +133,23 @@ class AppelRestApiCommand(sublime_plugin.TextCommand):
         contenu = self.view.substr(region)
         texte=callApiRest(contenu,getConfigurationForApiRestCall())
 
-
+        ## affichage de la réponse
             new_view = self.view.window().new_file()
         new_view.run_command("insert", {"characters": texte})  
+
             # Obtenir l'heure actuelle pour créer un nom de fichier unique  
             timestamp = time.strftime('%Y%m%d-%H%M%S')
-
             # Définir le nom de fichier à utiliser (avec l'horodatage)
-        filename = 'error_api_call_{timestamp}.html'
+        repertoire=getSetting("path_json_files_folder")
+        filename = "{}\\error_api_call_{}.html".format(repertoire,timestamp)
 
-            # Écrire le contenu HTML dans le fichier
-            with open(filename, 'w') as f:
-            f.write(texte)
+        # la réponse de l'appel REST
+        saveFichier(texte,filename)
 
-            # Ouvrir le fichier dans un navigateur
-            webbrowser.open(os.path.abspath(filename))           
+        reponse_json=json.loads(texte)
+        jira_file_name="{}\\{}.json".format(repertoire,reponse_json["key"])
+        # le fichier json utilisé pour l'appel REST
+        saveFichier(contenu,jira_file_name)
 
 class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
     def run(self, edit):
