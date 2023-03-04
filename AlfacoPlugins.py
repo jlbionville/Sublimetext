@@ -11,21 +11,22 @@ import sys
 from os.path import dirname
 sys.path.insert(0, dirname(__file__))
 import modules.tools
-from modules.configuration import addSetting
-from modules.tools import callApiRest,getOrganisationUrl
+from modules.configuration import Configuration
+from modules.tools import callApiRest,getOrganisationUrl,saveFichier,getUrlToGetJiraProjects
 
 settings_alfaco= None
 settings_atlassian = None
 settings_sublime = None
-
+configuration = Configuration()
 def plugin_loaded():
     global settings_alfaco
     global settings_sublime
     global settings_atlassian
-	# this file contains the tags that will be indented/unindented, etc.
+    # this file contains the tags that will be indented/unindented, etc.    
     settings_alfaco =  sublime.load_settings('alfaco.sublime-settings')    
     settings_sublime = sublime.load_settings('Preferences.sublime-settings')
     settings_atlassian = sublime.load_settings('alfaco-atlassian.sublime-settings')
+    setSetting("organisation","business-projects")
 def getSetting(key):
     '''
     charge les différents fichiers settings nécessaires pour le package
@@ -37,20 +38,19 @@ def getSetting(key):
         return settings_sublime.get(key)
     if settings_atlassian.has(key):
         return settings_atlassian.get(key)
+def setSetting(key,value):
+    settings_sublime.set(key,value)
 def getConfigurationForApiRestCall():
     return {"auth" : (getSetting("jira_login"), getSetting('jira_password')),
-    "headers" : {'Content-type': 'application/json'},
-    "url" : 'https://business-projects.atlassian.net/rest/api/2/issue/'
+    "headers" : {'Content-type': 'application/json;charset=UTF-8','Accept': 'application/json'},
+    "url" : 'https://{}.atlassian.net/rest/api/latest/'.format(configuration.__jira_project__)
     }        
 class OpenJiraProjectsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        selection = self.view.substr(self.view.sel()[0])
-        # jira_login=settings_sublime.get("jira_login")
-        # settings_sublime = sublime.load_settings('Preferences.sublime-settings')
-        # jira_password = settings_sublime.get('jira_password')
+
         print(getSetting('jira_password'))
         print(getSetting('jira_login'))
-		
+        
 class DonneNomFichierCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         # Récupère la vue active
@@ -66,10 +66,7 @@ class DonneNomFichierCommand(sublime_plugin.TextCommand):
         else:
             message = "Aucun fichier ouvert dans la vue actuelle"
         print(message)
-        # Ouvre le widget et y affiche le message
-        # sublime.active_window().run_command("show_panel", {"panel": "console", "toggle": False})
-        # panel = sublime.active_window().find_output_panel("console")
-        # panel.run_command("append", {"characters": message})
+
 class InsertTagCommand(sublime_plugin.TextCommand):
     def run(self, edit, text):
         # Récupère l'emplacement du curseur
@@ -85,11 +82,11 @@ class RemoveTagCommand(sublime_plugin.TextCommand):
         print(text)
         tags=text.split(',')
         for tag in tags:
-        	print(tag)
-	        search = self.view.find_all(tag)
-	        # Supprime toutes les occurrences du mot à l'emplacement du curseur
-	        for region in reversed(search):
-	            self.view.erase(edit, region)
+            print(tag)
+            search = self.view.find_all(tag)
+            # Supprime toutes les occurrences du mot à l'emplacement du curseur
+            for region in reversed(search):
+                self.view.erase(edit, region)
 class SelectBetweenMarkersCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         # Récupère les positions des marqueurs de début et de fin
@@ -127,22 +124,24 @@ class DateSelectionCommand(sublime_plugin.TextCommand):
         new_view = self.view.window().new_file()
         new_view.run_command("insert", {"characters": output})
 class AppelRestApiCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
+    def run(self, edit):    
         active_view = sublime.active_window().active_view()
         region = sublime.Region(0, self.view.size())
         contenu = self.view.substr(region)
-        texte=callApiRest(contenu,getConfigurationForApiRestCall())
+        configu=getConfigurationForApiRestCall()
+        configu["url"]=configu["url"]+"issue/"
+        texte=callApiRest(contenu,configu)
 
         ## affichage de la réponse
-            new_view = self.view.window().new_file()
+        new_view = self.view.window().new_file()
         new_view.run_command("insert", {"characters": texte})  
 
-            # Obtenir l'heure actuelle pour créer un nom de fichier unique  
-            timestamp = time.strftime('%Y%m%d-%H%M%S')
-            # Définir le nom de fichier à utiliser (avec l'horodatage)
+        # Obtenir l'heure actuelle pour créer un nom de fichier unique  
+        timestamp = time.strftime('%Y%m%d-%H%M%S')
+        # Définir le nom de fichier à utiliser (avec l'horodatage)
         repertoire=getSetting("path_json_files_folder")
         filename = "{}\\error_api_call_{}.html".format(repertoire,timestamp)
-
+        
         # la réponse de l'appel REST
         saveFichier(texte,filename)
 
@@ -150,7 +149,7 @@ class AppelRestApiCommand(sublime_plugin.TextCommand):
         jira_file_name="{}\\{}.json".format(repertoire,reponse_json["key"])
         # le fichier json utilisé pour l'appel REST
         saveFichier(contenu,jira_file_name)
-
+        
 class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         # Get selected text
@@ -163,24 +162,42 @@ class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
         for region in self.view.sel():
             self.view.insert(edit, region.begin(), settings.get('alfaco_delimiter'))
 
-
-
-class MyJiraOrganisationCommand(sublime_plugin.TextCommand):
+class GetJiraListForOrganisationCommand(sublime_plugin.TextCommand):
     def run(self, edit):
-        organisations=getSetting("atlassian")
-        keys = [list(org.keys())[0] for org in organisations['organisations']]
-        self.view.show_popup_menu(keys, self.on_done)
+        configu=getConfigurationForApiRestCall()
+        configu["url"]=configu["url"]+"project/"
+        configuration.__jira_project__,status_code,headers=getUrlToGetJiraProjects(configu)
+        self.view.show_popup_menu(configuration.__jira_project__, self.on_done)
 
     def on_done(self, index):
-        valeurs=["ALFA","BUS","ELUN"]
-        self.view.run_command('insert_text', {'args': {'text': valeurs[index]}})
+        
+        self.view.run_command('insert_text', {'args': {'text': configuration.__jira_project__[index]}})
+
+class GetListOrganisationCommand(sublime_plugin.TextCommand):
+    __key__=[]
+    def run(self, edit):
+        print(configuration.__organisation__)
+        atlassian=getSetting("atlassian")
+        #self.__keys__ = [list(org.keys())[0] for org in organisations['organisations']]
+        # print( atlassian['organisations'].keys())
+        liste=[project for project in atlassian['organisations'].keys()]
+        self.view.show_popup_menu(liste, self.on_done)
+
+    def on_done(self, index):
+        #self.view.run_command('insert_text', {'args': {'text': self.__keys__[index]}})
+        
+        atlassian=getSetting("atlassian")
+        print(atlassian)
+        liste=[project for project in atlassian['organisations'].keys()]
+        organisation=atlassian['organisations']
+        configuration.__organisation__=organisation[liste[index]]["url_key"]
+        print("la clef pour l'url {} ".format(configuration.__organisation__))
+        
 
 class InsertTextCommand(sublime_plugin.TextCommand):
     def run(self, edit, args):
         region = sublime.Region(0, self.view.size())
         content = self.view.substr(region)
-
         pattern = r'"key"\s*:\s*(""|\'\')'
         content = re.sub(pattern, r'"key": "{}"'.format(args['text']), content)
-
         self.view.replace(edit, region, content)
