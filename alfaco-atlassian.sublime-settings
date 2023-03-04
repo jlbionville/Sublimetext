@@ -1,75 +1,77 @@
 {
-    "jira_login": "jlbionville@alfaco.fr",
-    
+    "jira":
+    {
+        "default_organisation": "business-projects",
+        "default_project": "BUS",
+        "default_tags": "alfaco",
+        "default_date_end": "10",
+        "default_priority": "normal",
+        "default_category": "normal",
+        "login": "jlbionville@alfaco.fr",
+        "requests":
+        {
+            "searchJiraProject": "project/search"
+        }
+    },
     "atlassian":
     {
         "organisations":
-        [
+        {
+            "business projects":
             {
-                "business-projects":
-                {
-                    "jira":
-                    [],
-                    "confluence": true
-                }
+                "url_key": "business-projects",
+                "jira": true,
+                "confluence": true
             },
+            "e-commerce":
             {
-                "cloud-shopping":
-                {
-                    "jira": true,
-                    "confluence": false
-                }
+                "url_key": "cloud-shopping",
+                "jira": true,
+                "confluence": false
             },
+            "mes projets personnels":
             {
-                "myproject2020":
-                {
-                    "jira": true,
-                    "confluence": true
-                }
+                "url_key": "myproject2020",
+                "jira": true,
+                "confluence": true
             },
+            "mon agence immo":
             {
-                "nana-immobilier":
-                {
-                    "jira": true,
-                    "confluence": false
-                }
+                "url_key": "nana-immobilier",
+                "jira": true,
+                "confluence": false
             },
+            "mes projets immobiliers ":
             {
-                "projets-immobilier":
-                {
-                    "jira": true,
-                    "confluence": false
-                }
+                "url_key": "projets-immobilier",
+                "jira": true,
+                "confluence": false
             },
+            "alfaco-applications":
             {
-                "alfaco-applications":
-                {
-                    "jira": true,
-                    "confluence": false
-                }
+                "url_key": "alfaco-applications",
+                "jira": true,
+                "confluence": false
             },
+            "mes auto formations":
             {
-                "trainings-projects":
-                {
-                    "jira": true,
-                    "confluence": true
-                }
+                "url_key": "trainings-projects",
+                "jira": true,
+                "confluence": true
             },
+            "le cercle des investisseurs":
             {
-                "cercleimmobilier":
-                {
-                    "jira": true,
-                    "confluence": true
-                }
+                "url_key": "cercleimmobilier",
+                "jira": true,
+                "confluence": true
             },
+            "mes missions alfaco":
             {
-                "alfaco-missions":
-                {
-                    "jira": true,
-                    "confluence": false
-                }
+                "url_key": "alfaco-missions",
+                "jira": true,
+                "confluence": false
             }
-        ]
+        }
     },
     "path_json_files_folder": "H:\\Mon Drive\\jira"
 }
