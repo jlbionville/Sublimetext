@@ -17,16 +17,23 @@ from modules.tools import callApiRest,getOrganisationUrl,saveFichier,getUrlToGet
 settings_alfaco= None
 settings_atlassian = None
 settings_sublime = None
-configuration = Configuration()
+configuration = None
+
+# Faire une init de l'instance configuration
+
 def plugin_loaded():
     global settings_alfaco
     global settings_sublime
     global settings_atlassian
+    global configuration
     # this file contains the tags that will be indented/unindented, etc.    
     settings_alfaco =  sublime.load_settings('alfaco.sublime-settings')    
     settings_sublime = sublime.load_settings('Preferences.sublime-settings')
     settings_atlassian = sublime.load_settings('alfaco-atlassian.sublime-settings')
     setSetting("organisation","business-projects")
+    configuration = Configuration()
+    #TODO: gerer les clefs dans un dictionnaire
+    configuration.setJiraAuthorisation("jlbionville@alfaco.fr",getSetting('jira_password'))
 def getSetting(key):
     '''
     charge les différents fichiers settings nécessaires pour le package
@@ -41,6 +48,8 @@ def getSetting(key):
 def setSetting(key,value):
     settings_sublime.set(key,value)
 def getConfigurationForApiRestCall():
+    # mettre les informations dans l'instance Configuration
+    # utiliser l'instance Configuration pour obtenir ses informations
     return {"auth" : (getSetting("jira_login"), getSetting('jira_password')),
     "headers" : {'Content-type': 'application/json;charset=UTF-8','Accept': 'application/json'},
     "url" : 'https://{}.atlassian.net/rest/api/latest/'.format(configuration.__jira_project__)
@@ -128,8 +137,14 @@ class AppelRestApiCommand(sublime_plugin.TextCommand):
         active_view = sublime.active_window().active_view()
         region = sublime.Region(0, self.view.size())
         contenu = self.view.substr(region)
-        configu=getConfigurationForApiRestCall()
-        configu["url"]=configu["url"]+"issue/"
+        # configu=getConfigurationForApiRestCall()
+        # configu["url"]=configu["url"]+"issue/"
+        configu={
+        "url":configuration.getBaseUrlForRESTApi()+"issue/",
+        "headers":configuration.getKeyValue("headers"),
+        "auth":(configuration.getJiraAuthorisation())
+        }
+        print ("AppelRestApiCommand - configu: {}".format(configu))
         texte=callApiRest(contenu,configu)
 
         ## affichage de la réponse
@@ -163,20 +178,31 @@ class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
             self.view.insert(edit, region.begin(), settings.get('alfaco_delimiter'))
 
 class GetJiraListForOrganisationCommand(sublime_plugin.TextCommand):
+    
     def run(self, edit):
         configu=getConfigurationForApiRestCall()
-        configu["url"]=configu["url"]+"project/"
-        configuration.__jira_project__,status_code,headers=getUrlToGetJiraProjects(configu)
-        self.view.show_popup_menu(configuration.__jira_project__, self.on_done)
+        # configu["url"]=getOrganisationUrl(configuration.__organisation__)+"project/"
+        configu={
+        "url":configuration.getBaseUrlForRESTApi()+"project/",
+        "headers":configuration.getKeyValue("headers"),
+        "auth":(configuration.getJiraAuthorisation())
+        }        
+        print("GetJiraListForOrganisationCommand :{}".format(configu))
+        liste,status_code,headers=getUrlToGetJiraProjects(configu)
+        configuration.setListKeyJiraProject(liste)
+        self.view.show_popup_menu(liste, self.on_done)
 
     def on_done(self, index):
-        
-        self.view.run_command('insert_text', {'args': {'text': configuration.__jira_project__[index]}})
+        liste=configuration.getListKeyJiraProject()
+        print("GetJiraListForOrganisationCommand => la liste des projects : {}".format(liste))
+        configuration.setKeyValue("project_key",liste[index])
+        #self.view.run_command('insert_text', {'args': {'text': configuration.__jira_project__[index]}})
 
 class GetListOrganisationCommand(sublime_plugin.TextCommand):
     __key__=[]
     def run(self, edit):
-        print(configuration.__organisation__)
+        # print(configuration.__organisation__)
+        # TODO : utiliser la configuration
         atlassian=getSetting("atlassian")
         #self.__keys__ = [list(org.keys())[0] for org in organisations['organisations']]
         # print( atlassian['organisations'].keys())
@@ -187,11 +213,11 @@ class GetListOrganisationCommand(sublime_plugin.TextCommand):
         #self.view.run_command('insert_text', {'args': {'text': self.__keys__[index]}})
         
         atlassian=getSetting("atlassian")
-        print(atlassian)
+        print("GetListOrganisationCommand \n ==> {}".format(atlassian))
         liste=[project for project in atlassian['organisations'].keys()]
         organisation=atlassian['organisations']
-        configuration.__organisation__=organisation[liste[index]]["url_key"]
-        print("la clef pour l'url {} ".format(configuration.__organisation__))
+        configuration.setKeyValue("default_organisation",organisation[liste[index]]["url_key"])
+        print("GetListOrganisationCommand \n ==> la clef pour l'url {} ".format(configuration.getKeyValue("default_organisation")))
         
 
 class InsertTextCommand(sublime_plugin.TextCommand):
