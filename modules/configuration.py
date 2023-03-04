@@ -1,10 +1,16 @@
 import sublime
-def addSetting(settings):
-	'''
-	charge les différents fichiers settings nécessaires pour le package
-	renvoie un setting qui est une aggrégation des différents fichiers
-	'''
-	print('dans le addSetting {}'.format(settings.get('jira')))
+
+
+class Configuration(object):
+	"""docstring for Configuration"""
+	__organisation__=""
+	__jira_project__=""
+	def __init__(self):
+		super(Configuration, self).__init__()
+	
+		
+
+
 
 
 
