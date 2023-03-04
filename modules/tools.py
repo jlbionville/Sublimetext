@@ -28,3 +28,15 @@ def callApiRest(contenu, configuration):
             return 'Le code de statut de la réponse est :%s\nLes en-têtes de la réponse sont :%s\nLe corps de la réponse est :%s'%(response.status_code,response.headers,response.content)
         else:
             return response.text
+def getUrlToGetJiraProjects(configuration):
+    print(configuration)
+    response = requests.get(configuration["url"],headers=configuration["headers"],  auth=configuration["auth"], verify=False) 
+    if response.status_code == 200:
+        # Affichage de la réponse de la requête       
+        
+        json_reponse=json.loads(response.content.decode())
+
+        listeKeyProject=[project["key"] for project in json_reponse]
+        return listeKeyProject,response.status_code,response.content
+    else:
+        return response.status_code,response.text
