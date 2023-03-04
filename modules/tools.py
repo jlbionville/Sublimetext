@@ -10,7 +10,7 @@ def saveFichier(contenu, nomFichier):
         with open(nomFichier, 'w') as f:
             f.write(contenu)
 def readFichier(nomFichier):
-        with open(nomFichier, 'w') as f:
+    with open(nomFichier, 'r') as f:
             contenu=f.read()
             return contenu
 
