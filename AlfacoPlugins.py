@@ -221,10 +221,35 @@ class GetListOrganisationCommand(sublime_plugin.TextCommand):
         print("GetListOrganisationCommand \n ==> la clef pour l'url {} ".format(configuration.getKeyValue("default_organisation")))
         
 
-class InsertTextCommand(sublime_plugin.TextCommand):
+class SetJiraProjectInSnippetCommand(sublime_plugin.TextCommand):
     def run(self, edit, args):
         region = sublime.Region(0, self.view.size())
         content = self.view.substr(region)
         pattern = r'"key"\s*:\s*(""|\'\')'
         content = re.sub(pattern, r'"key": "{}"'.format(args['text']), content)
         self.view.replace(edit, region, content)
+
+class InitJsonJiraCommand(sublime_plugin.TextCommand):
+    def run(self, edit):
+        current_line = self.view.substr(self.view.line(self.view.sel()[0]))
+        new_view = self.view.window().new_file()
+        new_view.set_name("My Snippet")
+        new_view.set_scratch(True)
+        print(current_line)
+        # Insère le contenu du snippet dans la nouvelle vue
+        new_view.run_command("insert_snippet", {"name": "Packages/Alfaco/snippets/jira/jira.sublime-snippet","jira_key":"ALFA",
+            "description":"a completer","selection":current_line.strip()})
+        # new_view.run_command("insert", {"content":current_line})
+class ShowSelectedInputCommand(sublime_plugin.WindowCommand):
+    def run(self):
+        # Récupère le texte sélectionné dans la vue active
+        # selection = self.view.substr(self.view.sel()[0])
+        nput_view = self.window.show_input_panel(caption="Example", initial_text="Example", on_done = None, on_change = None, on_cancel = None)
+        input_view.add_regions("example", [sublime.Region(0, 7)], scope = "region.redish", flags = sublime.DRAW_NO_FILL | sublime.DRAW_NO_OUTLINE | sublime.DRAW_SQUIGGLY_UNDERLINE)
+
+        # Affiche le texte sélectionné dans un panneau de sortie
+        #sublime.active_window().run_command("show_panel", {"panel": "output.show_selected_text"})
+        # output_view = sublime.active_window().get_input_panel("show_selected_text")
+        # output_view.set_read_only(False)
+        # output_view.run_command("append", {"characters": selection})
+        # output_view.set_read_only(True)
