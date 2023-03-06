@@ -67,13 +67,75 @@
             "ctrl+alt+a"
         ],
         "command": "date_selection"
-    }
-    ,
-        {
+    },
+    {
         "keys":
         [
             "ctrl+alt+m"
         ],
         "command": "modify_setting_from_selection"
+    },
+    {
+        "keys":
+        [
+            "alt+j"
+        ],
+        "command": "donne_nom_fichier"
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+i"
+        ],
+        "command": "insert",
+        "args":
+        {
+            "characters": "{\"keys\":[\"alt+k\"],\"command\": \"insert\"}"
+        }
+    },
+    {
+        "keys":
+        [
+            "alt+w"
+        ],
+        "command": "insert_snippet",
+        "args":
+        {
+            "name": "Packages/Alfaco/snippets/jira/jira.sublime-snippet",
+            "jira_key": "ALFA",
+            "description": "a completer"
+        }
+    },
+    {
+        "keys":
+        [
+            "alt+k"
+        ],
+        "command": "insert_snippet",
+        "content":
+        {
+            "name": "Packages/Alfaco/snippets/jira/jira.sublime-snippet",
+            "jira_key": "ALFA",
+            "description": "a completer"
+        }
+    },
+    {
+        "keys":
+        [
+            "ctrl+alt+w"
+        ],
+        "command": "insert_snippet",
+        "args":
+        {
+            "contents": "{\"fields\":${0:$SELECTION}}"
+        }
+    },
+    {
+        "keys":
+        [
+            "alt+z"
+        ],        
+         "command": "appel_rest_api"
+                
     }
 ]
