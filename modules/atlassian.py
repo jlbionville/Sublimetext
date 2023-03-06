@@ -1,2 +1,1 @@
-def test(text):
-	print("ceci est un test")
+# -*- coding: utf-8 -*-

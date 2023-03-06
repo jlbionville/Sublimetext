@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 import sublime
 
 
@@ -13,7 +15,7 @@ class Configuration(object):
 	        "password": "",
 	        "login": ""
 	    },
-	    "headers": {'Content-type': 'application/json;charset=UTF-8','Accept': 'application/json'},
+	    "headers": {"Content-type": "application/json;charset=utf-8","Accept": "application/json"},
 
 	}
 	listeKeyJiraProject=[]
