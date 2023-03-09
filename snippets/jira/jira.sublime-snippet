@@ -2,8 +2,8 @@
 	<content><![CDATA[
 {
 "fields":{
-    "summary": "${1:$SELECTION}",
-    "description": "$2",
+    "summary": "${1:${selection}}",
+    "description": "${description}",
     "duedate": "2022-02-23",
     "issuetype":
     {
@@ -12,7 +12,7 @@
     },
     "project":
     {
-        "key": "$3"
+        "key": "${jira_key}"
     },
     "priority":
     {
