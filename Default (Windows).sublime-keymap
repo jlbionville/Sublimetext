@@ -78,9 +78,9 @@
     {
         "keys":
         [
-            "alt+j"
+            "ctrl+j+l"
         ],
-        "command": "donne_nom_fichier"
+        "command": "get_jira_list_for_organisation"
     },
     {
         "keys":
@@ -96,23 +96,10 @@
     {
         "keys":
         [
-            "alt+w"
+            "super+n"
         ],
-        "command": "insert_snippet",
+        "command": "init_json_jira",
         "args":
-        {
-            "name": "Packages/Alfaco/snippets/jira/jira.sublime-snippet",
-            "jira_key": "ALFA",
-            "description": "a completer"
-        }
-    },
-    {
-        "keys":
-        [
-            "alt+k"
-        ],
-        "command": "insert_snippet",
-        "content":
         {
             "name": "Packages/Alfaco/snippets/jira/jira.sublime-snippet",
             "jira_key": "ALFA",
@@ -133,9 +120,8 @@
     {
         "keys":
         [
-            "alt+z"
-        ],        
-         "command": "appel_rest_api"
-                
+            "alt+j"
+        ],
+        "command": "appel_rest_api"
     }
 ]

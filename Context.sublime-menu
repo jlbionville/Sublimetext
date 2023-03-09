@@ -8,19 +8,27 @@
                 "command": "pretty_json"
             },
             {
-                "caption": "default jira",
-                "command": "open_jira_projects"
-            },
-            {
                 "caption": "call rest api",
                 "command": "appel_rest_api"
+            }
+        ]
+    },
+    {
+        "caption": "Jira",
+        "children":
+        [
+            {
+                "caption": "Select Jira project",
+                "command": "get_jira_list_for_organisation"
             },
-            
-                {
-                    "caption": "My Command",
-                    "command": "my_context_menu"
-                }
-            
+            {
+                "caption": "create jira",
+                "command": "appel_rest_api"
+            },
+            {
+                "caption": "Select Organisation",
+                "command": "get_list_organisation"
+            }
         ]
     }
 ]
