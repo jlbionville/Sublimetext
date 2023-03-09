@@ -43,7 +43,7 @@ def getUrlToGetJiraProjects(configuration):
         
         json_reponse=json.loads(response.content.decode())
         
-        listeKeyProject=[project["key"] for project in json_reponse]
+        listeKeyProject=["{}-{}".format(project["key"],project["name"]) for project in json_reponse]
         return listeKeyProject,response.status_code,response.content
     else:
         return response.status_code,response.text
