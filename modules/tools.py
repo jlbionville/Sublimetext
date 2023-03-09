@@ -16,12 +16,12 @@ def readFichier(nomFichier):
         contenu=f.read()
         return contenu
 
-def callApiRest(contenu, configuration):
+def callApiRest(contenu, configuration, http_verb="GET"):
         # Envoyer la requête POST à JIRA pour créer un ticket
     # print(contenu)
     #print("callApiRest : configuration \n ==> ".format(configuration))
     # response = requests.post(configuration["url"], headers=configuration["headers"], auth=configuration["auth"], data = contenu,verify=False)
-    response = requests.request("POST",configuration["url"], headers=configuration["headers"], auth=configuration["auth"], data = contenu,verify=False)
+    response = requests.request(http_verb,configuration["url"], headers=configuration["headers"], auth=configuration["auth"], data = contenu,verify=False)
     # Vérification de la réponse de la requête
     if response.status_code == 200:
         # Affichage de la réponse de la requête
@@ -36,6 +36,7 @@ def callApiRest(contenu, configuration):
         return response.text
 def getUrlToGetJiraProjects(configuration):
     # print(configuration)
+    # refactorisation pour utiliser callApiRest
     response = requests.get(configuration["url"],headers=configuration["headers"],  auth=configuration["auth"], verify=False) 
     if response.status_code == 200:
         # Affichage de la réponse de la requête       
