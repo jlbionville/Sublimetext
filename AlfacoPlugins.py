@@ -230,15 +230,18 @@ class SetJiraProjectInSnippetCommand(sublime_plugin.TextCommand):
         self.view.replace(edit, region, content)
 
 class InitJsonJiraCommand(sublime_plugin.TextCommand):
-    def run(self, edit):
+    def run(self, edit,**args):
         current_line = self.view.substr(self.view.line(self.view.sel()[0]))
         new_view = self.view.window().new_file()
-        new_view.set_name("My Snippet")
+        new_view.set_name("Init new Jira")
         new_view.set_scratch(True)
         print(current_line)
         # Insère le contenu du snippet dans la nouvelle vue
-        new_view.run_command("insert_snippet", {"name": "Packages/Alfaco/snippets/jira/jira.sublime-snippet","jira_key":"ALFA",
-            "description":"a completer","selection":current_line.strip()})
+  
+        args["selection"]=current_line.strip()
+        args['jira_key']=configuration.getKeyValue('project_key')
+        print(args)
+        new_view.run_command("insert_snippet", args)
         # new_view.run_command("insert", {"content":current_line})
 class ShowSelectedInputCommand(sublime_plugin.WindowCommand):
     def run(self):
