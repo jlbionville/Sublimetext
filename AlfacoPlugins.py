@@ -242,6 +242,7 @@ class InitJsonJiraCommand(sublime_plugin.TextCommand):
         print(current_line)
         # Insère le contenu du snippet dans la nouvelle vue
   
+        args["duedate"]= (datetime.now() + timedelta(days=10)).strftime("%Y-%m-%d")
         args["selection"]=current_line.strip()
         args['jira_key']=configuration.getKeyValue('project_key')
         print(args)
