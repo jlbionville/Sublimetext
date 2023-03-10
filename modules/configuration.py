@@ -39,7 +39,7 @@ class Configuration(object):
 	def getJiraAuthorisation(self,):
 		return (self.dictionnary["jira"]["login"], self.dictionnary["jira"]["password"])
 	def getBaseUrlForRESTApi(self,):
-		return 'https://{}.atlassian.net/rest/api/latest/'.format(self.getKeyValue("default_organisation"))
+		return 'https://{}.atlassian.net/rest/api/2/'.format(self.getKeyValue("default_organisation"))
 	def setListKeyJiraProject(self,liste):
 		self.listeKeyJiraProject=liste
 	def getListKeyJiraProject(self):
