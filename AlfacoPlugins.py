@@ -197,7 +197,10 @@ class GetJiraListForOrganisationCommand(sublime_plugin.TextCommand):
     def on_done(self, index):
         liste=configuration.getListKeyJiraProject()
         print("GetJiraListForOrganisationCommand => la liste des projects : {}".format(liste))
-        configuration.setKeyValue("project_key",liste[index])
+        pattern = re.compile(r'^\w+')
+        print("la clef : {}".format(pattern.match(liste[index]).group()))
+        configuration.setKeyValue("project_key",pattern.match(liste[index]).group())
+        # configuration.setKeyValue("project_key",liste[index])
         #self.view.run_command('insert_text', {'args': {'text': configuration.__jira_project__[index]}})
 
 class GetListOrganisationCommand(sublime_plugin.TextCommand):
