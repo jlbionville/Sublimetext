@@ -4,7 +4,7 @@
 "fields":{
     "summary": "${1:${selection}}",
     "description": "${description}",
-    "duedate": "2022-02-23",
+    "duedate": "${duedate}",
     "issuetype":
     {
         "name": "Task",
