@@ -49,13 +49,7 @@ def getSetting(key):
         return settings_atlassian.get(key)
 def setSetting(key,value):
     settings_sublime.set(key,value)
-def getConfigurationForApiRestCall():
-    # mettre les informations dans l'instance Configuration
-    # utiliser l'instance Configuration pour obtenir ses informations
-    return {"auth" : (getSetting("jira_login"), getSetting('jira_password')),
-    "headers" : {'Content-type': 'application/json;charset=UTF-8','Accept': 'application/json'},
-    "url" : 'https://{}.atlassian.net/rest/api/latest/'.format(configuration.__jira_project__)
-    }        
+       
 class OpenJiraProjectsCommand(sublime_plugin.TextCommand):
     def run(self, edit):
 
@@ -139,7 +133,7 @@ class AppelRestApiCommand(sublime_plugin.TextCommand):
         active_view = sublime.active_window().active_view()
         region = sublime.Region(0, self.view.size())
         contenu = self.view.substr(region)
-        # configu=getConfigurationForApiRestCall()
+        
         # configu["url"]=configu["url"]+"issue/"
         configu={
         "url":configuration.getBaseUrlForRESTApi()+"issue/",
@@ -182,7 +176,7 @@ class ModifySettingFromSelectionCommand(sublime_plugin.TextCommand):
 class GetJiraListForOrganisationCommand(sublime_plugin.TextCommand):
     
     def run(self, edit):
-        configu=getConfigurationForApiRestCall()
+        
         # configu["url"]=getOrganisationUrl(configuration.__organisation__)+"project/"
         configu={
         "url":configuration.getBaseUrlForRESTApi()+"project/",
