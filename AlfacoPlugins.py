@@ -36,6 +36,7 @@ def plugin_loaded():
     configuration = Configuration()
     #TODO: gerer les clefs dans un dictionnaire
     configuration.setJiraAuthorisation("jlbionville@alfaco.fr",getSetting('jira_password'))
+    configuration.setKeyValue("api_rest_version",getSetting("api_rest_version"))
 def getSetting(key):
     '''
     charge les différents fichiers settings nécessaires pour le package
