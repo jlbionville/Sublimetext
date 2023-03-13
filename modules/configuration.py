@@ -15,6 +15,8 @@ class Configuration(object):
 	        "password": "",
 	        "login": ""
 	    },
+	    "organisations":{},"api_rest_version":"2",
+
 	    "headers": {"Content-type": "application/json;charset=utf-8","Accept": "application/json"},
 
 	}
@@ -39,7 +41,8 @@ class Configuration(object):
 	def getJiraAuthorisation(self,):
 		return (self.dictionnary["jira"]["login"], self.dictionnary["jira"]["password"])
 	def getBaseUrlForRESTApi(self,):
-		return 'https://{}.atlassian.net/rest/api/2/'.format(self.getKeyValue("default_organisation"))
+		return 'https://{}.atlassian.net/rest/api/{}/'.format(self.getKeyValue("default_organisation"),
+			self.getKeyValue("api_rest_version"))
 	def setListKeyJiraProject(self,liste):
 		self.listeKeyJiraProject=liste
 	def getListKeyJiraProject(self):
