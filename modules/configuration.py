@@ -5,8 +5,8 @@ import sublime
 
 class Configuration(object):
 	"""docstring for Configuration"""
-	__organisation__=""
-	__jira_project__=""
+	# __organisation__=""
+	# __jira_project__=""
 	dictionnary={
 	    "jira":
 	    {
@@ -47,5 +47,9 @@ class Configuration(object):
 		self.listeKeyJiraProject=liste
 	def getListKeyJiraProject(self):
 		return self.listeKeyJiraProject
+	def setOrganisation(organisation,organisationProjects={}):
+		self.dictionnary[organisation]=organisationProjects
+	def getOrganisationJiraProjects(organisation):
+		return self.dictionnary[organisation]
 
 	
