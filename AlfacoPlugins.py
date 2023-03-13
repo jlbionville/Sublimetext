@@ -141,7 +141,8 @@ class AppelRestApiCommand(sublime_plugin.TextCommand):
         "auth":(configuration.getJiraAuthorisation())
         }
         print ("AppelRestApiCommand - configu: {}".format(configu))
-        texte=callApiRest(contenu,configu)
+        configu["headers"]={"Content-type": "application/json","Accept": "application/json"}
+        texte=callApiRest(contenu,configu,http_verb="POST")
 
         ## affichage de la réponse
         new_view = self.view.window().new_file()
