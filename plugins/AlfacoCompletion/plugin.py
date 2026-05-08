@@ -1,20 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Entry point du plugin Completion."""
-import importlib
-import sublime  # noqa: F401  (réservé pour usages futurs)
-
-from AlfacoLib import config as _alfacolib_config
-
-_LIB_MODULES = (_alfacolib_config,)
-
-config = None
+"""Auto-complétion statique pour les buffers Python."""
+import sublime_plugin
 
 
-def plugin_loaded():
-    global config
-    for mod in _LIB_MODULES:
-        importlib.reload(mod)
-    config = _alfacolib_config.Configuration([
-        "alfaco-completion.sublime-settings",
-        "Preferences.sublime-settings",
-    ])
+class AlfacoCompletion(sublime_plugin.EventListener):
+    AVAILABLE = ["def", "class", "None", "True", "False"]
+
+    def on_query_completions(self, view, prefix, locations):
+        if not view.match_selector(locations[0], "source.python"):
+            return []
+        prefix = prefix.lower()
+        return [c for c in self.AVAILABLE if c.lower().startswith(prefix)]
