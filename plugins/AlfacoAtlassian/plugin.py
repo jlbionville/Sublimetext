@@ -26,3 +26,4 @@ def plugin_loaded():
 
 from AlfacoAtlassian.commands.select_organisation import SelectOrganisationCommand  # noqa: E402, F401
 from AlfacoAtlassian.commands.select_jira_project import SelectJiraProjectCommand  # noqa: E402, F401
+from AlfacoAtlassian.commands.create_jira_issue import CreateJiraIssueCommand  # noqa: E402, F401
