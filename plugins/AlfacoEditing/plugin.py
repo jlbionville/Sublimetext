@@ -21,3 +21,6 @@ def plugin_loaded():
 
 
 from AlfacoEditing.commands.text_to_table import TextToTableCommand  # noqa: E402, F401
+from AlfacoEditing.commands.insert_tag import InsertTagCommand  # noqa: E402, F401
+from AlfacoEditing.commands.remove_tag import RemoveTagCommand  # noqa: E402, F401
+from AlfacoEditing.commands.select_between_markers import SelectBetweenMarkersCommand  # noqa: E402, F401
