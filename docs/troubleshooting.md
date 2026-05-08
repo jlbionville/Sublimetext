@@ -1,188 +1,99 @@
-# Troubleshooting & dette technique
+# Troubleshooting
 
-Ce document recense les bugs connus, pièges, comportements surprenants et actions correctives à envisager.
+## Bugs résolus pendant la migration monorepo
 
-## Bugs connus dans le code
+Les bugs suivants étaient documentés dans le legacy et sont **fixés** dans cette structure :
 
-### Bug `show_selected_input`
+| Bug | Plugin / Fichier | Statut |
+|---|---|---|
+| Typo `nput_view` (NameError dans `ShowSelectedInputCommand`) | AlfacoEditing | Résolu |
+| Login Jira codé en dur (`jlbionville@alfaco.fr`) | AlfacoAtlassian | Résolu — lit `jira_login` |
+| `setSetting("organisation", ...)` mutait Preferences au démarrage | AlfacoAtlassian/plugin.py | Résolu — `config.set()` runtime |
+| `verify=False` codé en dur | AlfacoLib/atlassian_client | Résolu — `tls_verify` configurable |
+| Pas de timeout HTTP (UI bloque indéfiniment) | AlfacoLib/atlassian_client | Résolu — `(5, 30)` par défaut |
+| `\\` Windows codés en dur (`H:\\Mon Drive\\jira\\...`) | AlfacoLib/io | Résolu — `pathlib.Path` partout |
+| `Configuration.setOrganisation` / `getOrganisationJiraProjects` cassés (manque `self`) | AlfacoLib/config | Supprimés — Configuration réécrite |
+| `print(jira_password)` dans console | AlfacoAtlassian/open_jira_projects | Résolu — masqué |
+| Snippet `snippets/jira.sublime-snippet` avec `duedate: "2022-02-23"` | (legacy) | Résolu — supprimé, seul `snippets/jira/jira.sublime-snippet` à variables est conservé |
+| Snippets en doublon entre `snippets/` et `snippets/{jira,confluence}/` | (legacy) | Résolu — versions racine supprimées |
+| Headers HTTP réécrits dans `create_jira_issue` (perte du `charset=utf-8`) | AlfacoAtlassian/create_jira_issue | Résolu — préservés via `cfg.get("headers")` |
 
-`AlfacoPlugins.py:251` — typo dans le nom de variable :
+## Erreurs spécifiques au monorepo
 
-```python
-class ShowSelectedInputCommand(sublime_plugin.WindowCommand):
-    def run(self):
-        nput_view = self.window.show_input_panel(...)   # ← « nput_view »
-        input_view.add_regions(...)                     # ← référence inexistante → NameError
+### `ImportError: No module named 'AlfacoLib'`
+
+Les autres plugins importent `AlfacoLib`. Si la lib n'est pas déployée, l'import échoue.
+
+**Diagnostic** :
+```bash
+make status
 ```
 
-**Symptôme** : invoquer la commande lève `NameError: name 'input_view' is not defined`.
-**Correction** : renommer `nput_view` → `input_view`.
+Si `AlfacoLib` est `absent` : `make link PLUGIN=AlfacoLib` puis redémarrer Sublime.
 
-### Configuration : méthodes cassées
+### Plugin host différent
 
-`modules/configuration.py:50-53` — déclarations sans `self` :
+Si un plugin a `.python-version: 3.3` au lieu de `3.8`, il est chargé dans un autre interpréteur Python qui ne voit pas `AlfacoLib`.
 
-```python
-def setOrganisation(organisation, organisationProjects={}):
-    self.dictionnary[organisation] = organisationProjects   # ← self n'existe pas
-def getOrganisationJiraProjects(organisation):
-    return self.dictionnary[organisation]
+**Vérification** : `cat plugins/*/`.python-version` — doit afficher `3.8` partout.
+
+### WSL : symlinks NTFS qui ne marchent pas
+
+`make link` détecte WSL et force `make install` (copie). Si tu vois quand même des "broken symlinks" dans `<Packages>/Alfaco*` :
+
+```bash
+make uninstall && make install
 ```
 
-**Symptôme** : appel → `TypeError` (mauvais nombre d'arguments) ou `NameError`.
-**Correction** : ajouter `self` en premier paramètre, ou supprimer les méthodes si plus utiles.
+### Username Windows ≠ username WSL
 
-### Login Jira codé en dur
+Symptôme : `make link` plante avec `Profil Windows '<user>' introuvable sous /mnt/c/Users/`.
 
-`AlfacoPlugins.py:38` :
-
-```python
-configuration.setJiraAuthorisation("jlbionville@alfaco.fr", getSetting('jira_password'))
+**Fix** : poser `SUBLIME_PACKAGES_DIR` :
+```bash
+export SUBLIME_PACKAGES_DIR='/mnt/c/Users/Jean/AppData/Roaming/Sublime Text/Packages'
+make install
 ```
 
-**Symptôme** : tout utilisateur autre que `jlbionville` envoie un login qui n'a pas le token associé → `401 Unauthorized` à chaque appel.
-**Correction** : remplacer par `getSetting("jira_login")` (la clé existe déjà conceptuellement, voir `OpenJiraProjectsCommand` qui l'imprime).
+### Modifications de `AlfacoLib` non prises en compte
 
-### Mutation des prefs au chargement
+Sublime ne reload pas automatiquement les consommateurs d'un package modifié. Le `importlib.reload()` dans `plugin_loaded()` corrige ça **quand le consommateur est lui-même rechargé** (sauvegarde d'un de ses `.py`).
 
-`AlfacoPlugins.py:35` :
-
-```python
-setSetting("organisation", "business-projects")
-```
-
-Cette ligne **écrit** dans `Preferences.sublime-settings` à chaque démarrage de Sublime. Effets :
-- Pollue les préférences globales avec une clé propre au plugin.
-- Annule toute valeur que l'utilisateur aurait posée.
-
-**Correction** : poser cette valeur dans `configuration` directement (`configuration.setKeyValue("organisation", "business-projects")`), sans toucher au fichier global.
-
-## Pièges multi-OS
-
-### Chemin Windows codé en dur
-
-`alfaco.sublime-settings` et `alfaco-atlassian.sublime-settings` :
-
-```json
-"path_json_files_folder": "H:\\Mon Drive\\jira"
-```
-
-Sur Linux / macOS, la valeur n'est pas valide. Pire, `AppelRestApiCommand` construit les noms de fichier avec des **backslashes en dur** :
-
-```python
-filename = "{}\\error_api_call_{}.html".format(repertoire, timestamp)
-jira_file_name = "{}\\{}.json".format(repertoire, reponse_json["key"])
-```
-
-**Symptôme** : l'API Jira est bien appelée, mais `saveFichier` lève `FileNotFoundError` ou crée un fichier au nom bizarre `H:\Mon Drive\jira\error_api_call_….html`.
-**Correction** : utiliser `os.path.join(repertoire, "error_api_call_{}.html".format(timestamp))`.
-
-### Keymaps divergentes
-
-Les trois fichiers `Default (Linux|Windows|OSX).sublime-keymap` ne contiennent pas les mêmes commandes. Récap dans [usage.md → Raccourcis clavier](usage.md#raccourcis-clavier).
-
-**Conséquence** : un workflow documenté pour Windows (`super+n` puis `alt+j`) ne fonctionne pas sur Linux (rien n'est lié).
-**Correction** : aligner les trois keymaps (au minimum sur les commandes Jira centrales `appel_rest_api`, `init_json_jira`, `get_jira_list_for_organisation`).
-
-## Sécurité
-
-### TLS désactivé
-
-Toutes les requêtes utilisent `verify=False` (`modules/tools.py`).
-
-**Symptôme** : `InsecureRequestWarning` à chaque appel ; les MITM ne sont pas détectés.
-**Correction** : conditionner via `getSetting("tls_verify")` (défaut `true`), ou pointer vers un bundle CA d'entreprise (`verify="/chemin/vers/cacert.pem"`).
-
-### Mot de passe imprimé en console
-
-`OpenJiraProjectsCommand.run` :
-
-```python
-print(getSetting('jira_password'))
-print(getSetting('jira_login'))
-```
-
-**Symptôme** : le token API apparaît en clair dans la console Sublime — risque en démo, screenshot, ou enregistrement.
-**Correction** : retirer ces `print` ou les remplacer par un masquage (`****`).
-
-## Comportements surprenants
-
-### Pas de timeout
-
-`requests.request(...)` est appelé sans `timeout=`. Si le serveur ne répond pas, l'UI thread Sublime bloque indéfiniment (la fenêtre devient non réactive).
-
-**Correction** : ajouter `timeout=(5, 30)` (5 s connexion, 30 s lecture) dans `callApiRest` et `getUrlToGetJiraProjects`.
-
-### Headers réécrits dans `AppelRestApiCommand`
-
-```python
-configu["headers"] = configuration.getKeyValue("headers")
-…
-configu["headers"] = {"Content-type": "application/json", "Accept": "application/json"}  # ← écrase
-```
-
-Le `charset=utf-8` posé dans `Configuration.dictionnary["headers"]` est perdu.
-
-**Symptôme** : sur les payloads contenant des accents non échappés, Atlassian peut rejeter (`400`).
-**Correction** : ne pas réassigner `configu["headers"]`.
-
-### Snippets en double
-
-Les fichiers suivants sont des doublons à la racine `snippets/` ET dans le sous-dossier :
-
-- `snippets/jira.sublime-snippet` ≈ `snippets/jira/jira.sublime-snippet` (versions divergentes).
-- `snippets/page.sublime-snippet` = `snippets/confluence/page.sublime-snippet`.
-- `snippets/childPage.sublime-snippet` = `snippets/confluence/childPage.sublime-snippet`.
-- `snippets/space.sublime-snippet` = `snippets/confluence/space.sublime-snippet`.
-
-Comme ils partagent le même `tabTrigger`, Sublime peut prendre l'un ou l'autre selon l'ordre de chargement → comportement non déterministe.
-
-**Correction** : supprimer les doublons à la racine et ne garder que les versions sous-dossiers.
-
-### Snippet Jira racine — `duedate` codée
-
-`snippets/jira.sublime-snippet` :
-
-```json
-"duedate": "2022-02-23"
-```
-
-**Symptôme** : tous les tickets créés ont une échéance dans le passé.
-**Correction** : utiliser `${duedate}` (la version `snippets/jira/jira.sublime-snippet` le fait correctement) ou supprimer ce fichier obsolète.
+**Fix manuel** : sauvegarder un fichier `.py` du plugin consommateur (par exemple `plugins/AlfacoAtlassian/plugin.py`) après modif de `AlfacoLib/*.py`.
 
 ## Diagnostic des erreurs Atlassian
 
 ### `401 Unauthorized`
 
-- Vérifier `jira_login` (et le bug du login codé en dur ci-dessus).
+- Vérifier `jira_login` (et que ce n'est plus l'email codé en dur du legacy).
 - Vérifier que `jira_password` est bien un **token API** (pas le mot de passe du compte).
-- Vérifier `default_organisation` dans la console après `Select Organisation` — l'URL doit correspondre à un sous-domaine `.atlassian.net` valide.
+- Vérifier `default_organisation` après `select_organisation` (`make` ne montre pas, mais le log debug oui — activer `"debug": true`).
 
 ### `404 Not Found` sur `/issue/`
 
-- L'URL est `https://{org}.atlassian.net/rest/api/{version}/issue/`. Vérifier `api_rest_version` (`"2"` ou `"3"`).
-- Sous API v3, certains champs (notamment `description`) attendent du **Atlassian Document Format** (`{ "type": "doc", "version": 1, "content": [...] }`) et non une simple string. Si la création échoue : passer `api_rest_version` à `"2"`.
+- `api_rest_version` = `"2"` ou `"3"` ?
+- API v3 attend `description` au format Atlassian Document Format. Si l'erreur persiste : passer à `"2"`.
 
 ### `400 Bad Request` à la création
 
-- Vérifier la `project.key` (doit exister dans Jira et être accessible).
-- Vérifier `issuetype.name` (selon le projet, `Task` peut s'appeler `Tâche` en français → utiliser `issuetype.id`).
-- Vérifier `priority.name` (certains projets n'ont pas `High`).
-- Le payload doit être encapsulé dans `{ "fields": { … } }` — la version « racine » du snippet `jira/jira.sublime-snippet` le fait, l'ancienne `snippets/jira.sublime-snippet` non.
+- `project.key` existe ? (`select_jira_project` doit avoir réussi avant.)
+- `issuetype.name` = `Task` ou `Tâche` selon la langue du projet.
+- Le payload doit être encapsulé `{"fields": {...}}` — vérifier le snippet utilisé.
 
 ### Le buffer reste bloqué
 
-Voir [Pas de timeout](#pas-de-timeout) — soit le serveur est lent, soit la connectivité réseau est interrompue. En attendant le fix, fermer Sublime et le relancer.
+Plus possible depuis l'ajout du `timeout=(5, 30)`. Si ça arrive : vérifier que `AlfacoLib/atlassian_client.py` contient bien `timeout=` dans les appels `requests.request`.
 
-## Checklist de troubleshooting rapide
+## Checklist rapide
 
 ```
-□ La console Sublime (Ctrl+`) affiche-t-elle une exception ?
-□ requests est-il importable ? (Console : `from requests import get`)
-□ jira_password est-il défini dans User/alfaco.sublime-settings ?
-□ default_organisation est-il bien posé après Select Organisation ?
-□ project_key est-il bien posé après Select Jira project ?
+□ La console Sublime (Ctrl+`) affiche-t-elle un Traceback ?
+□ make status — tous les plugins sont link/copy ? (pas absent)
+□ requests est-il importable ? Console : import requests
+□ jira_password est-il défini dans User/alfaco-atlassian.sublime-settings ?
+□ default_organisation est-il posé après Select Organisation ?
+□ project_key est-il posé après Select Jira project ?
 □ path_json_files_folder existe-t-il et est-il writable ?
-□ api_rest_version est-il cohérent avec le format du payload ?
-□ Le buffer envoyé est-il un JSON valide ? (essayer pretty_json avant d'envoyer)
+□ api_rest_version cohérent avec le format du payload ?
+□ Le buffer envoyé est-il un JSON valide ?
 ```
