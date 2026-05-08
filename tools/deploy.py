@@ -98,3 +98,128 @@ def _windows_username_from_wsl():
         return out or None
     except (OSError, subprocess.SubprocessError):
         return None
+
+
+EXCLUDE_DURING_DEPLOY = {"tests", "__pycache__", ".pytest_cache", ".git"}
+
+
+def _iter_plugins(monorepo_root: Path) -> list[Path]:
+    plugins_dir = monorepo_root / "plugins"
+    return sorted(p for p in plugins_dir.iterdir() if p.is_dir() and not p.name.startswith("."))
+
+
+def _filter_for_deploy(src: Path, name: str) -> bool:
+    if name in EXCLUDE_DURING_DEPLOY:
+        return False
+    if name.endswith(".pyc"):
+        return False
+    return True
+
+
+def _copy_plugin(src: Path, dst: Path) -> None:
+    if dst.exists():
+        if dst.is_symlink() or dst.is_file():
+            dst.unlink()
+        else:
+            shutil.rmtree(dst)
+    shutil.copytree(src, dst, ignore=lambda d, names: [n for n in names if not _filter_for_deploy(Path(d), n)])
+
+
+def _link_plugin(src: Path, dst: Path) -> None:
+    if dst.exists() or dst.is_symlink():
+        if dst.is_symlink() or dst.is_file():
+            dst.unlink()
+        else:
+            shutil.rmtree(dst)
+    try:
+        os.symlink(src, dst, target_is_directory=True)
+    except (OSError, NotImplementedError):
+        # Fallback Windows : junction
+        if platform.system() == "Windows":
+            os.system(f'mklink /J "{dst}" "{src}"')
+        else:
+            raise
+
+
+def link(monorepo_root: Path, packages_dir: Path, only: str | None = None) -> list[str]:
+    if _is_wsl():
+        print("WSL détecté → mode 'install' (copie) forcé : NTFS ne suit pas les symlinks WSL.")
+        return install(monorepo_root, packages_dir, only=only)
+    done = []
+    for plugin in _iter_plugins(monorepo_root):
+        if only and plugin.name != only:
+            continue
+        _link_plugin(plugin, packages_dir / plugin.name)
+        done.append(plugin.name)
+    return done
+
+
+def install(monorepo_root: Path, packages_dir: Path, only: str | None = None) -> list[str]:
+    done = []
+    for plugin in _iter_plugins(monorepo_root):
+        if only and plugin.name != only:
+            continue
+        _copy_plugin(plugin, packages_dir / plugin.name)
+        done.append(plugin.name)
+    return done
+
+
+def uninstall(monorepo_root: Path, packages_dir: Path, only: str | None = None) -> list[str]:
+    done = []
+    for plugin in _iter_plugins(monorepo_root):
+        if only and plugin.name != only:
+            continue
+        dst = packages_dir / plugin.name
+        if not dst.exists() and not dst.is_symlink():
+            continue
+        if dst.is_symlink() or dst.is_file():
+            dst.unlink()
+        else:
+            shutil.rmtree(dst)
+        done.append(plugin.name)
+    return done
+
+
+def status(monorepo_root: Path, packages_dir: Path) -> dict[str, str]:
+    out = {}
+    for plugin in _iter_plugins(monorepo_root):
+        dst = packages_dir / plugin.name
+        if not dst.exists() and not dst.is_symlink():
+            out[plugin.name] = "absent"
+        elif dst.is_symlink():
+            out[plugin.name] = "link"
+        else:
+            out[plugin.name] = "copy"
+    return out
+
+
+def main() -> int:
+    import argparse
+
+    parser = argparse.ArgumentParser(prog="deploy")
+    parser.add_argument("action", choices=["link", "install", "uninstall", "status"])
+    parser.add_argument("--plugin", default=None, help="Cibler un seul plugin")
+    parser.add_argument("--packages-dir", default=None)
+    args = parser.parse_args()
+
+    monorepo_root = Path(__file__).resolve().parents[1]
+    packages_dir = Path(args.packages_dir).expanduser() if args.packages_dir else detect_packages_dir()
+
+    if args.action == "status":
+        for name, mode in status(monorepo_root, packages_dir).items():
+            print(f"  {name:25s} {mode}")
+        return 0
+    if args.action == "link":
+        done = link(monorepo_root, packages_dir, only=args.plugin)
+    elif args.action == "install":
+        done = install(monorepo_root, packages_dir, only=args.plugin)
+    elif args.action == "uninstall":
+        done = uninstall(monorepo_root, packages_dir, only=args.plugin)
+    else:
+        return 2
+    print(f"{args.action}: {len(done)} plugin(s) → {', '.join(done) or '(aucun)'}")
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main())
