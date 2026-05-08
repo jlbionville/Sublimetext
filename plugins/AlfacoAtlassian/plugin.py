@@ -22,3 +22,7 @@ def plugin_loaded():
         "Preferences.sublime-settings",
     ])
     log = _alfacolib_logger.get_logger("Atlassian", debug=config.get("debug", False))
+
+
+from AlfacoAtlassian.commands.select_organisation import SelectOrganisationCommand  # noqa: E402, F401
+from AlfacoAtlassian.commands.select_jira_project import SelectJiraProjectCommand  # noqa: E402, F401
