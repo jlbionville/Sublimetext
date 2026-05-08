@@ -1,0 +1,10 @@
+{
+    "name": "AlfacoAtlassian",
+    "version": "0.2.0",
+    "description": "Plugin Sublime Text Atlassian (suite Alfaco)",
+    "sublime_text": ">=4000",
+    "platforms": ["*"],
+    "dependencies_alfaco": [
+        { "name": "AlfacoLib", "version": ">=0.1.0,<1.0.0" }
+    ]
+}
