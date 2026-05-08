@@ -1,0 +1,24 @@
+<snippet>
+	<content><![CDATA[
+{
+    "space":
+    {
+        "key": "$1"
+    },
+    "type": "page",
+    "title": "$2",
+    "body":
+    {
+        "storage":
+        {
+            "value": "$2",
+            "representation": "wiki"
+        }
+    }
+}
+]]></content>
+	<!-- Optional: Set a tabTrigger to define how to trigger the snippet -->
+	<tabTrigger>confluencepage</tabTrigger>
+	<!-- Optional: Set a scope to limit where the snippet will trigger -->
+	<!-- <scope>source.python</scope> -->
+</snippet>
