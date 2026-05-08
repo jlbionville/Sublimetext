@@ -24,3 +24,6 @@ from AlfacoEditing.commands.text_to_table import TextToTableCommand  # noqa: E40
 from AlfacoEditing.commands.insert_tag import InsertTagCommand  # noqa: E402, F401
 from AlfacoEditing.commands.remove_tag import RemoveTagCommand  # noqa: E402, F401
 from AlfacoEditing.commands.select_between_markers import SelectBetweenMarkersCommand  # noqa: E402, F401
+from AlfacoEditing.commands.date_selection import DateSelectionCommand  # noqa: E402, F401
+from AlfacoEditing.commands.show_file_name import ShowFileNameCommand  # noqa: E402, F401
+from AlfacoEditing.commands.modify_setting_from_selection import ModifySettingFromSelectionCommand  # noqa: E402, F401
