@@ -35,8 +35,8 @@ def detect_packages_dir() -> Path:
             candidate = Path(
                 f"/mnt/c/Users/{user}/AppData/Roaming/Sublime Text/Packages"
             )
-            # candidate.parent.parent.parent == /mnt/c/Users/<user>
-            if not candidate.parent.parent.parent.exists():
+            user_profile = Path(f"/mnt/c/Users/{user}")
+            if not user_profile.exists():
                 raise RuntimeError(
                     f"Profil Windows '{user}' introuvable sous /mnt/c/Users/. "
                     "Posez SUBLIME_PACKAGES_DIR pour pointer manuellement vers votre dossier Packages Sublime."
