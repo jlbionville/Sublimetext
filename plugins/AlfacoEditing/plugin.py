@@ -27,3 +27,4 @@ from AlfacoEditing.commands.select_between_markers import SelectBetweenMarkersCo
 from AlfacoEditing.commands.date_selection import DateSelectionCommand  # noqa: E402, F401
 from AlfacoEditing.commands.show_file_name import ShowFileNameCommand  # noqa: E402, F401
 from AlfacoEditing.commands.modify_setting_from_selection import ModifySettingFromSelectionCommand  # noqa: E402, F401
+from AlfacoEditing.commands.show_selected_input import ShowSelectedInputCommand  # noqa: E402, F401
