@@ -18,3 +18,6 @@ def plugin_loaded():
         "alfaco-editing.sublime-settings",
         "Preferences.sublime-settings",
     ])
+
+
+from AlfacoEditing.commands.text_to_table import TextToTableCommand  # noqa: E402, F401
