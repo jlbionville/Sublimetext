@@ -1,0 +1,5 @@
+[
+    { "caption": "AlfacoEditing: text to table", "command": "text_to_table" },
+    { "caption": "AlfacoEditing: show file name", "command": "show_file_name" },
+    { "caption": "AlfacoEditing: select between markers", "command": "select_between_markers" }
+]
