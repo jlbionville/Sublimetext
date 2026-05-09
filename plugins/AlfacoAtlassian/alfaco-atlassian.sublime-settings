@@ -1,0 +1,13 @@
+{
+    "api_rest_version": "3",
+    "tls_verify": true,
+    "path_json_files_folder": "",
+    "jira_login": "",
+    "jira_password": "",
+    "default_organisation": "",
+    "atlassian": {
+        "organisations": {
+            "business projects": { "url_key": "business-projects", "jira": true, "confluence": true }
+        }
+    }
+}

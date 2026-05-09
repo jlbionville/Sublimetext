@@ -1,0 +1,19 @@
+[
+    { "keys": ["ctrl+alt+j"], "command": "pretty_json" },
+    { "keys": ["ctrl+j+l"], "command": "select_jira_project" },
+    {
+        "keys": ["super+n"],
+        "command": "init_json_jira",
+        "args": {
+            "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet",
+            "jira_key": "ALFA",
+            "description": "a completer"
+        }
+    },
+    {
+        "keys": ["ctrl+alt+w"],
+        "command": "insert_snippet",
+        "args": { "contents": "{\"fields\":${0:$SELECTION}}" }
+    },
+    { "keys": ["alt+j"], "command": "create_jira_issue" }
+]

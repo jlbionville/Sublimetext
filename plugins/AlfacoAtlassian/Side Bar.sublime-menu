@@ -1,0 +1,9 @@
+[
+    {
+        "caption": "AlfacoAtlassian",
+        "children": [
+            { "caption": "format JSON", "command": "pretty_json" },
+            { "caption": "open jira projects (debug)", "command": "open_jira_projects" }
+        ]
+    }
+]
