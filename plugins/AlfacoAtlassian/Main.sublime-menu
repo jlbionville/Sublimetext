@@ -1,0 +1,42 @@
+[
+    {
+        "id": "tools",
+        "children": [
+            {
+                "caption": "Alfaco",
+                "id": "alfaco",
+                "children": [
+                    {
+                        "caption": "Atlassian",
+                        "id": "alfaco-atlassian",
+                        "children": [
+                            { "caption": "Sélectionner organisation", "command": "select_organisation" },
+                            { "caption": "Sélectionner projet Jira", "command": "select_jira_project" },
+                            { "caption": "Créer ticket Jira", "command": "create_jira_issue" },
+                            { "caption": "Initialiser JSON Jira", "command": "init_json_jira" },
+                            { "caption": "Open Jira projects (debug)", "command": "open_jira_projects" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "preferences",
+        "children": [
+            {
+                "id": "package-settings",
+                "children": [
+                    {
+                        "caption": "AlfacoAtlassian",
+                        "id": "alfaco-atlassian",
+                        "children": [
+                            { "caption": "Settings – Default", "args": { "file": "${packages}/AlfacoAtlassian/alfaco-atlassian.sublime-settings" }, "command": "open_file" },
+                            { "caption": "Settings – User", "args": { "file": "${packages}/User/alfaco-atlassian.sublime-settings" }, "command": "open_file" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

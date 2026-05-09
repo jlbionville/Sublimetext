@@ -1,0 +1,12 @@
+[
+    {
+        "keys": ["ctrl+j"],
+        "command": "insert_snippet",
+        "args": { "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet" }
+    },
+    {
+        "keys": ["f2"],
+        "command": "run_macro_file",
+        "args": { "file": "Packages/AlfacoAtlassian/macros/addjira.sublime-macro" }
+    }
+]
