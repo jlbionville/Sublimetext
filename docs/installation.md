@@ -4,8 +4,9 @@
 
 - **Sublime Text 4** (plugin host Python 3.8). ST3 (Python 3.3) n'est plus supporté.
 - **Python ≥ 3.8** sur la machine de dev (pour `make` / pytest).
-- **`requests`** disponible dans le plugin host de Sublime. Voir [Dépendance requests](#dépendance-requests).
 - **Compte Atlassian** + token API (https://id.atlassian.com/manage-profile/security/api-tokens) pour utiliser AlfacoAtlassian.
+
+Aucune dépendance Python tierce côté plugin host (le client REST utilise `urllib`, livré avec Python).
 
 ## Installation en mode développeur (recommandé)
 
@@ -47,29 +48,26 @@ make install
 3. Redémarrer Sublime (ou simplement modifier puis sauvegarder un `.py` du package pour rejouer `plugin_loaded()`).
 4. Vérifier la console (`` Ctrl+` ``) : aucun Traceback. La commande `Tools → Alfaco → Atlassian → Sélectionner organisation` doit afficher la liste.
 
-## Dépendance `requests`
+## Cohabitation avec Package Control
 
-`AlfacoLib.atlassian_client` importe `requests`. Sublime ne l'embarque pas par défaut. Trois solutions :
+Si Package Control est installé, il supprime au démarrage tout package présent dans `Packages/` mais absent de `installed_packages` (« orphelins »). `make install` copie nos plugins hors PC, donc il faut les déclarer une fois pour que PC les laisse tranquilles.
 
-### Option 1 : Package Control + dependency
-
-Créer à la racine d'`AlfacoLib/` un fichier `dependencies.json` :
+Ouvrir `Preferences → Package Settings → Package Control → Settings – User` et ajouter les 4 noms à `installed_packages` :
 
 ```json
 {
-    "*": { "*": ["requests"] }
+    "installed_packages":
+    [
+        "AlfacoAtlassian",
+        "AlfacoCompletion",
+        "AlfacoEditing",
+        "AlfacoLib",
+        // ... vos autres packages
+    ]
 }
 ```
 
-Puis lancer `Package Control: Satisfy Dependencies` depuis la palette.
-
-### Option 2 : Vendoring
-
-Copier `requests` (et `urllib3`, `certifi`, `charset_normalizer`, `idna`) dans `plugins/AlfacoLib/vendor/` et ajuster les imports.
-
-### Option 3 : `pip install --target` dans le dossier des paquets Python embarqués (fragile).
-
-> **TODO** : déclarer `requests` comme dépendance officielle. Pas inclus dans la refactorisation.
+Sans ça : au prochain redémarrage, PC affichera `Removing N orphaned packages...` et videra les `Packages/Alfaco*`.
 
 ## WSL : précisions
 

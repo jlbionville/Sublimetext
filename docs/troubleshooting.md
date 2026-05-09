@@ -31,6 +31,24 @@ make status
 
 Si `AlfacoLib` est `absent` : `make link PLUGIN=AlfacoLib` puis redémarrer Sublime.
 
+### `Package Control: Removing N orphaned packages...` au démarrage
+
+Symptôme : les 4 plugins disparaissent de `Packages/` après chaque redémarrage. PC considère orphelin tout package non listé dans `installed_packages`.
+
+**Fix** : ajouter les 4 noms dans `Packages/User/Package Control.sublime-settings` :
+
+```json
+{
+    "installed_packages": ["AlfacoAtlassian", "AlfacoCompletion", "AlfacoEditing", "AlfacoLib", ...]
+}
+```
+
+Voir [installation.md](installation.md#cohabitation-avec-package-control).
+
+### `ModuleNotFoundError: No module named 'requests'`
+
+Plus possible : `AlfacoLib.atlassian_client` n'utilise plus `requests` (remplacé par `urllib` stdlib). Si tu vois encore cette erreur : tu as un déploiement obsolète, refais `make uninstall && make install` puis redémarre Sublime.
+
 ### Plugin host différent
 
 Si un plugin a `.python-version: 3.3` au lieu de `3.8`, il est chargé dans un autre interpréteur Python qui ne voit pas `AlfacoLib`.
