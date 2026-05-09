@@ -32,7 +32,9 @@ Variable `PLUGIN=AlfacoEditing` to target a single plugin: `make link PLUGIN=Alf
 
 `make link` detects WSL and forces `make install` (NTFS doesn't follow WSL symlinks). The Windows username is resolved via `cmd.exe` (handles the case where `$USER=ubuntu` but Windows user is `Jean`). Override with `SUBLIME_PACKAGES_DIR` if needed. See `docs/deployment.md`.
 
-`requests` is imported by `AlfacoLib.atlassian_client` but not yet declared as a Package Control dependency — see `docs/installation.md` for workarounds.
+`AlfacoLib.atlassian_client` uses **stdlib `urllib`** (no `requests` dep). The Sublime Text 4 plugin host doesn't ship `requests`, and pulling it in via Package Control conflicts with our `make install` (manual copy) deployment.
+
+If Package Control is installed, add the 4 plugin names to `Packages/User/Package Control.sublime-settings → installed_packages`, otherwise PC removes them at startup as orphans. See `docs/installation.md` (« Cohabitation avec Package Control »).
 
 ## Architecture
 
@@ -88,7 +90,7 @@ pytest plugins/AlfacoLib/tests/        # one plugin
 pytest -k "test_my_function"           # by name
 ```
 
-`requests-mock` is used for Atlassian client tests. Sublime commands (`*Command`) are not testable hors-Sublime — extract pure logic to test it.
+Atlassian client tests use `unittest.mock.patch` on `AlfacoLib.atlassian_client.urlopen`. Sublime commands (`*Command`) are not testable hors-Sublime — extract pure logic to test it.
 
 ## Pitfalls / gotchas
 
@@ -97,10 +99,9 @@ pytest -k "test_my_function"           # by name
 - **Modifying `AlfacoLib` doesn't cascade-reload consumers** in Sublime. Save a `.py` in the consumer plugin to retrigger `plugin_loaded()` (which does the `importlib.reload()`).
 - **Adding a command**: don't forget to import it in `plugin.py` (otherwise Sublime won't see it) and to update **all 3 OS keymaps** if it has a binding.
 - **`Main.sublime-menu`** is auto-merged across packages by Sublime. Each plugin declares its own branch under `Tools → Alfaco → <plugin>`.
-- **`requests` is not declared as a Package Control dependency** yet — see `docs/installation.md`.
+- **Package Control orphans**: PC silently deletes packages from `Packages/` that aren't in `installed_packages`. After every fresh dev box, declare the 4 packages there.
 
 ## Known follow-ups (not blocking)
 
-- Declare `requests` as `dependencies.json` in `AlfacoLib/`.
 - Windows: junctions are reported as `copy` by `make status` (Python <3.12 doesn't recognize them as symlinks).
 - Manual Sublime validation (Tasks 18 + 25 of the implementation plan) hasn't been done yet — see `docs/superpowers/plans/2026-05-08-multi-plugins-monorepo.md`.
