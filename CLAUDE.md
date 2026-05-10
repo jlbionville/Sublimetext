@@ -24,9 +24,13 @@ make link              # symlinks plugins/* → <Packages>/  (Linux/macOS)
 make install           # copy plugins/* → <Packages>/    (WSL/Windows)
 make uninstall         # remove all <Packages>/Alfaco*
 make status            # which plugin is link/copy/absent
+make init-config       # copy plugins/<X>/templates/User/* → <Packages>/User/  (skip-if-exists)
+make init-config-force # same, overwrites existing
 make test              # pytest hors-Sublime
 make new-plugin NAME=X # scaffold plugins/AlfacoX/
 ```
+
+User config templates live under `plugins/<X>/templates/User/<setting>.sublime-settings` (excluded from deployment). They contain placeholders + JSONC comments — never real secrets.
 
 Variable `PLUGIN=AlfacoEditing` to target a single plugin: `make link PLUGIN=AlfacoEditing`.
 
