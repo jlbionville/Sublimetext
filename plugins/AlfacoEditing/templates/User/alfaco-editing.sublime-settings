@@ -1,0 +1,12 @@
+// Template utilisateur pour AlfacoEditing.
+// Copier dans <Packages>/User/alfaco-editing.sublime-settings via :
+//
+//     make init-config
+//
+// (la cible Makefile ne remplace pas un fichier existant — safe à relancer).
+{
+    // Délimiteur utilisé par `modify_setting_from_selection` et certains
+    // snippets pour repérer un bloc à remplacer. Toute chaîne convient,
+    // mais doit être unique dans les buffers où on l'utilise.
+    "alfaco_delimiter": "##"
+}

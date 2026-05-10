@@ -100,7 +100,7 @@ def _windows_username_from_wsl():
         return None
 
 
-EXCLUDE_DURING_DEPLOY = {"tests", "__pycache__", ".pytest_cache", ".git"}
+EXCLUDE_DURING_DEPLOY = {"tests", "__pycache__", ".pytest_cache", ".git", "templates"}
 
 
 def _iter_plugins(monorepo_root: Path) -> list[Path]:
@@ -180,6 +180,36 @@ def uninstall(monorepo_root: Path, packages_dir: Path, only: str | None = None) 
     return done
 
 
+def init_config(monorepo_root: Path, packages_dir: Path, only: str | None = None,
+                force: bool = False) -> list[tuple[str, str, str]]:
+    """Copie les templates plugins/<X>/templates/User/* vers <Packages>/User/.
+
+    Ne remplace PAS un fichier existant (sauf `force=True`) — on ne veut
+    jamais écraser une config utilisateur déjà remplie. Retourne la liste
+    des opérations sous la forme (action, plugin, filename) où action vaut
+    'copied' ou 'skipped'.
+    """
+    user_dir = packages_dir / "User"
+    user_dir.mkdir(parents=True, exist_ok=True)
+    done: list[tuple[str, str, str]] = []
+    for plugin in _iter_plugins(monorepo_root):
+        if only and plugin.name != only:
+            continue
+        template_dir = plugin / "templates" / "User"
+        if not template_dir.is_dir():
+            continue
+        for template in sorted(template_dir.iterdir()):
+            if not template.is_file():
+                continue
+            dst = user_dir / template.name
+            if dst.exists() and not force:
+                done.append(("skipped", plugin.name, template.name))
+                continue
+            shutil.copy2(template, dst)
+            done.append(("copied", plugin.name, template.name))
+    return done
+
+
 def status(monorepo_root: Path, packages_dir: Path) -> dict[str, str]:
     out = {}
     for plugin in _iter_plugins(monorepo_root):
@@ -197,9 +227,11 @@ def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(prog="deploy")
-    parser.add_argument("action", choices=["link", "install", "uninstall", "status"])
+    parser.add_argument("action", choices=["link", "install", "uninstall", "status", "init-config"])
     parser.add_argument("--plugin", default=None, help="Cibler un seul plugin")
     parser.add_argument("--packages-dir", default=None)
+    parser.add_argument("--force", action="store_true",
+                        help="(init-config) écrase un fichier User/ existant")
     args = parser.parse_args()
 
     monorepo_root = Path(__file__).resolve().parents[1]
@@ -208,6 +240,17 @@ def main() -> int:
     if args.action == "status":
         for name, mode in status(monorepo_root, packages_dir).items():
             print(f"  {name:25s} {mode}")
+        return 0
+    if args.action == "init-config":
+        ops = init_config(monorepo_root, packages_dir, only=args.plugin, force=args.force)
+        if not ops:
+            print("init-config : aucun template trouvé.")
+            return 0
+        for action, plugin, fname in ops:
+            print(f"  [{action:7s}] {plugin}: {fname}")
+        copied = sum(1 for a, _, _ in ops if a == "copied")
+        skipped = sum(1 for a, _, _ in ops if a == "skipped")
+        print(f"init-config : {copied} copié(s), {skipped} ignoré(s) (déjà présent — utiliser --force pour écraser).")
         return 0
     if args.action == "link":
         done = link(monorepo_root, packages_dir, only=args.plugin)

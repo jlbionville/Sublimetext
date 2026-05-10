@@ -1,0 +1,70 @@
+// Template utilisateur pour AlfacoAtlassian.
+// Copier dans <Packages>/User/alfaco-atlassian.sublime-settings via :
+//
+//     make init-config
+//
+// (la cible Makefile ne remplace pas un fichier existant — safe à relancer).
+//
+// Aucun secret n'est versionné : ce fichier de template doit rester avec
+// des placeholders. Remplir les valeurs dans la copie sous User/.
+{
+    // === Authentification Atlassian ===
+
+    // Email du compte Atlassian (l'adresse, pas le username).
+    "jira_login": "votre.email@domaine.tld",
+
+    // Token API Atlassian (PAS le mot de passe du compte) :
+    //   https://id.atlassian.com/manage-profile/security/api-tokens
+    "jira_password": "ATATT3xFfGF0…",
+
+    // === Organisation par défaut ===
+
+    // url_key de l'organisation utilisée au démarrage (avant que
+    // `select_organisation` ne mute la valeur en runtime). Doit
+    // correspondre à une clé déclarée dans `atlassian.organisations`
+    // ci-dessous, ou à une URL Atlassian "https://<X>.atlassian.net/".
+    "default_organisation": "votre-org",
+
+    // === API REST ===
+
+    // "2" ou "3". v3 attend les descriptions au format Atlassian
+    // Document Format ; v2 accepte du markdown plus permissif.
+    "api_rest_version": "3",
+
+    // Vérification TLS du certificat serveur. Mettre `false` UNIQUEMENT
+    // derrière un proxy d'entreprise qui ré-émet les certificats.
+    "tls_verify": true,
+
+    // === Persistance des payloads / réponses ===
+
+    // Dossier où `create_jira_issue` sauvegarde la réponse HTTP et le
+    // payload envoyé. Doit exister et être writable. Laisser vide pour
+    // désactiver la sauvegarde.
+    "path_json_files_folder": "",
+
+    // === Catalogue des organisations ===
+    //
+    // Une entrée par organisation Atlassian gérée. La clé "lisible" est
+    // affichée dans le popup `select_organisation` ; `url_key` est le
+    // sous-domaine "<X>.atlassian.net" effectivement requêté.
+    "atlassian": {
+        "organisations": {
+            "Mon org principale": {
+                "url_key": "votre-org",
+                "jira": true,
+                "confluence": true
+            },
+            // "Autre org": {
+            //     "url_key": "autre-org",
+            //     "jira": true,
+            //     "confluence": false
+            // }
+        }
+    },
+
+    // === Debug ===
+
+    // Active les logs `debug`/`info` du logger AlfacoLib (sinon seuls
+    // les `warn` apparaissent en console).
+    "debug": false
+}

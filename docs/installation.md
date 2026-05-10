@@ -32,18 +32,27 @@ make install
 
 ## Première configuration
 
-1. Ouvrir `Preferences → Package Settings → AlfacoAtlassian → Settings – User`.
-2. Coller au minimum :
+1. Initialiser les fichiers `User/` depuis les templates versionnés :
 
-```json
-{
-    "jira_login": "votre.email@domaine.tld",
-    "jira_password": "ATATT3xFfGF0…",
-    "default_organisation": "votre-org",
-    "api_rest_version": "3",
-    "path_json_files_folder": "/chemin/absolu/dossier/jira"
-}
-```
+   ```bash
+   make init-config
+   ```
+
+   Cette cible copie `plugins/<X>/templates/User/*.sublime-settings` vers `<Packages>/User/`. Elle **ne remplace pas** un fichier existant — relancer avec `make init-config-force` si besoin.
+
+2. Ouvrir `Preferences → Package Settings → AlfacoAtlassian → Settings – User` et remplir les valeurs (le template contient des placeholders + commentaires inline) :
+
+   ```jsonc
+   {
+       "jira_login": "votre.email@domaine.tld",
+       "jira_password": "ATATT3xFfGF0…",          // token API, PAS le mdp
+       "default_organisation": "votre-org",
+       "api_rest_version": "3",
+       "path_json_files_folder": "/chemin/absolu/dossier/jira"
+   }
+   ```
+
+   Détail des clés disponibles : [configuration.md](configuration.md).
 
 3. Redémarrer Sublime (ou simplement modifier puis sauvegarder un `.py` du package pour rejouer `plugin_loaded()`).
 4. Vérifier la console (`` Ctrl+` ``) : aucun Traceback. La commande `Tools → Alfaco → Atlassian → Sélectionner organisation` doit afficher la liste.
