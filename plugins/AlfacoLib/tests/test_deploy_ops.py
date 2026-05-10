@@ -1,18 +1,24 @@
-"""Tests des opérations link/install/uninstall/status."""
+"""Tests des opérations link/install/uninstall/status/init-config."""
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
-from tools.deploy import install, uninstall, status  # noqa: E402
+from tools.deploy import install, uninstall, status, init_config  # noqa: E402
 
 
-def _make_plugin(monorepo: Path, name: str) -> Path:
+def _make_plugin(monorepo: Path, name: str, with_template: bool = False) -> Path:
     plugin = monorepo / "plugins" / name
     (plugin / "tests").mkdir(parents=True)
     (plugin / "plugin.py").write_text("# fake plugin\n")
     (plugin / "tests" / "test_x.py").write_text("def test_x(): pass\n")
     (plugin / "__pycache__").mkdir()
     (plugin / "__pycache__" / "x.pyc").write_text("")
+    if with_template:
+        tpl = plugin / "templates" / "User"
+        tpl.mkdir(parents=True)
+        (tpl / f"{name.lower()}.sublime-settings").write_text(
+            '{ "fake_key": "fake_value" }\n'
+        )
     return plugin
 
 
@@ -68,3 +74,82 @@ def test_install_only_one_plugin(tmp_path):
     assert done == ["AlfacoEditing"]
     assert (packages / "AlfacoEditing").exists()
     assert not (packages / "AlfacoLib").exists()
+
+
+def test_install_excludes_templates_dir(tmp_path):
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoAtlassian", with_template=True)
+    packages = tmp_path / "Packages"
+    packages.mkdir()
+
+    install(monorepo, packages)
+    assert (packages / "AlfacoAtlassian" / "plugin.py").exists()
+    assert not (packages / "AlfacoAtlassian" / "templates").exists()
+
+
+def test_init_config_copies_templates_to_user(tmp_path):
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoAtlassian", with_template=True)
+    _make_plugin(monorepo, "AlfacoEditing", with_template=True)
+    packages = tmp_path / "Packages"
+    packages.mkdir()
+
+    ops = init_config(monorepo, packages)
+    actions = sorted((a, p) for a, p, _ in ops)
+    assert actions == [("copied", "AlfacoAtlassian"), ("copied", "AlfacoEditing")]
+    assert (packages / "User" / "alfacoatlassian.sublime-settings").exists()
+    assert (packages / "User" / "alfacoediting.sublime-settings").exists()
+
+
+def test_init_config_skips_existing_files(tmp_path):
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoAtlassian", with_template=True)
+    packages = tmp_path / "Packages"
+    (packages / "User").mkdir(parents=True)
+    (packages / "User" / "alfacoatlassian.sublime-settings").write_text(
+        '{ "user_filled": true }\n'
+    )
+
+    ops = init_config(monorepo, packages)
+    assert ops == [("skipped", "AlfacoAtlassian", "alfacoatlassian.sublime-settings")]
+    assert "user_filled" in (packages / "User" / "alfacoatlassian.sublime-settings").read_text()
+
+
+def test_init_config_force_overwrites(tmp_path):
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoAtlassian", with_template=True)
+    packages = tmp_path / "Packages"
+    (packages / "User").mkdir(parents=True)
+    (packages / "User" / "alfacoatlassian.sublime-settings").write_text(
+        '{ "user_filled": true }\n'
+    )
+
+    ops = init_config(monorepo, packages, force=True)
+    assert ops == [("copied", "AlfacoAtlassian", "alfacoatlassian.sublime-settings")]
+    assert "fake_key" in (packages / "User" / "alfacoatlassian.sublime-settings").read_text()
+
+
+def test_init_config_creates_user_dir_if_missing(tmp_path):
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoEditing", with_template=True)
+    packages = tmp_path / "Packages"
+    packages.mkdir()  # pas de User/
+
+    init_config(monorepo, packages)
+    assert (packages / "User" / "alfacoediting.sublime-settings").exists()
+
+
+def test_init_config_no_template_no_op(tmp_path):
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoLib", with_template=False)  # pas de templates/
+    packages = tmp_path / "Packages"
+    packages.mkdir()
+
+    ops = init_config(monorepo, packages)
+    assert ops == []

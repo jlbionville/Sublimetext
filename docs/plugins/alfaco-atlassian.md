@@ -1,78 +1,151 @@
 # AlfacoAtlassian
 
-Pilotage des API REST Atlassian (Jira / Confluence) depuis Sublime Text.
+## Présentation
 
-## Commandes Sublime
+Pilotage des API REST Atlassian (Jira / Confluence) depuis Sublime Text :
+- Sélection interactive de l'organisation et du projet Jira.
+- Initialisation d'un buffer JSON pré-rempli (snippet `issue`).
+- Création d'un ticket via `POST /issue` à partir du buffer courant.
+- Snippets Confluence (page, sous-page, espace).
 
-| Commande | Effet |
-|---|---|
-| `select_organisation` | Choisit une organisation Atlassian dans la config runtime (popup). |
-| `select_jira_project` | `GET /project/`, popup `KEY-Nom`, stocke la `project_key`. |
-| `create_jira_issue` | POST le buffer JSON entier vers `…/issue/`, sauvegarde réponse + payload. |
-| `init_json_jira` | Ouvre un buffer scratch + insère le snippet Jira pré-rempli (avec `project_key` courante). |
-| `set_jira_project_in_snippet` | Remplace `"key": ""` par `"key": "<X>"` dans le buffer. |
-| `open_jira_projects` | Affiche le login Jira en console (debug). |
+Le plugin s'appuie sur `AlfacoLib` pour la configuration, l'auth Basic, l'appel HTTP et les chemins de sauvegarde.
+
+## Prérequis
+
+- `AlfacoLib` déployé (`make status` doit afficher `link` ou `copy`).
+- Un compte Atlassian Cloud avec un **token API** :
+  https://id.atlassian.com/manage-profile/security/api-tokens
+  ⚠️ Le token API n'est **pas** le mot de passe du compte.
+- Un dossier writable sur disque pour archiver payloads et réponses (clé `path_json_files_folder`).
 
 ## Configuration
 
-Voir [../configuration.md](../configuration.md). Fichier : `User/alfaco-atlassian.sublime-settings`.
+### Initialiser depuis le template
 
-Clés requises pour le workflow Jira complet :
+```bash
+make init-config PLUGIN=AlfacoAtlassian
+```
 
-```json
+Copie [`plugins/AlfacoAtlassian/templates/User/alfaco-atlassian.sublime-settings`](../../plugins/AlfacoAtlassian/templates/User/alfaco-atlassian.sublime-settings) vers `<Packages>/User/alfaco-atlassian.sublime-settings`. La cible **n'écrase pas** un fichier existant — relancer avec `make init-config-force` pour forcer.
+
+Ensuite : `Preferences → Package Settings → AlfacoAtlassian → Settings – User`, remplir les valeurs.
+
+### Template inline
+
+```jsonc
 {
     "jira_login": "votre.email@domaine.tld",
-    "jira_password": "ATATT3xFfGF0…",
+    "jira_password": "ATATT3xFfGF0…",            // token API, PAS le mdp
     "default_organisation": "votre-org",
-    "api_rest_version": "3",
-    "tls_verify": true,
-    "path_json_files_folder": "/chemin/absolu/dossier/jira",
+    "api_rest_version": "3",                       // "2" ou "3"
+    "tls_verify": true,                            // false uniquement derrière proxy d'entreprise
+    "path_json_files_folder": "/chemin/dossier/jira",
     "atlassian": {
         "organisations": {
             "Mon org": { "url_key": "votre-org", "jira": true, "confluence": true }
         }
-    }
+    },
+    "debug": false
 }
 ```
 
-## Snippets
+### Référence des clés
 
-| Fichier | tabTrigger | Cible |
-|---|---|---|
-| `snippets/jira/jira.sublime-snippet` | `issue` | Payload Jira REST `POST /issue` (avec variables `${selection}`, `${description}`, `${duedate}`, `${jira_key}`). |
-| `snippets/confluence/page.sublime-snippet` | `confluencepage` | Page Confluence (POST /content). |
-| `snippets/confluence/childPage.sublime-snippet` | `childpage` | Page Confluence enfant (avec ancestors). |
-| `snippets/confluence/space.sublime-snippet` | `confluencespace` | Création d'espace Confluence. |
+| Clé | Type | Défaut | Rôle |
+|---|---|---|---|
+| `jira_login` | string | `""` | Email du compte Atlassian. |
+| `jira_password` | string | `""` | Token API Atlassian. |
+| `default_organisation` | string | `""` | `url_key` initial. Modifié en runtime par `select_organisation`. |
+| `api_rest_version` | string | `"3"` | `"2"` ou `"3"`. v3 attend descriptions au format ADF. |
+| `tls_verify` | bool | `true` | Vérification du certificat TLS. |
+| `path_json_files_folder` | string | `""` | Dossier de sauvegarde — vide = pas de sauvegarde. |
+| `headers` | object | `{Content-type: application/json, Accept: application/json}` | Headers HTTP. |
+| `atlassian.organisations` | object | (catalogue exemple) | Organisations affichées par `select_organisation`. |
+| `debug` | bool | `false` | Active les logs `debug`/`info`. |
 
-## Macro
+### Clés mutées en runtime (non persistées)
 
-| Fichier | Effet |
+| Clé | Posée par |
 |---|---|
-| `macros/addjira.sublime-macro` | Sélectionne la ligne, insère snippet jira, ajoute `,\n` en fin de fichier. Lié à `F2` sous Linux. |
+| `default_organisation` | `select_organisation` |
+| `project_key` | `select_jira_project` |
 
-## Raccourcis clavier
+Au redémarrage, ces valeurs reviennent à celles du fichier — c'est attendu.
+
+## Utilisation
+
+### Workflow Jira
+
+1. **Sélectionner l'organisation** : `Tools → Alfaco → Atlassian → Sélectionner organisation`, ou commande palette `select_organisation`.
+2. **Sélectionner le projet** : `select_jira_project` (popup `KEY-Nom`). Linux `Ctrl+J L` / Windows `Ctrl+J L`.
+3. **Initialiser un buffer JSON** : `init_json_jira` (Windows `Super+N`). Ouvre un buffer scratch avec le snippet `issue` pré-rempli (`project.key` courante, `duedate` à J+10).
+4. **Éditer le payload** dans le buffer.
+5. **POST** : `create_jira_issue` (Windows `Alt+J`). La réponse s'ouvre dans un nouveau buffer ; le payload et la réponse sont archivés sous `<path_json_files_folder>/<KEY>.json` et `<KEY>_response_<timestamp>.json`.
+
+### Workflow Confluence
+
+Pas de commande dédiée à la création — utiliser les snippets via tabTrigger dans un buffer JSON, puis envoyer manuellement (cURL/Postman) ou réutiliser `create_jira_issue` après avoir adapté l'URL.
+
+### Commandes
+
+| Commande | Effet |
+|---|---|
+| `select_organisation` | Popup d'organisations (catalogue `atlassian.organisations`). |
+| `select_jira_project` | `GET /project/`, popup `KEY-Nom`, stocke `project_key`. |
+| `create_jira_issue` | `POST` du buffer JSON vers `/issue/`, sauvegarde réponse + payload. |
+| `init_json_jira` | Buffer scratch avec snippet `issue` pré-rempli. |
+| `set_jira_project_in_snippet` | Remplace `"key": ""` par `"key": "<courant>"` dans le buffer. |
+| `open_jira_projects` | Affiche le `jira_login` en console (debug). |
+
+### Snippets
+
+| TabTrigger | Cible |
+|---|---|
+| `issue` | Payload Jira `POST /issue` (avec variables `${selection}`, `${description}`, `${duedate}`, `${jira_key}`). |
+| `confluencepage` | Création de page Confluence. |
+| `childpage` | Page Confluence enfant (avec `ancestors`). |
+| `confluencespace` | Création d'espace Confluence. |
+
+### Macro
+
+`addjira.sublime-macro` (Linux `F2`) — sélectionne la ligne, insère le snippet `jira`, ajoute `,\n` en fin de fichier.
+
+## Raccourcis
 
 | Touches | OS | Commande |
 |---|---|---|
 | `Ctrl+J` | Linux | `insert_snippet` (jira) |
-| `F2` | Linux | `addjira` macro |
-| `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
-| `Ctrl+J+L` | Windows | `select_jira_project` |
+| `F2` | Linux | macro `addjira` |
+| `Ctrl+J L` | Windows | `select_jira_project` |
 | `Super+N` | Windows | `init_json_jira` |
 | `Ctrl+Alt+W` | Windows | snippet `{"fields": ...}` |
 | `Alt+J` | Windows | `create_jira_issue` |
+| `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
 
-## Bugs corrigés depuis le legacy
+Voir aussi [`plugins/AlfacoAtlassian/Default (*).sublime-keymap`](../../plugins/AlfacoAtlassian/) pour la liste exhaustive (Linux / Windows / OSX).
+
+## Dépannage
+
+| Erreur | Cause probable | Voir |
+|---|---|---|
+| `401 Unauthorized` | `jira_login` absent ou token expiré | [troubleshooting.md](../troubleshooting.md#diagnostic-des-erreurs-atlassian) |
+| `404` sur `/issue/` | Mauvais `api_rest_version` ou format de description | troubleshooting.md |
+| `400 Bad Request` à la création | `project.key` absent, `issuetype.name` mauvaise langue, payload non encapsulé `{"fields": {...}}` | troubleshooting.md |
+| `ModuleNotFoundError: requests` | Déploiement obsolète (le code utilise désormais `urllib`) — `make uninstall && make install` | [troubleshooting.md](../troubleshooting.md) |
+| Plugins supprimés au démarrage | Package Control les considère orphelins | [installation.md](../installation.md#cohabitation-avec-package-control) |
+
+### Bugs corrigés depuis le legacy
 
 | Bug | Statut |
 |---|---|
-| Login Jira codé en dur (`jlbionville@alfaco.fr`) | Résolu — lit `jira_login` |
-| `setSetting("organisation", …)` mutait Preferences au démarrage | Résolu — `config.set()` runtime seul |
+| Login Jira codé en dur | Résolu — lit `jira_login` |
+| `setSetting("organisation", …)` mutait `Preferences` au démarrage | Résolu — `config.set()` runtime |
 | `verify=False` codé en dur | Résolu — `tls_verify` configurable |
 | Pas de timeout HTTP | Résolu — `(5, 30)` par défaut |
-| `\\` Windows codés en dur dans paths | Résolu — `pathlib.Path` partout |
-| `print(jira_password)` dans `OpenJiraProjectsCommand` | Résolu — masqué |
+| `\\` Windows codés en dur | Résolu — `pathlib.Path` |
+| `print(jira_password)` console | Résolu — masqué |
 | Headers HTTP réécrits dans `create_jira_issue` | Résolu — préservés |
+| Dépendance `requests` (non livré par ST4) | Résolu — `atlassian_client` réécrit avec `urllib` stdlib |
 
 ## Version
 

@@ -17,9 +17,11 @@ cd Sublimetext
 make link              # mode dev (symlinks)  — Linux / macOS
 # OU
 make install           # mode utilisateur (copie)  — WSL / Windows
+
+make init-config       # copie les templates User/ depuis plugins/<X>/templates/User/
 ```
 
-Puis créer `<Packages>/User/alfaco-atlassian.sublime-settings` avec votre token API Atlassian — voir [docs/configuration.md](docs/configuration.md).
+Puis remplir le token API Atlassian dans `<Packages>/User/alfaco-atlassian.sublime-settings` — voir [docs/configuration.md](docs/configuration.md). Si Package Control est installé, déclarer aussi les 4 plugins comme `installed_packages` ([détails](docs/installation.md#cohabitation-avec-package-control)).
 
 ## Documentation
 
@@ -34,10 +36,12 @@ Puis créer `<Packages>/User/alfaco-atlassian.sublime-settings` avec votre token
 ## Développement
 
 ```bash
-make test              # pytest hors-Sublime
-make new-plugin NAME=X # scaffold un nouveau plugin
-make status            # voir l'état de déploiement
-make help              # liste toutes les cibles
+make test                   # pytest hors-Sublime
+make new-plugin NAME=X      # scaffold un nouveau plugin
+make status                 # voir l'état de déploiement
+make init-config            # copier les templates User/ (skip-if-exists)
+make init-config-force      # idem mais écrase
+make help                   # liste toutes les cibles
 ```
 
 ## Licence
