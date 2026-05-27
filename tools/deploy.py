@@ -100,7 +100,13 @@ def _windows_username_from_wsl():
         return None
 
 
-EXCLUDE_DURING_DEPLOY = {"tests", "__pycache__", ".pytest_cache", ".git", "templates"}
+EXCLUDE_DURING_DEPLOY = {
+    "tests", "__pycache__", ".pytest_cache", ".git", "templates",
+    # Marqueur Package Control « ce paquet est géré par moi » : s'il est présent
+    # et que le plugin n'est pas dans installed_packages, PC le supprime au
+    # démarrage de Sublime. On préfère que PC les ignore comme tout dossier manuel.
+    "package-metadata.json",
+}
 
 
 def _iter_plugins(monorepo_root: Path) -> list[Path]:

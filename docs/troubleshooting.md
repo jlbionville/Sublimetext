@@ -33,17 +33,18 @@ Si `AlfacoLib` est `absent` : `make link PLUGIN=AlfacoLib` puis redémarrer Subl
 
 ### `Package Control: Removing N orphaned packages...` au démarrage
 
-Symptôme : les 4 plugins disparaissent de `Packages/` après chaque redémarrage. PC considère orphelin tout package non listé dans `installed_packages`.
+Symptôme : les 4 plugins disparaissent de `Packages/` après chaque redémarrage. PC considère orphelin tout package contenant un `package-metadata.json` (marqueur « géré par PC ») mais non listé dans `installed_packages`.
 
-**Fix** : ajouter les 4 noms dans `Packages/User/Package Control.sublime-settings` :
+**Fix** : depuis la v0.3.0, `tools/deploy.py` exclut `package-metadata.json` du déploiement, donc PC ne reconnaît plus nos plugins comme « gérés par lui » et n'y touche pas. Refaire `make uninstall && make install` pour purger d'anciens déploiements qui contenaient encore le fichier marqueur.
 
-```json
-{
-    "installed_packages": ["AlfacoAtlassian", "AlfacoCompletion", "AlfacoEditing", "AlfacoLib", ...]
-}
+Vérification post-fix :
+
+```bash
+find "$SUBLIME_PACKAGES_DIR"/Alfaco* -name package-metadata.json
+# doit être vide
 ```
 
-Voir [installation.md](installation.md#cohabitation-avec-package-control).
+L'ancien contournement (ajouter les 4 noms à `installed_packages`) reste valide mais devient inutile.
 
 ### `ModuleNotFoundError: No module named 'requests'`
 

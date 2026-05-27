@@ -59,24 +59,16 @@ make install
 
 ## Cohabitation avec Package Control
 
-Si Package Control est installé, il supprime au démarrage tout package présent dans `Packages/` mais absent de `installed_packages` (« orphelins »). `make install` copie nos plugins hors PC, donc il faut les déclarer une fois pour que PC les laisse tranquilles.
+Rien à configurer. `tools/deploy.py` exclut le fichier `package-metadata.json` du déploiement (`EXCLUDE_DURING_DEPLOY`). Sans ce marqueur, Package Control ne considère pas nos plugins comme « gérés par lui » et ne les touche pas au démarrage — exactement comme tout dossier manuel déposé dans `Packages/`.
 
-Ouvrir `Preferences → Package Settings → Package Control → Settings – User` et ajouter les 4 noms à `installed_packages` :
+**Migration depuis une version antérieure** (`<= v0.2.0` qui livrait `package-metadata.json`) : un simple `make install` écrase chaque dossier cible et purge donc les anciens fichiers. Vérifier au besoin :
 
-```json
-{
-    "installed_packages":
-    [
-        "AlfacoAtlassian",
-        "AlfacoCompletion",
-        "AlfacoEditing",
-        "AlfacoLib",
-        // ... vos autres packages
-    ]
-}
+```bash
+find "$SUBLIME_PACKAGES_DIR"/Alfaco* -name package-metadata.json
+# doit être vide
 ```
 
-Sans ça : au prochain redémarrage, PC affichera `Removing N orphaned packages...` et videra les `Packages/Alfaco*`.
+Si tu avais ajouté `AlfacoAtlassian`, `AlfacoCompletion`, `AlfacoEditing`, `AlfacoLib` à `installed_packages` (ancienne procédure), tu peux retirer ces 4 entrées — elles ne servent plus à rien (mais ne nuisent pas non plus).
 
 ## WSL : précisions
 

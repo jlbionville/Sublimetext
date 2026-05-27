@@ -6,7 +6,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
 from tools.deploy import install, uninstall, status, init_config  # noqa: E402
 
 
-def _make_plugin(monorepo: Path, name: str, with_template: bool = False) -> Path:
+def _make_plugin(monorepo: Path, name: str, with_template: bool = False,
+                 with_metadata: bool = False) -> Path:
     plugin = monorepo / "plugins" / name
     (plugin / "tests").mkdir(parents=True)
     (plugin / "plugin.py").write_text("# fake plugin\n")
@@ -19,7 +20,26 @@ def _make_plugin(monorepo: Path, name: str, with_template: bool = False) -> Path
         (tpl / f"{name.lower()}.sublime-settings").write_text(
             '{ "fake_key": "fake_value" }\n'
         )
+    if with_metadata:
+        (plugin / "package-metadata.json").write_text(
+            '{ "name": "' + name + '", "version": "0.1.0" }\n'
+        )
     return plugin
+
+
+def test_install_excludes_package_metadata_json(tmp_path):
+    """package-metadata.json est l'indicateur Package Control « ce paquet est géré par moi ».
+    Si présent ET absent de installed_packages, PC le supprime au démarrage. On ne veut
+    pas le déployer : Sublime ouvre alors le plugin comme un dossier manuel (jamais touché)."""
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoLib", with_metadata=True)
+    packages = tmp_path / "Packages"
+    packages.mkdir()
+
+    install(monorepo, packages)
+    assert (packages / "AlfacoLib" / "plugin.py").exists()
+    assert not (packages / "AlfacoLib" / "package-metadata.json").exists()
 
 
 def test_install_copies_without_excluded_dirs(tmp_path):
