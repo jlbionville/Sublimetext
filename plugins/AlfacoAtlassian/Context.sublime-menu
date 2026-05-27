@@ -4,6 +4,8 @@
         "children": [
             { "caption": "format JSON", "command": "pretty_json" },
             { "caption": "créer ticket Jira", "command": "create_jira_issue" },
+            { "caption": "créer ticket Jira (depuis Markdown)", "command": "create_jira_from_markdown" },
+            { "caption": "init Markdown Jira", "command": "init_markdown_jira" },
             { "caption": "sélectionner projet Jira", "command": "select_jira_project" },
             { "caption": "sélectionner organisation", "command": "select_organisation" }
         ]
