@@ -15,10 +15,14 @@ class _Logger:
         if self._debug:
             print(f"[Alfaco][{self._name}] {msg}")
 
-    info = debug
+    def info(self, msg):
+        print(f"[Alfaco][{self._name}][INFO] {msg}")
 
     def warn(self, msg):
         print(f"[Alfaco][{self._name}][WARN] {msg}")
+
+    def error(self, msg):
+        print(f"[Alfaco][{self._name}][ERROR] {msg}")
 
 
 def get_logger(name, debug=False):
