@@ -20,6 +20,23 @@ _INLINE_PATTERNS = [
 
 
 _HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$")
+_BULLET_RE = re.compile(r"^[-*+]\s+(.+)$")
+_ORDERED_RE = re.compile(r"^\d+\.\s+(.+)$")
+
+
+def _parse_list(lines, item_re, list_type):
+    items = []
+    for line in lines:
+        m = item_re.match(line)
+        if not m:
+            continue
+        items.append({
+            "type": "listItem",
+            "content": [
+                {"type": "paragraph", "content": _parse_inline(m.group(1))}
+            ],
+        })
+    return {"type": list_type, "content": items}
 
 
 def _build_mark(mark_type, match):
@@ -77,6 +94,10 @@ def _split_blocks(md_text):
 def _parse_block(lines):
     """Convertit un bloc (liste de lignes) en un node ADF top-level."""
     first = lines[0]
+    if _BULLET_RE.match(first):
+        return _parse_list(lines, _BULLET_RE, "bulletList")
+    if _ORDERED_RE.match(first):
+        return _parse_list(lines, _ORDERED_RE, "orderedList")
     m = _HEADING_RE.match(first)
     if m:
         level = len(m.group(1))

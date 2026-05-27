@@ -136,3 +136,55 @@ def test_block_paragraph_joins_soft_lines():
             "content": [{"type": "text", "text": "ligne 1 ligne 2"}],
         }
     ]
+
+
+def test_block_bullet_list_dash():
+    doc = _markdown_to_adf("- item 1\n- item 2")
+    assert doc["content"] == [
+        {
+            "type": "bulletList",
+            "content": [
+                {
+                    "type": "listItem",
+                    "content": [
+                        {"type": "paragraph", "content": [
+                            {"type": "text", "text": "item 1"}
+                        ]}
+                    ],
+                },
+                {
+                    "type": "listItem",
+                    "content": [
+                        {"type": "paragraph", "content": [
+                            {"type": "text", "text": "item 2"}
+                        ]}
+                    ],
+                },
+            ],
+        }
+    ]
+
+
+def test_block_bullet_list_star_or_plus():
+    """`*` et `+` sont aussi valides comme bullets."""
+    for marker in ("*", "+"):
+        doc = _markdown_to_adf(f"{marker} foo\n{marker} bar")
+        assert doc["content"][0]["type"] == "bulletList"
+        assert len(doc["content"][0]["content"]) == 2
+
+
+def test_block_ordered_list():
+    doc = _markdown_to_adf("1. premier\n2. second")
+    assert doc["content"][0]["type"] == "orderedList"
+    assert len(doc["content"][0]["content"]) == 2
+    assert doc["content"][0]["content"][0]["content"][0]["content"][0]["text"] == "premier"
+
+
+def test_block_list_items_with_inline_marks():
+    """Les items conservent les marks inline."""
+    doc = _markdown_to_adf("- **bold** item")
+    item_para = doc["content"][0]["content"][0]["content"][0]
+    assert item_para["content"] == [
+        {"type": "text", "text": "bold", "marks": [{"type": "strong"}]},
+        {"type": "text", "text": " item"},
+    ]
