@@ -3,7 +3,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from AlfacoLib.markdown_to_adf import _parse_inline, _markdown_to_adf  # noqa: E402
+from AlfacoLib.markdown_to_adf import (  # noqa: E402
+    _parse_inline,
+    _markdown_to_adf,
+    _split_fields,
+    KNOWN_FIELDS,
+)
 
 
 def test_parse_inline_plain_text():
@@ -214,3 +219,60 @@ def test_block_code_block_preserves_indentation():
     md = "```\n    indented\n```"
     doc = _markdown_to_adf(md)
     assert doc["content"][0]["content"][0]["text"] == "    indented"
+
+
+def test_known_fields_constants():
+    """Les 8 champs réservés du template."""
+    assert KNOWN_FIELDS == [
+        "Summary", "Project", "Type", "Priority", "Labels",
+        "Startdate", "Duedate", "Description",
+    ]
+
+
+def test_split_fields_minimal_template():
+    template = "# Summary\nfoo\n\n# Description\nbar"
+    result = _split_fields(template)
+    assert result == {"Summary": "foo", "Description": "bar"}
+
+
+def test_split_fields_all_fields():
+    template = (
+        "# Summary\nS\n\n"
+        "# Project\nPRJ\n\n"
+        "# Type\nTask\n\n"
+        "# Priority\nHigh\n\n"
+        "# Labels\nimportant, urgent\n\n"
+        "# Startdate\n2026-05-27\n\n"
+        "# Duedate\n2026-06-06\n\n"
+        "# Description\nbody"
+    )
+    result = _split_fields(template)
+    assert set(result.keys()) == set(KNOWN_FIELDS)
+    assert result["Labels"] == "important, urgent"
+
+
+def test_split_fields_description_captures_until_eof():
+    """Tout ce qui suit `# Description` est dans Description, y compris h2+."""
+    template = (
+        "# Summary\nfoo\n\n"
+        "# Description\nintro\n\n## Sub-section\n- item\n"
+    )
+    result = _split_fields(template)
+    assert result["Description"] == "intro\n\n## Sub-section\n- item"
+
+
+def test_split_fields_unknown_field_raises():
+    template = "# Summary\nfoo\n\n# Bogus\nx\n\n# Description\nbar"
+    try:
+        _split_fields(template)
+    except ValueError as e:
+        assert "Bogus" in str(e)
+        assert "Summary" in str(e)
+    else:
+        assert False, "ValueError attendue"
+
+
+def test_split_fields_trims_field_body():
+    template = "# Summary\n  foo  \n\n# Description\nbar"
+    result = _split_fields(template)
+    assert result["Summary"] == "foo"

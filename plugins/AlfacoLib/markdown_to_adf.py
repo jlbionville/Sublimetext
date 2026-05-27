@@ -148,3 +148,49 @@ def _markdown_to_adf(md_text):
     if not content:
         content = [{"type": "paragraph", "content": []}]
     return {"type": "doc", "version": 1, "content": content}
+
+
+KNOWN_FIELDS = [
+    "Summary", "Project", "Type", "Priority", "Labels",
+    "Startdate", "Duedate", "Description",
+]
+
+
+def _split_fields(text):
+    """Découpe un template Markdown sur les headings H1 et retourne
+    {field_name: body}. La section `# Description` capture jusqu'à EOF.
+
+    Raises:
+        ValueError si un champ inconnu (non dans KNOWN_FIELDS) est rencontré
+        avant `# Description`.
+    """
+    fields = {}
+    current_field = None
+    current_lines = []
+    in_description = False
+    for line in text.split("\n"):
+        if not in_description:
+            m = re.match(r"^#\s+(\w+)\s*$", line)
+            if m:
+                field_name = m.group(1)
+                if current_field is not None:
+                    fields[current_field] = "\n".join(current_lines).strip()
+                if field_name not in KNOWN_FIELDS:
+                    raise ValueError(
+                        f"Champ inconnu '# {field_name}'. "
+                        f"Champs reconnus : {', '.join(KNOWN_FIELDS)}."
+                    )
+                current_field = field_name
+                current_lines = []
+                if field_name == "Description":
+                    in_description = True
+                continue
+        if current_field is not None:
+            current_lines.append(line)
+    if current_field is not None:
+        body = "\n".join(current_lines)
+        if current_field == "Description":
+            fields[current_field] = body.strip("\n")
+        else:
+            fields[current_field] = body.strip()
+    return fields
