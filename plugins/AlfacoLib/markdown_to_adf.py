@@ -194,3 +194,64 @@ def _split_fields(text):
         else:
             fields[current_field] = body.strip()
     return fields
+
+
+def parse_markdown_jira_template(text, defaults):
+    """Parse un template Markdown Jira en payload `{fields: {...}}` complet.
+
+    Args:
+        text: contenu Markdown du template (cf. spec pour le format).
+        defaults: dict avec `project_key`, `startdate`, `duedate`, `type`,
+            `priority`, `labels` utilisés comme fallback si le champ
+            correspondant est absent du template.
+
+    Returns:
+        dict `{"fields": {...}}` prêt à JSON-dump et POST sur l'API Jira v3
+        (description en ADF).
+
+    Raises:
+        ValueError: champ obligatoire absent, champ inconnu, project_key
+            non résolu.
+    """
+    fields_md = _split_fields(text)
+
+    summary = fields_md.get("Summary", "").strip()
+    if not summary:
+        raise ValueError("Champ `# Summary` obligatoire et non vide.")
+
+    description_md = fields_md.get("Description")
+    if description_md is None:
+        raise ValueError("Champ `# Description` obligatoire.")
+
+    project_key = fields_md.get("Project") or defaults.get("project_key", "")
+    if not project_key:
+        raise ValueError(
+            "`# Project` absent et `project_key` non défini dans la config. "
+            "Utiliser `Tools → Alfaco → Atlassian → Sélectionner projet Jira` "
+            "ou ajouter `# Project\\n<KEY>` au template."
+        )
+
+    issue_type = fields_md.get("Type") or defaults.get("type", "Task")
+    priority = fields_md.get("Priority") or defaults.get("priority", "High")
+
+    labels_csv = fields_md.get("Labels")
+    if labels_csv:
+        labels = [s.strip() for s in labels_csv.split(",") if s.strip()]
+    else:
+        labels = list(defaults.get("labels", []))
+
+    startdate = fields_md.get("Startdate") or defaults.get("startdate", "")
+    duedate = fields_md.get("Duedate") or defaults.get("duedate", "")
+
+    return {
+        "fields": {
+            "summary": summary,
+            "description": _markdown_to_adf(description_md),
+            "startdate": startdate,
+            "duedate": duedate,
+            "issuetype": {"name": issue_type, "subtask": False},
+            "project": {"key": project_key},
+            "priority": {"name": priority},
+            "labels": labels,
+        }
+    }

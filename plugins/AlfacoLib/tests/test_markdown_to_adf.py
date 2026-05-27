@@ -8,7 +8,18 @@ from AlfacoLib.markdown_to_adf import (  # noqa: E402
     _markdown_to_adf,
     _split_fields,
     KNOWN_FIELDS,
+    parse_markdown_jira_template,
 )
+
+
+_DEFAULTS = {
+    "project_key": "SDAL",
+    "startdate": "2026-05-27",
+    "duedate": "2026-06-06",
+    "type": "Task",
+    "priority": "High",
+    "labels": ["important", "urgent"],
+}
 
 
 def test_parse_inline_plain_text():
@@ -276,3 +287,78 @@ def test_split_fields_trims_field_body():
     template = "# Summary\n  foo  \n\n# Description\nbar"
     result = _split_fields(template)
     assert result["Summary"] == "foo"
+
+
+def test_parse_full_template_returns_payload_with_adf():
+    template = (
+        "# Summary\nDevelopper feature\n\n"
+        "# Description\nLe contexte.\n\n- item 1\n- item 2"
+    )
+    payload = parse_markdown_jira_template(template, _DEFAULTS)
+    fields = payload["fields"]
+    assert fields["summary"] == "Developper feature"
+    assert fields["project"] == {"key": "SDAL"}
+    assert fields["issuetype"] == {"name": "Task", "subtask": False}
+    assert fields["priority"] == {"name": "High"}
+    assert fields["labels"] == ["important", "urgent"]
+    assert fields["startdate"] == "2026-05-27"
+    assert fields["duedate"] == "2026-06-06"
+    assert fields["description"]["type"] == "doc"
+    assert len(fields["description"]["content"]) == 2
+
+
+def test_parse_template_overrides_defaults():
+    template = (
+        "# Summary\nS\n# Project\nFOO\n# Type\nBug\n# Priority\nLow\n"
+        "# Labels\na, b\n# Startdate\n2026-01-01\n# Duedate\n2026-01-10\n"
+        "# Description\nbody"
+    )
+    payload = parse_markdown_jira_template(template, _DEFAULTS)
+    fields = payload["fields"]
+    assert fields["project"] == {"key": "FOO"}
+    assert fields["issuetype"] == {"name": "Bug", "subtask": False}
+    assert fields["priority"] == {"name": "Low"}
+    assert fields["labels"] == ["a", "b"]
+    assert fields["startdate"] == "2026-01-01"
+    assert fields["duedate"] == "2026-01-10"
+
+
+def test_parse_template_summary_required():
+    template = "# Description\nbar"
+    try:
+        parse_markdown_jira_template(template, _DEFAULTS)
+    except ValueError as e:
+        assert "Summary" in str(e)
+    else:
+        assert False, "ValueError attendue"
+
+
+def test_parse_template_description_required():
+    template = "# Summary\nfoo"
+    try:
+        parse_markdown_jira_template(template, _DEFAULTS)
+    except ValueError as e:
+        assert "Description" in str(e)
+    else:
+        assert False, "ValueError attendue"
+
+
+def test_parse_template_project_required_without_default():
+    template = "# Summary\nS\n\n# Description\nbody"
+    no_project = dict(_DEFAULTS)
+    no_project["project_key"] = ""
+    try:
+        parse_markdown_jira_template(template, no_project)
+    except ValueError as e:
+        assert "Project" in str(e) or "project_key" in str(e)
+    else:
+        assert False, "ValueError attendue"
+
+
+def test_parse_template_labels_csv_split():
+    template = (
+        "# Summary\nS\n\n# Labels\nfoo,  bar ,baz  \n\n"
+        "# Description\nbody"
+    )
+    payload = parse_markdown_jira_template(template, _DEFAULTS)
+    assert payload["fields"]["labels"] == ["foo", "bar", "baz"]
