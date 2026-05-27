@@ -76,6 +76,37 @@ def call_rest(url, body, auth, headers, verb="GET", verify=True, timeout=DEFAULT
         return Response(e.code, e.read().decode("utf-8", errors="replace"))
 
 
+def wrap_description_as_adf(payload):
+    """Convertit payload["fields"]["description"] en Atlassian Document Format
+    si c'est encore une chaîne.
+
+    L'API Jira v3 refuse les descriptions plain-string et exige un document ADF
+    (`{type:"doc", version:1, content:[{type:"paragraph",content:[...]}]}`).
+    Pour permettre à l'utilisateur d'écrire du texte plat dans le snippet, on
+    enveloppe automatiquement avant POST.
+
+    Idempotent : si la description est déjà un dict (déjà ADF), absente, ou
+    si le payload n'a pas de `fields`, on retourne le payload tel quel.
+    Sépare en paragraphes sur les doubles-newlines.
+    """
+    fields = payload.get("fields")
+    if not isinstance(fields, dict):
+        return payload
+    desc = fields.get("description")
+    if not isinstance(desc, str):
+        return payload
+    paragraphs = [p for p in desc.split("\n\n") if p.strip()]
+    fields["description"] = {
+        "type": "doc",
+        "version": 1,
+        "content": [
+            {"type": "paragraph", "content": [{"type": "text", "text": p}]}
+            for p in paragraphs
+        ] or [{"type": "paragraph", "content": []}],
+    }
+    return payload
+
+
 def list_projects(url, auth, headers, verify=True, timeout=DEFAULT_TIMEOUT):
     """Recupere la liste des projets Jira sous la forme ['KEY-Nom', ...].
 

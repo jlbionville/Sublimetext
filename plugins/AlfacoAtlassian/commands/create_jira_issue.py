@@ -7,13 +7,14 @@ Migration de AppelRestApiCommand avec les corrections suivantes :
 - Headers conservés (plus écrasés en cours de route).
 - Erreurs HTTP remontées sans masquage.
 """
+import json as _json
 import time
 
 import sublime
 import sublime_plugin
 
 from AlfacoAtlassian import plugin as _atlassian_plugin
-from AlfacoLib.atlassian_client import call_rest
+from AlfacoLib.atlassian_client import call_rest, wrap_description_as_adf
 from AlfacoLib.io import save_file, build_response_path, build_payload_path
 
 
@@ -21,6 +22,24 @@ class CreateJiraIssueCommand(sublime_plugin.TextCommand):
     def run(self, edit):
         cfg = _atlassian_plugin.config
         contenu = self.view.substr(sublime.Region(0, self.view.size()))
+
+        # L'API Jira v3 exige description au format ADF. On enveloppe
+        # automatiquement les descriptions plain-string pour que le snippet
+        # reste lisible côté utilisateur. v2 accepte string telle quelle.
+        if cfg.get("api_rest_version", "2") == "3":
+            try:
+                payload = _json.loads(contenu)
+            except ValueError as e:
+                _atlassian_plugin.log.error(f"buffer non-JSON, POST avorté : {e}")
+                sublime.error_message(
+                    f"AlfacoAtlassian : le buffer n'est pas du JSON valide.\n\n{e}"
+                )
+                return
+            wrap_description_as_adf(payload)
+            contenu = _json.dumps(payload, ensure_ascii=False, indent=4)
+            _atlassian_plugin.log.info(
+                "API v3 : description plain-string convertie en ADF avant POST"
+            )
 
         url = cfg.base_url() + "issue/"
         headers = cfg.get("headers", {"Content-type": "application/json", "Accept": "application/json"})
