@@ -5,6 +5,14 @@
         "args": { "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet" }
     },
     {
+        "keys": ["ctrl+alt+m"],
+        "command": "init_markdown_jira"
+    },
+    {
+        "keys": ["alt+m"],
+        "command": "create_jira_from_markdown"
+    },
+    {
         "keys": ["f2"],
         "command": "run_macro_file",
         "args": { "file": "Packages/AlfacoAtlassian/macros/addjira.sublime-macro" }
