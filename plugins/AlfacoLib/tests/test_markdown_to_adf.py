@@ -15,3 +15,23 @@ def test_parse_inline_plain_text():
 
 def test_parse_inline_empty_string():
     assert _parse_inline("") == []
+
+
+def test_parse_inline_bold_double_asterisk():
+    assert _parse_inline("**bold**") == [
+        {"type": "text", "text": "bold", "marks": [{"type": "strong"}]}
+    ]
+
+
+def test_parse_inline_bold_double_underscore():
+    assert _parse_inline("__bold__") == [
+        {"type": "text", "text": "bold", "marks": [{"type": "strong"}]}
+    ]
+
+
+def test_parse_inline_bold_with_surrounding_text():
+    assert _parse_inline("voici **important** ici") == [
+        {"type": "text", "text": "voici "},
+        {"type": "text", "text": "important", "marks": [{"type": "strong"}]},
+        {"type": "text", "text": " ici"},
+    ]
