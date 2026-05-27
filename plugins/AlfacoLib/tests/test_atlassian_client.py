@@ -9,7 +9,12 @@ from urllib.error import HTTPError
 sys.modules.setdefault("sublime", MagicMock())
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from AlfacoLib.atlassian_client import call_rest, list_projects, _basic_auth_header  # noqa: E402
+from AlfacoLib.atlassian_client import (  # noqa: E402
+    call_rest,
+    list_projects,
+    wrap_description_as_adf,
+    _basic_auth_header,
+)
 
 
 def _fake_urlopen_cm(status, body):
@@ -125,6 +130,69 @@ def test_list_projects_returns_key_name_pairs(monkeypatch):
         headers={"Accept": "application/json"},
     )
     assert result == ["BUS-Business", "DEV-Dev"]
+
+
+def test_wrap_description_converts_string_to_adf():
+    """L'API Jira v3 exige description au format ADF (doc/paragraph/text).
+    On laisse l'utilisateur écrire du texte plat dans le snippet et on
+    enveloppe automatiquement avant POST."""
+    payload = {"fields": {"description": "hello", "summary": "x"}}
+    result = wrap_description_as_adf(payload)
+    assert result["fields"]["description"] == {
+        "type": "doc",
+        "version": 1,
+        "content": [
+            {"type": "paragraph", "content": [{"type": "text", "text": "hello"}]}
+        ],
+    }
+    assert result["fields"]["summary"] == "x"
+
+
+def test_wrap_description_keeps_existing_adf_dict_unchanged():
+    """Si l'utilisateur a déjà fourni une description ADF (dict),
+    on ne touche à rien — idempotent."""
+    adf = {
+        "type": "doc",
+        "version": 1,
+        "content": [{"type": "paragraph", "content": [{"type": "text", "text": "x"}]}],
+    }
+    payload = {"fields": {"description": adf}}
+    result = wrap_description_as_adf(payload)
+    assert result["fields"]["description"] is adf
+
+
+def test_wrap_description_noop_when_missing():
+    payload = {"fields": {"summary": "x"}}
+    result = wrap_description_as_adf(payload)
+    assert "description" not in result["fields"]
+
+
+def test_wrap_description_splits_paragraphs_on_double_newline():
+    payload = {"fields": {"description": "para 1\n\npara 2"}}
+    result = wrap_description_as_adf(payload)
+    content = result["fields"]["description"]["content"]
+    assert len(content) == 2
+    assert content[0]["content"][0]["text"] == "para 1"
+    assert content[1]["content"][0]["text"] == "para 2"
+
+
+def test_wrap_description_handles_empty_string():
+    """Une description vide donne un doc avec un paragraphe vide
+    (Jira refuse un `content` totalement vide)."""
+    payload = {"fields": {"description": ""}}
+    result = wrap_description_as_adf(payload)
+    assert result["fields"]["description"] == {
+        "type": "doc",
+        "version": 1,
+        "content": [{"type": "paragraph", "content": []}],
+    }
+
+
+def test_wrap_description_noop_when_fields_missing():
+    """Payload mal formé : pas de `fields`. Ne pas planter."""
+    payload = {"foo": "bar"}
+    result = wrap_description_as_adf(payload)
+    assert result == {"foo": "bar"}
 
 
 def test_list_projects_raises_on_http_error(monkeypatch):
