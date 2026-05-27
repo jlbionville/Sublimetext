@@ -56,3 +56,32 @@ def test_parse_inline_strong_then_em():
         {"type": "text", "text": " et "},
         {"type": "text", "text": "B", "marks": [{"type": "em"}]},
     ]
+
+
+def test_parse_inline_code():
+    assert _parse_inline("voir `git pull`") == [
+        {"type": "text", "text": "voir "},
+        {"type": "text", "text": "git pull", "marks": [{"type": "code"}]},
+    ]
+
+
+def test_parse_inline_link():
+    assert _parse_inline("[Atlassian](https://x.io)") == [
+        {
+            "type": "text",
+            "text": "Atlassian",
+            "marks": [{"type": "link", "attrs": {"href": "https://x.io"}}],
+        }
+    ]
+
+
+def test_parse_inline_link_with_surrounding_text():
+    assert _parse_inline("voir [doc](http://a) ici") == [
+        {"type": "text", "text": "voir "},
+        {
+            "type": "text",
+            "text": "doc",
+            "marks": [{"type": "link", "attrs": {"href": "http://a"}}],
+        },
+        {"type": "text", "text": " ici"},
+    ]

@@ -14,7 +14,15 @@ _INLINE_PATTERNS = [
     # le match le plus précoce, mais à position égale on garde l'ordre déclaré.
     ("strong", re.compile(r"\*\*(.+?)\*\*|__(.+?)__")),
     ("em", re.compile(r"(?<!\*)\*([^*]+?)\*(?!\*)|(?<!_)_([^_]+?)_(?!_)")),
+    ("code", re.compile(r"`([^`]+)`")),
+    ("link", re.compile(r"\[([^\]]+)\]\(([^)]+)\)")),
 ]
+
+
+def _build_mark(mark_type, match):
+    if mark_type == "link":
+        return [{"type": "link", "attrs": {"href": match.group(2)}}]
+    return [{"type": mark_type}]
 
 
 def _parse_inline(text):
@@ -36,6 +44,10 @@ def _parse_inline(text):
         if match.start() > cursor:
             nodes.append({"type": "text", "text": text[cursor:match.start()]})
         inner = next(g for g in match.groups() if g is not None)
-        nodes.append({"type": "text", "text": inner, "marks": [{"type": mark_type}]})
+        nodes.append({
+            "type": "text",
+            "text": inner,
+            "marks": _build_mark(mark_type, match),
+        })
         cursor = match.end()
     return nodes
