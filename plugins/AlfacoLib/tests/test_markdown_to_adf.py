@@ -35,3 +35,24 @@ def test_parse_inline_bold_with_surrounding_text():
         {"type": "text", "text": "important", "marks": [{"type": "strong"}]},
         {"type": "text", "text": " ici"},
     ]
+
+
+def test_parse_inline_italic_single_asterisk():
+    assert _parse_inline("*ital*") == [
+        {"type": "text", "text": "ital", "marks": [{"type": "em"}]}
+    ]
+
+
+def test_parse_inline_italic_single_underscore():
+    assert _parse_inline("_ital_") == [
+        {"type": "text", "text": "ital", "marks": [{"type": "em"}]}
+    ]
+
+
+def test_parse_inline_strong_then_em():
+    """**bold** et *italic* → 4 nodes (bold, ' et ', italic) + texte autour."""
+    assert _parse_inline("**A** et *B*") == [
+        {"type": "text", "text": "A", "marks": [{"type": "strong"}]},
+        {"type": "text", "text": " et "},
+        {"type": "text", "text": "B", "marks": [{"type": "em"}]},
+    ]

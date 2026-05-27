@@ -10,7 +10,10 @@ import re
 
 # Ordre = priorité. Le premier qui matche emporte la portion de texte.
 _INLINE_PATTERNS = [
+    # ⚠ strong AVANT em (sinon ** est matché comme deux *) ; le moteur préfère
+    # le match le plus précoce, mais à position égale on garde l'ordre déclaré.
     ("strong", re.compile(r"\*\*(.+?)\*\*|__(.+?)__")),
+    ("em", re.compile(r"(?<!\*)\*([^*]+?)\*(?!\*)|(?<!_)_([^_]+?)_(?!_)")),
 ]
 
 
