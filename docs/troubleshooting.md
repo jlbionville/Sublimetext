@@ -91,7 +91,12 @@ Sublime ne reload pas automatiquement les consommateurs d'un package modifié. L
 ### `404 Not Found` sur `/issue/`
 
 - `api_rest_version` = `"2"` ou `"3"` ?
-- API v3 attend `description` au format Atlassian Document Format. Si l'erreur persiste : passer à `"2"`.
+
+### `400 Bad Request` : « description n'est pas un contenu ADF valide » (API v3)
+
+Plus possible depuis la v0.4.0 : `create_jira_issue` enveloppe automatiquement les descriptions plain-string en Atlassian Document Format (`{type:"doc", version:1, content:[...]}`) quand `api_rest_version` vaut `"3"`. Idempotent : si le buffer contient déjà une description ADF (dict), elle est laissée intacte. Sépare en paragraphes sur les doubles-newlines.
+
+Si le 400 persiste, vérifier que `_json.loads(buffer)` réussit (le buffer doit être un JSON valide avant POST — sinon `create_jira_issue` montre un `error_message` explicite).
 
 ### `400 Bad Request` à la création
 
