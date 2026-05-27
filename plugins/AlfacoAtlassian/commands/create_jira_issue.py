@@ -24,6 +24,9 @@ class CreateJiraIssueCommand(sublime_plugin.TextCommand):
 
         url = cfg.base_url() + "issue/"
         headers = cfg.get("headers", {"Content-type": "application/json", "Accept": "application/json"})
+        _atlassian_plugin.log.info(f"POST {url} ({len(contenu)} bytes)")
+        sublime.status_message(f"AlfacoAtlassian : POST {url}…")
+
         response = call_rest(
             url,
             body=contenu,
@@ -33,7 +36,13 @@ class CreateJiraIssueCommand(sublime_plugin.TextCommand):
             verify=cfg.get("tls_verify", True),
         )
 
+        _atlassian_plugin.log.info(f"POST {url} → {response.status_code}")
+        if response.status_code >= 400:
+            _atlassian_plugin.log.error(f"POST {url} → {response.status_code} : {response.text[:300]}")
+            sublime.status_message(f"AlfacoAtlassian : POST {url} → {response.status_code} (voir buffer réponse)")
+
         new_view = self.view.window().new_file()
+        new_view.set_name(f"Jira response {response.status_code}")
         new_view.run_command("insert", {"characters": response.text})
 
         folder = cfg.get("path_json_files_folder")
@@ -43,5 +52,10 @@ class CreateJiraIssueCommand(sublime_plugin.TextCommand):
             try:
                 jira_key = response.json()["key"]
                 save_file(contenu, build_payload_path(folder, jira_key))
+                _atlassian_plugin.log.info(f"ticket créé : {jira_key} (payload + réponse sauvegardés dans {folder})")
+                sublime.status_message(f"AlfacoAtlassian : ticket {jira_key} créé")
             except (KeyError, ValueError):
-                _atlassian_plugin.log.warn("Réponse sans 'key' — payload non sauvegardé.")
+                _atlassian_plugin.log.warn(
+                    f"Réponse sans 'key' (probablement échec — code {response.status_code}) "
+                    "— payload non sauvegardé."
+                )
