@@ -114,13 +114,15 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 
 | Touches | OS | Commande |
 |---|---|---|
-| `Ctrl+J` | Linux | `insert_snippet` (jira) |
-| `F2` | Linux | macro `addjira` |
-| `Ctrl+J L` | Windows | `select_jira_project` |
-| `Super+N` | Windows | `init_json_jira` |
-| `Ctrl+Alt+W` | Windows | snippet `{"fields": ...}` |
+| `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (startdate, duedate, project_key) |
+| `Cmd+Shift+J` | macOS | `init_json_jira` (idem) |
+| `F2` | Linux | macro `addjira` — insère le snippet inline dans le buffer courant (sans dates) |
+| `Ctrl+J Ctrl+L` | Windows | `select_jira_project` (chord) |
+| `Ctrl+Alt+W` | Windows | snippet `{"fields": ...}` wrapper |
 | `Alt+J` | Windows | `create_jira_issue` |
 | `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
+
+**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`startdate`, `duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
 
 Voir aussi [`plugins/AlfacoAtlassian/Default (*).sublime-keymap`](../../plugins/AlfacoAtlassian/) pour la liste exhaustive (Linux / Windows / OSX).
 
