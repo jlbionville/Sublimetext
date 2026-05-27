@@ -22,6 +22,7 @@ _INLINE_PATTERNS = [
 _HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$")
 _BULLET_RE = re.compile(r"^[-*+]\s+(.+)$")
 _ORDERED_RE = re.compile(r"^\d+\.\s+(.+)$")
+_FENCE_RE = re.compile(r"^```(\w*)$")
 
 
 def _parse_list(lines, item_re, list_type):
@@ -74,18 +75,36 @@ def _parse_inline(text):
 
 
 def _split_blocks(md_text):
-    """Découpe en blocs : un bloc = lignes contigües séparées par une ligne vide.
-    Retourne list[list[str]] (chaque sous-liste = lignes du bloc, sans newlines).
-    """
+    """Découpe en blocs. Un code-block fence (```…```) est préservé entier
+    même s'il contient des lignes vides."""
     blocks = []
     current = []
-    for line in md_text.split("\n"):
+    lines = md_text.split("\n")
+    i = 0
+    while i < len(lines):
+        line = lines[i]
+        m = _FENCE_RE.match(line)
+        if m:
+            if current:
+                blocks.append(current)
+                current = []
+            fence_lines = [line]
+            i += 1
+            while i < len(lines) and lines[i] != "```":
+                fence_lines.append(lines[i])
+                i += 1
+            if i < len(lines):
+                fence_lines.append(lines[i])  # closing ```
+            blocks.append(fence_lines)
+            i += 1
+            continue
         if line.strip():
             current.append(line)
         else:
             if current:
                 blocks.append(current)
                 current = []
+        i += 1
     if current:
         blocks.append(current)
     return blocks
@@ -94,6 +113,17 @@ def _split_blocks(md_text):
 def _parse_block(lines):
     """Convertit un bloc (liste de lignes) en un node ADF top-level."""
     first = lines[0]
+    m_fence = _FENCE_RE.match(first)
+    if m_fence:
+        language = m_fence.group(1)
+        body_lines = lines[1:]
+        if body_lines and body_lines[-1] == "```":
+            body_lines = body_lines[:-1]
+        code = "\n".join(body_lines)
+        node = {"type": "codeBlock", "content": [{"type": "text", "text": code}]}
+        if language:
+            node["attrs"] = {"language": language}
+        return node
     if _BULLET_RE.match(first):
         return _parse_list(lines, _BULLET_RE, "bulletList")
     if _ORDERED_RE.match(first):

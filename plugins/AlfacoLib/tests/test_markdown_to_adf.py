@@ -188,3 +188,29 @@ def test_block_list_items_with_inline_marks():
         {"type": "text", "text": "bold", "marks": [{"type": "strong"}]},
         {"type": "text", "text": " item"},
     ]
+
+
+def test_block_code_block_with_language():
+    md = "```python\nprint('hi')\n```"
+    doc = _markdown_to_adf(md)
+    assert doc["content"] == [
+        {
+            "type": "codeBlock",
+            "attrs": {"language": "python"},
+            "content": [{"type": "text", "text": "print('hi')"}],
+        }
+    ]
+
+
+def test_block_code_block_without_language():
+    md = "```\nfoo\nbar\n```"
+    doc = _markdown_to_adf(md)
+    assert doc["content"][0]["type"] == "codeBlock"
+    assert "attrs" not in doc["content"][0] or doc["content"][0].get("attrs") == {}
+    assert doc["content"][0]["content"][0]["text"] == "foo\nbar"
+
+
+def test_block_code_block_preserves_indentation():
+    md = "```\n    indented\n```"
+    doc = _markdown_to_adf(md)
+    assert doc["content"][0]["content"][0]["text"] == "    indented"
