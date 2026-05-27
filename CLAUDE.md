@@ -38,7 +38,7 @@ Variable `PLUGIN=AlfacoEditing` to target a single plugin: `make link PLUGIN=Alf
 
 `AlfacoLib.atlassian_client` uses **stdlib `urllib`** (no `requests` dep). The Sublime Text 4 plugin host doesn't ship `requests`, and pulling it in via Package Control conflicts with our `make install` (manual copy) deployment.
 
-If Package Control is installed, add the 4 plugin names to `Packages/User/Package Control.sublime-settings → installed_packages`, otherwise PC removes them at startup as orphans. See `docs/installation.md` (« Cohabitation avec Package Control »).
+Package Control cohabite sans rien à faire : les `package-metadata.json` sont **exclus du déploiement** (`tools/deploy.py:EXCLUDE_DURING_DEPLOY`), donc PC ne reconnaît pas nos plugins comme « gérés par lui » et les laisse comme tout dossier manuel (comparable à `MyBookmarks`). Sans cette exclusion, PC les supprimait au démarrage comme « orphelins ». Voir `docs/installation.md`.
 
 ## Architecture
 
@@ -103,7 +103,7 @@ Atlassian client tests use `unittest.mock.patch` on `AlfacoLib.atlassian_client.
 - **Modifying `AlfacoLib` doesn't cascade-reload consumers** in Sublime. Save a `.py` in the consumer plugin to retrigger `plugin_loaded()` (which does the `importlib.reload()`).
 - **Adding a command**: don't forget to import it in `plugin.py` (otherwise Sublime won't see it) and to update **all 3 OS keymaps** if it has a binding.
 - **`Main.sublime-menu`** is auto-merged across packages by Sublime. Each plugin declares its own branch under `Tools → Alfaco → <plugin>`.
-- **Package Control orphans**: PC silently deletes packages from `Packages/` that aren't in `installed_packages`. After every fresh dev box, declare the 4 packages there.
+- **Package Control orphans** : PC ne supprime un dossier de `Packages/` au démarrage **que** s'il contient un `package-metadata.json` (marqueur « géré par PC ») et que le nom n'est pas dans `installed_packages`. Notre `tools/deploy.py` exclut explicitement `package-metadata.json` du déploiement pour cette raison — ne pas le réintroduire sans aussi documenter le patch `installed_packages`.
 
 ## Known follow-ups (not blocking)
 
