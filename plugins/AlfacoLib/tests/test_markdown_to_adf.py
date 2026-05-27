@@ -3,7 +3,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
-from AlfacoLib.markdown_to_adf import _parse_inline  # noqa: E402
+from AlfacoLib.markdown_to_adf import _parse_inline, _markdown_to_adf  # noqa: E402
 
 
 def test_parse_inline_plain_text():
@@ -84,4 +84,55 @@ def test_parse_inline_link_with_surrounding_text():
             "marks": [{"type": "link", "attrs": {"href": "http://a"}}],
         },
         {"type": "text", "text": " ici"},
+    ]
+
+
+def test_block_single_paragraph():
+    assert _markdown_to_adf("hello world") == {
+        "type": "doc",
+        "version": 1,
+        "content": [
+            {
+                "type": "paragraph",
+                "content": [{"type": "text", "text": "hello world"}],
+            }
+        ],
+    }
+
+
+def test_block_two_paragraphs_separated_by_blank_line():
+    md = "para 1\n\npara 2"
+    doc = _markdown_to_adf(md)
+    assert len(doc["content"]) == 2
+    assert doc["content"][0]["content"][0]["text"] == "para 1"
+    assert doc["content"][1]["content"][0]["text"] == "para 2"
+
+
+def test_block_heading_level_2():
+    doc = _markdown_to_adf("## Sub-section")
+    assert doc["content"] == [
+        {
+            "type": "heading",
+            "attrs": {"level": 2},
+            "content": [{"type": "text", "text": "Sub-section"}],
+        }
+    ]
+
+
+def test_block_heading_levels_1_to_6():
+    for level in range(1, 7):
+        md = "#" * level + " Titre"
+        doc = _markdown_to_adf(md)
+        assert doc["content"][0]["type"] == "heading"
+        assert doc["content"][0]["attrs"]["level"] == level
+
+
+def test_block_paragraph_joins_soft_lines():
+    """Sans ligne vide, deux lignes Markdown = un seul paragraphe (joint par espace)."""
+    doc = _markdown_to_adf("ligne 1\nligne 2")
+    assert doc["content"] == [
+        {
+            "type": "paragraph",
+            "content": [{"type": "text", "text": "ligne 1 ligne 2"}],
+        }
     ]

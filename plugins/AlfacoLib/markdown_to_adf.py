@@ -19,6 +19,9 @@ _INLINE_PATTERNS = [
 ]
 
 
+_HEADING_RE = re.compile(r"^(#{1,6})\s+(.+)$")
+
+
 def _build_mark(mark_type, match):
     if mark_type == "link":
         return [{"type": "link", "attrs": {"href": match.group(2)}}]
@@ -51,3 +54,46 @@ def _parse_inline(text):
         })
         cursor = match.end()
     return nodes
+
+
+def _split_blocks(md_text):
+    """Découpe en blocs : un bloc = lignes contigües séparées par une ligne vide.
+    Retourne list[list[str]] (chaque sous-liste = lignes du bloc, sans newlines).
+    """
+    blocks = []
+    current = []
+    for line in md_text.split("\n"):
+        if line.strip():
+            current.append(line)
+        else:
+            if current:
+                blocks.append(current)
+                current = []
+    if current:
+        blocks.append(current)
+    return blocks
+
+
+def _parse_block(lines):
+    """Convertit un bloc (liste de lignes) en un node ADF top-level."""
+    first = lines[0]
+    m = _HEADING_RE.match(first)
+    if m:
+        level = len(m.group(1))
+        return {
+            "type": "heading",
+            "attrs": {"level": level},
+            "content": _parse_inline(m.group(2)),
+        }
+    # Paragraphe : soft-join sur espace
+    text = " ".join(lines)
+    return {"type": "paragraph", "content": _parse_inline(text)}
+
+
+def _markdown_to_adf(md_text):
+    """Convertit du Markdown en document ADF top-level."""
+    blocks = _split_blocks(md_text)
+    content = [_parse_block(b) for b in blocks]
+    if not content:
+        content = [{"type": "paragraph", "content": []}]
+    return {"type": "doc", "version": 1, "content": content}
