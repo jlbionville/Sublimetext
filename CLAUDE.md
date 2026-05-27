@@ -9,7 +9,7 @@ A **monorepo** of 4 Sublime Text 4 plugins (the "Alfaco suite"), refactored from
 | Plugin | Purpose |
 |---|---|
 | `AlfacoLib` | Shared library: `Configuration`, Atlassian REST client, IO helpers, logger. **No user commands.** |
-| `AlfacoAtlassian` | Jira/Confluence REST workflows: select org/project, create issues, init JSON snippets. |
+| `AlfacoAtlassian` | Jira/Confluence REST workflows: select org/project, create issues depuis JSON ou Markdown (templates). |
 | `AlfacoEditing` | Editor utilities: text-to-table, `<start>`/`<end>` markers, date insertion, tag handling. |
 | `AlfacoCompletion` | Static Python autocompletion (demo `EventListener`). |
 
