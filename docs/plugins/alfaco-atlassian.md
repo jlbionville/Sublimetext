@@ -136,7 +136,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 | `Alt+J` | Windows | `create_jira_issue` |
 | `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
 
-**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`startdate`, `duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
+**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
 
 Voir aussi [`plugins/AlfacoAtlassian/Default (*).sublime-keymap`](../../plugins/AlfacoAtlassian/) pour la liste exhaustive (Linux / Windows / OSX).
 
