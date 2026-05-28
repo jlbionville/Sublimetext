@@ -1,0 +1,30 @@
+<snippet>
+	<content><![CDATA[
+# Summary
+${1:à compléter}
+
+# Project
+${jira_key}
+
+# Type
+Task
+
+# Priority
+High
+
+# Labels
+important, urgent
+
+# Startdate
+${startdate}
+
+# Duedate
+${duedate}
+
+# Description
+
+${2:à compléter}
+$0
+]]></content>
+	<!-- Pas de tabTrigger : insertion via la commande init_markdown_jira uniquement. -->
+</snippet>

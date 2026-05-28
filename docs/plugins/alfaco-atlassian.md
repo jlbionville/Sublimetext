@@ -110,12 +110,26 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 
 `addjira.sublime-macro` (Linux `F2`) — sélectionne la ligne, insère le snippet `jira`, ajoute `,\n` en fin de fichier.
 
+## Workflow Markdown (alternatif au JSON)
+
+Depuis la v0.5.0, un second flux permet de créer un ticket depuis un buffer Markdown au lieu d'un buffer JSON.
+
+`Ctrl+Alt+M` (Linux/Win) / `Cmd+Alt+M` (Mac) → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
+
+Champs réservés : `Summary`, `Project`, `Type`, `Priority`, `Labels`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.).
+
+Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](../../plugins/AlfacoLib/markdown_to_adf.py) (non supporté MVP : tables, images, blockquotes, listes imbriquées, strikethrough → texte brut).
+
 ## Raccourcis
 
 | Touches | OS | Commande |
 |---|---|---|
 | `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (startdate, duedate, project_key) |
 | `Cmd+Shift+J` | macOS | `init_json_jira` (idem) |
+| `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli |
+| `Cmd+Alt+M` | macOS | `init_markdown_jira` (idem) |
+| `Alt+M` | Linux / Windows | `create_jira_from_markdown` — parse + POST |
+| `Cmd+Shift+M` | macOS | `create_jira_from_markdown` (idem) |
 | `F2` | Linux | macro `addjira` — insère le snippet inline dans le buffer courant (sans dates) |
 | `Ctrl+J Ctrl+L` | Windows | `select_jira_project` (chord) |
 | `Ctrl+Alt+W` | Windows | snippet `{"fields": ...}` wrapper |
