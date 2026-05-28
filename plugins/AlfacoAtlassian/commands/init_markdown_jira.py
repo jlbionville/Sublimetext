@@ -20,7 +20,6 @@ class InitMarkdownJiraCommand(sublime_plugin.TextCommand):
             "name",
             "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet-markdown",
         )
-        args["startdate"] = today.strftime("%Y-%m-%d")
         args["duedate"] = (today + timedelta(days=10)).strftime("%Y-%m-%d")
         args["jira_key"] = _atlassian_plugin.config.get("project_key", "")
 

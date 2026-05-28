@@ -25,7 +25,6 @@ class CreateJiraFromMarkdownCommand(sublime_plugin.TextCommand):
         today = datetime.now()
         defaults = {
             "project_key": cfg.get("project_key", ""),
-            "startdate": today.strftime("%Y-%m-%d"),
             "duedate": (today + timedelta(days=10)).strftime("%Y-%m-%d"),
             "type": "Task",
             "priority": "High",
