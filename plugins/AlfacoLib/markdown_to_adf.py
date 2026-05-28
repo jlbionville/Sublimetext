@@ -152,7 +152,7 @@ def _markdown_to_adf(md_text):
 
 KNOWN_FIELDS = [
     "Summary", "Project", "Type", "Priority", "Labels",
-    "Startdate", "Duedate", "Description",
+    "Duedate", "Description",
 ]
 
 
@@ -201,9 +201,9 @@ def parse_markdown_jira_template(text, defaults):
 
     Args:
         text: contenu Markdown du template (cf. spec pour le format).
-        defaults: dict avec `project_key`, `startdate`, `duedate`, `type`,
-            `priority`, `labels` utilisés comme fallback si le champ
-            correspondant est absent du template.
+        defaults: dict avec `project_key`, `duedate`, `type`, `priority`,
+            `labels` utilisés comme fallback si le champ correspondant est
+            absent du template.
 
     Returns:
         dict `{"fields": {...}}` prêt à JSON-dump et POST sur l'API Jira v3
@@ -240,14 +240,12 @@ def parse_markdown_jira_template(text, defaults):
     else:
         labels = list(defaults.get("labels", []))
 
-    startdate = fields_md.get("Startdate") or defaults.get("startdate", "")
     duedate = fields_md.get("Duedate") or defaults.get("duedate", "")
 
     return {
         "fields": {
             "summary": summary,
             "description": _markdown_to_adf(description_md),
-            "startdate": startdate,
             "duedate": duedate,
             "issuetype": {"name": issue_type, "subtask": False},
             "project": {"key": project_key},

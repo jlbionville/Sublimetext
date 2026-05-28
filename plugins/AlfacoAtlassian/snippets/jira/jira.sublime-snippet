@@ -4,7 +4,6 @@
 "fields":{
     "summary": "${1:${selection:à compléter}}",
     "description": "${2:${description:à compléter}}",
-    "startdate": "${startdate}",
     "duedate": "${duedate}",
     "issuetype":
     {

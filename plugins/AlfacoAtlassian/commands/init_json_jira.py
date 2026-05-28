@@ -14,7 +14,6 @@ class InitJsonJiraCommand(sublime_plugin.TextCommand):
         new_view.set_name("Init new Jira")
         new_view.set_scratch(True)
         today = datetime.now()
-        args["startdate"] = today.strftime("%Y-%m-%d")
         args["duedate"] = (today + timedelta(days=10)).strftime("%Y-%m-%d")
         args["selection"] = current_line.strip()
         args["jira_key"] = _atlassian_plugin.config.get("project_key", "")

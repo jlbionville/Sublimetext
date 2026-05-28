@@ -14,7 +14,6 @@ from AlfacoLib.markdown_to_adf import (  # noqa: E402
 
 _DEFAULTS = {
     "project_key": "SDAL",
-    "startdate": "2026-05-27",
     "duedate": "2026-06-06",
     "type": "Task",
     "priority": "High",
@@ -236,7 +235,7 @@ def test_known_fields_constants():
     """Les 8 champs réservés du template."""
     assert KNOWN_FIELDS == [
         "Summary", "Project", "Type", "Priority", "Labels",
-        "Startdate", "Duedate", "Description",
+        "Duedate", "Description",
     ]
 
 
@@ -253,7 +252,6 @@ def test_split_fields_all_fields():
         "# Type\nTask\n\n"
         "# Priority\nHigh\n\n"
         "# Labels\nimportant, urgent\n\n"
-        "# Startdate\n2026-05-27\n\n"
         "# Duedate\n2026-06-06\n\n"
         "# Description\nbody"
     )
@@ -301,8 +299,8 @@ def test_parse_full_template_returns_payload_with_adf():
     assert fields["issuetype"] == {"name": "Task", "subtask": False}
     assert fields["priority"] == {"name": "High"}
     assert fields["labels"] == ["important", "urgent"]
-    assert fields["startdate"] == "2026-05-27"
     assert fields["duedate"] == "2026-06-06"
+    assert "startdate" not in fields
     assert fields["description"]["type"] == "doc"
     assert len(fields["description"]["content"]) == 2
 
@@ -310,7 +308,7 @@ def test_parse_full_template_returns_payload_with_adf():
 def test_parse_template_overrides_defaults():
     template = (
         "# Summary\nS\n# Project\nFOO\n# Type\nBug\n# Priority\nLow\n"
-        "# Labels\na, b\n# Startdate\n2026-01-01\n# Duedate\n2026-01-10\n"
+        "# Labels\na, b\n# Duedate\n2026-01-10\n"
         "# Description\nbody"
     )
     payload = parse_markdown_jira_template(template, _DEFAULTS)
@@ -319,7 +317,6 @@ def test_parse_template_overrides_defaults():
     assert fields["issuetype"] == {"name": "Bug", "subtask": False}
     assert fields["priority"] == {"name": "Low"}
     assert fields["labels"] == ["a", "b"]
-    assert fields["startdate"] == "2026-01-01"
     assert fields["duedate"] == "2026-01-10"
 
 
