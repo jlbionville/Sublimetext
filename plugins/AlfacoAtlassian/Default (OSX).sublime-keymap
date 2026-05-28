@@ -3,5 +3,13 @@
         "keys": ["super+shift+j"],
         "command": "init_json_jira",
         "args": { "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet" }
+    },
+    {
+        "keys": ["super+alt+m"],
+        "command": "init_markdown_jira"
+    },
+    {
+        "keys": ["super+shift+m"],
+        "command": "create_jira_from_markdown"
     }
 ]

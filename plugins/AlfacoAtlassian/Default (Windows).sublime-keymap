@@ -7,6 +7,14 @@
         "args": { "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet" }
     },
     {
+        "keys": ["ctrl+alt+m"],
+        "command": "init_markdown_jira"
+    },
+    {
+        "keys": ["alt+m"],
+        "command": "create_jira_from_markdown"
+    },
+    {
         "keys": ["ctrl+alt+w"],
         "command": "insert_snippet",
         "args": { "contents": "{\"fields\":${0:$SELECTION}}" }
