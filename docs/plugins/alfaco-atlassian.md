@@ -116,7 +116,7 @@ Depuis la v0.5.0, un second flux permet de créer un ticket depuis un buffer Mar
 
 `Ctrl+Alt+M` (Linux/Win) / `Cmd+Alt+M` (Mac) → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
 
-Champs réservés : `Summary`, `Project`, `Type`, `Priority`, `Labels`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.).
+Champs réservés : `Summary`, `Project`, `Type`, `Priority`, `Labels`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.).
 
 Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](../../plugins/AlfacoLib/markdown_to_adf.py) (non supporté MVP : tables, images, blockquotes, listes imbriquées, strikethrough → texte brut).
 
@@ -124,7 +124,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 
 | Touches | OS | Commande |
 |---|---|---|
-| `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (startdate, duedate, project_key) |
+| `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (duedate, project_key) |
 | `Cmd+Shift+J` | macOS | `init_json_jira` (idem) |
 | `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli |
 | `Cmd+Alt+M` | macOS | `init_markdown_jira` (idem) |

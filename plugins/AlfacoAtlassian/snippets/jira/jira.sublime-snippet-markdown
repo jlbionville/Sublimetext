@@ -15,9 +15,6 @@ High
 # Labels
 important, urgent
 
-# Startdate
-${startdate}
-
 # Duedate
 ${duedate}
 
