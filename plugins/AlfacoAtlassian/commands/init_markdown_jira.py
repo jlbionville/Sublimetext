@@ -18,7 +18,7 @@ class InitMarkdownJiraCommand(sublime_plugin.TextCommand):
         today = datetime.now()
         args.setdefault(
             "name",
-            "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet-markdown",
+            "Packages/AlfacoAtlassian/snippets/jira/jira-markdown.sublime-snippet",
         )
         args["organisation"] = _atlassian_plugin.config.get("default_organisation", "")
         args["startdate"] = today.strftime("%Y-%m-%d")
