@@ -18,6 +18,7 @@ _DEFAULTS = {
     "type": "Task",
     "priority": "High",
     "labels": ["important", "urgent"],
+    "startdate_field": "customfield_10015",
 }
 
 
@@ -378,3 +379,34 @@ def test_parse_organisation_absent_is_empty_string():
     template = "# Summary\nS\n\n# Description\nbody"
     payload, meta = parse_markdown_jira_template(template, _DEFAULTS)
     assert meta["organisation"] == ""
+
+
+def test_parse_startdate_present_uses_configured_custom_field():
+    template = (
+        "# Summary\nS\n\n# Startdate\n2026-05-29\n\n# Description\nbody"
+    )
+    payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
+    assert payload["fields"]["customfield_10015"] == "2026-05-29"
+
+
+def test_parse_startdate_absent_field_omitted():
+    template = "# Summary\nS\n\n# Description\nbody"
+    payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
+    assert "customfield_10015" not in payload["fields"]
+    assert "startdate" not in payload["fields"]
+
+
+def test_parse_startdate_present_but_field_disabled_is_omitted():
+    template = (
+        "# Summary\nS\n\n# Startdate\n2026-05-29\n\n# Description\nbody"
+    )
+    defaults_no_field = dict(_DEFAULTS)
+    defaults_no_field["startdate_field"] = ""
+    payload, _ = parse_markdown_jira_template(template, defaults_no_field)
+    assert "customfield_10015" not in payload["fields"]
+
+
+def test_parse_startdate_empty_value_omitted():
+    template = "# Summary\nS\n\n# Startdate\n\n\n# Description\nbody"
+    payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
+    assert "customfield_10015" not in payload["fields"]

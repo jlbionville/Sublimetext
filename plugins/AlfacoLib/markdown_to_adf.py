@@ -252,6 +252,11 @@ def parse_markdown_jira_template(text, defaults):
         "labels": labels,
     }
 
+    startdate = (fields_md.get("Startdate") or "").strip()
+    startdate_field = defaults.get("startdate_field", "")
+    if startdate and startdate_field:
+        fields[startdate_field] = startdate
+
     organisation = (fields_md.get("Organisation") or "").strip()
 
     return {"fields": fields}, {"organisation": organisation}
