@@ -10,6 +10,8 @@ Le détail par plugin est dans [plugins/](plugins/). Cette page consolide les wo
 4. **Éditer le JSON** dans le buffer.
 5. **POSTer** — palette `create_jira_issue` (ou `Alt+J` Windows). La réponse s'affiche dans un nouveau buffer, le payload est sauvegardé sous `<path_json_files_folder>/<KEY>.json`.
 
+Le flux Markdown (`init_markdown_jira` / `create_jira_from_markdown`) accepte en plus `# Organisation` (route le POST vers un autre site Atlassian, prioritaire sur `default_organisation`) et `# Startdate` (date du jour pré-remplie, optionnelle, envoyée sur `customfield_10015` via le réglage `jira_startdate_field`).
+
 ## Workflow d'édition (AlfacoEditing)
 
 Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
