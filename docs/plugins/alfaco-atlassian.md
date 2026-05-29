@@ -127,7 +127,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 |---|---|---|
 | `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (duedate, project_key) |
 | `Cmd+Shift+J` | macOS | `init_json_jira` (idem) |
-| `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli |
+| `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli (⚠️ collision Windows avec AlfacoEditing — voir [troubleshooting.md](../troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)) |
 | `Cmd+Alt+M` | macOS | `init_markdown_jira` (idem) |
 | `Alt+M` | Linux / Windows | `create_jira_from_markdown` — parse + POST |
 | `Cmd+Shift+M` | macOS | `create_jira_from_markdown` (idem) |
@@ -137,7 +137,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 | `Alt+J` | Windows | `create_jira_issue` |
 | `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
 
-**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`startdate`, `duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
+**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
 
 Voir aussi [`plugins/AlfacoAtlassian/Default (*).sublime-keymap`](../../plugins/AlfacoAtlassian/) pour la liste exhaustive (Linux / Windows / OSX).
 
