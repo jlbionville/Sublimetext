@@ -7,13 +7,17 @@ from tools.deploy import install, uninstall, status, init_config  # noqa: E402
 
 
 def _make_plugin(monorepo: Path, name: str, with_template: bool = False,
-                 with_metadata: bool = False) -> Path:
+                 with_metadata: bool = False, with_settings: bool = False) -> Path:
     plugin = monorepo / "plugins" / name
     (plugin / "tests").mkdir(parents=True)
     (plugin / "plugin.py").write_text("# fake plugin\n")
     (plugin / "tests" / "test_x.py").write_text("def test_x(): pass\n")
     (plugin / "__pycache__").mkdir()
     (plugin / "__pycache__" / "x.pyc").write_text("")
+    if with_settings:
+        (plugin / f"{name.lower()}.sublime-settings").write_text(
+            '{ "default_key": "default_value" }\n'
+        )
     if with_template:
         tpl = plugin / "templates" / "User"
         tpl.mkdir(parents=True)
@@ -40,6 +44,38 @@ def test_install_excludes_package_metadata_json(tmp_path):
     install(monorepo, packages)
     assert (packages / "AlfacoLib" / "plugin.py").exists()
     assert not (packages / "AlfacoLib" / "package-metadata.json").exists()
+
+
+def test_install_excludes_package_settings(tmp_path):
+    """Le fichier de settings du package n'est pas déployé : la config vit
+    dans <Packages>/User/ (posé par init-config), jamais écrasé par install."""
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoAtlassian", with_settings=True)
+    packages = tmp_path / "Packages"
+    packages.mkdir()
+
+    install(monorepo, packages)
+    assert (packages / "AlfacoAtlassian" / "plugin.py").exists()
+    assert not (packages / "AlfacoAtlassian" / "alfacoatlassian.sublime-settings").exists()
+
+
+def test_install_seeds_user_config_skip_if_exists(tmp_path):
+    """install seed <Packages>/User/ depuis le template (skip-if-exists) :
+    1er install crée le fichier User, les suivants ne l'écrasent jamais."""
+    monorepo = tmp_path / "repo"
+    (monorepo / "plugins").mkdir(parents=True)
+    _make_plugin(monorepo, "AlfacoAtlassian", with_template=True)
+    packages = tmp_path / "Packages"
+    packages.mkdir()
+
+    install(monorepo, packages)
+    user_file = packages / "User" / "alfacoatlassian.sublime-settings"
+    assert user_file.exists()
+
+    user_file.write_text('{ "jira_login": "me@x.io" }\n')
+    install(monorepo, packages)
+    assert "me@x.io" in user_file.read_text()
 
 
 def test_install_copies_without_excluded_dirs(tmp_path):
