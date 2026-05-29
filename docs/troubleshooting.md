@@ -80,20 +80,11 @@ Sublime ne reload pas automatiquement les consommateurs d'un package modifié. L
 
 **Fix manuel** : sauvegarder un fichier `.py` du plugin consommateur (par exemple `plugins/AlfacoAtlassian/plugin.py`) après modif de `AlfacoLib/*.py`.
 
-### Conflit de raccourci `Ctrl+Alt+M` entre plugins (Windows)
+### Conflit de raccourci `Ctrl+Alt+M` entre plugins (Windows) — résolu
 
-Sur **Windows uniquement**, `Ctrl+Alt+M` est lié dans deux packages à la fois :
+**Résolu** : `init_markdown_jira` (AlfacoAtlassian) est passé sur `Ctrl+M` (contexte Markdown uniquement), donc `Ctrl+Alt+M` n'est plus utilisé que par `modify_setting_from_selection` (AlfacoEditing). Plus de collision.
 
-| Package | Commande | Keymap |
-|---|---|---|
-| AlfacoAtlassian | `init_markdown_jira` | `Default (Windows).sublime-keymap` |
-| AlfacoEditing | `modify_setting_from_selection` | `Default (Windows).sublime-keymap` |
-
-Sublime fusionne les keymaps de tous les packages et, pour une même touche sans contexte distinctif, **le package chargé en dernier l'emporte**. L'ordre de chargement étant alphabétique, `AlfacoEditing` passe après `AlfacoAtlassian` : c'est donc `modify_setting_from_selection` qui gagne et `init_markdown_jira` qui est masqué sur Windows.
-
-Sur **Linux** il n'y a pas de collision (AlfacoEditing ne mappe pas `Ctrl+Alt+M`) et sur **macOS** AlfacoAtlassian utilise `Cmd+Alt+M` (`super+alt+m`).
-
-**Contournement** : rebinder l'une des deux commandes (par exemple dans `Packages/User/Default (Windows).sublime-keymap`, qui prime sur tous les packages), ou modifier l'un des deux keymaps de package. Vérifier l'effectif via `Preferences → Key Bindings` (la colonne de droite montre la liaison résolue).
+La leçon générale reste valable : les keymaps de tous les packages sont fusionnées et, pour une même touche **sans contexte distinctif**, le package chargé en dernier (ordre alphabétique) l'emporte. Pour cohabiter sur une même touche, ajouter un `context` (comme le selector Markdown de `Ctrl+M`) ou choisir des touches distinctes. Vérifier la liaison résolue via `Preferences → Key Bindings`.
 
 ## Diagnostic des erreurs Atlassian
 

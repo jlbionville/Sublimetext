@@ -34,7 +34,7 @@ Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
 
 ### AlfacoAtlassian
 
-`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `set_jira_project_in_snippet`, `open_jira_projects`.
+`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `insert_current_project`, `insert_current_organisation`, `set_jira_project_in_snippet`, `open_jira_projects`.
 
 ### AlfacoEditing
 
