@@ -5,11 +5,16 @@
         "args": { "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet" }
     },
     {
-        "keys": ["super+alt+m"],
-        "command": "init_markdown_jira"
+        "keys": ["super+m"],
+        "command": "init_markdown_jira",
+        "context": [{ "key": "selector", "operator": "equal", "operand": "text.html.markdown" }]
     },
     {
         "keys": ["super+shift+m"],
         "command": "create_jira_from_markdown"
-    }
+    },
+    { "keys": ["super+j", "super+o"], "command": "select_organisation" },
+    { "keys": ["super+j", "super+p"], "command": "select_jira_project" },
+    { "keys": ["super+j", "o"], "command": "insert_current_organisation" },
+    { "keys": ["super+j", "p"], "command": "insert_current_project" }
 ]

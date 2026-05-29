@@ -7,7 +7,9 @@
             { "caption": "créer ticket Jira (depuis Markdown)", "command": "create_jira_from_markdown" },
             { "caption": "init Markdown Jira", "command": "init_markdown_jira" },
             { "caption": "sélectionner projet Jira", "command": "select_jira_project" },
-            { "caption": "sélectionner organisation", "command": "select_organisation" }
+            { "caption": "sélectionner organisation", "command": "select_organisation" },
+            { "caption": "insérer organisation courante", "command": "insert_current_organisation" },
+            { "caption": "insérer projet courant", "command": "insert_current_project" }
         ]
     }
 ]
