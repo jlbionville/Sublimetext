@@ -35,6 +35,14 @@
     // derrière un proxy d'entreprise qui ré-émet les certificats.
     "tls_verify": true,
 
+    // === Champ Start date ===
+
+    // Custom field Jira utilisé pour la date de début (Start date).
+    // Cet id varie selon l'instance Jira ; sur l'instance de référence
+    // c'est `customfield_10015`. Laisser vide ("") pour ne JAMAIS envoyer
+    // Start date (le champ du template Markdown sera alors ignoré).
+    "jira_startdate_field": "customfield_10015",
+
     // === Persistance des payloads / réponses ===
 
     // Dossier où `create_jira_issue` sauvegarde la réponse HTTP et le

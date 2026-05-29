@@ -68,3 +68,20 @@ def test_base_url_version_override():
     cfg = Configuration([])
     cfg.set("default_organisation", "acme")
     assert cfg.base_url(version="2") == "https://acme.atlassian.net/rest/api/2/"
+
+
+def test_base_url_org_override_takes_precedence():
+    cfg = Configuration([])
+    cfg.set("default_organisation", "default-site")
+    cfg.set("api_rest_version", "3")
+    assert cfg.base_url(org="autre-site") == "https://autre-site.atlassian.net/rest/api/3/"
+    # pas d'effet de bord : la config n'est pas mutée
+    assert cfg.base_url() == "https://default-site.atlassian.net/rest/api/3/"
+
+
+def test_base_url_org_empty_falls_back_to_default():
+    cfg = Configuration([])
+    cfg.set("default_organisation", "default-site")
+    cfg.set("api_rest_version", "2")
+    assert cfg.base_url(org="") == "https://default-site.atlassian.net/rest/api/2/"
+    assert cfg.base_url(org=None) == "https://default-site.atlassian.net/rest/api/2/"

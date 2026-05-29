@@ -10,6 +10,14 @@ Le détail par plugin est dans [plugins/](plugins/). Cette page consolide les wo
 4. **Éditer le JSON** dans le buffer.
 5. **POSTer** — palette `create_jira_issue` (ou `Alt+J` Windows). La réponse s'affiche dans un nouveau buffer, le payload est sauvegardé sous `<path_json_files_folder>/<KEY>.json`.
 
+### Variante Markdown
+
+Au lieu du buffer JSON (étapes 3-5), un flux Markdown est disponible (détails dans [plugins/alfaco-atlassian.md](plugins/alfaco-atlassian.md#workflow-markdown-alternatif-au-json)) :
+
+1. **Initialiser** — palette `init_markdown_jira` (ou `Ctrl+Alt+M` Linux / `Cmd+Alt+M` macOS ; ⚠️ collision Windows, voir [troubleshooting.md](troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)). Ouvre un scratch Markdown avec template pré-rempli (`project_key` courant + `duedate` à J+10).
+2. **Rédiger** — corps en Markdown (headings, listes, **emphase**, `code`, liens, blocs de code). Champs réservés via `# Summary`, `# Organisation` (site Atlassian, prioritaire sur `default_organisation`), `# Project`, `# Type`, `# Priority`, `# Labels`, `# Startdate` (date du jour, optionnelle → `customfield_10015`), `# Duedate`, `# Description`.
+3. **POSTer** — palette `create_jira_from_markdown` (ou `Alt+M` Linux/Windows / `Cmd+Shift+M` macOS). Le corps est converti en ADF puis envoyé.
+
 ## Workflow d'édition (AlfacoEditing)
 
 Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
@@ -26,7 +34,7 @@ Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
 
 ### AlfacoAtlassian
 
-`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `set_jira_project_in_snippet`, `open_jira_projects`.
+`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `set_jira_project_in_snippet`, `open_jira_projects`.
 
 ### AlfacoEditing
 
@@ -44,11 +52,13 @@ Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
 - Sélectionner projet Jira
 - Créer ticket Jira
 - Initialiser JSON Jira
+- Initialiser Markdown Jira
+- Créer ticket Jira (depuis Markdown)
 - Open Jira projects (debug)
 
 ### Clic droit éditeur
 
-- AlfacoAtlassian : format JSON, créer ticket Jira, sélectionner projet/organisation.
+- AlfacoAtlassian : format JSON, créer ticket Jira (JSON et depuis Markdown), init Markdown Jira, sélectionner projet/organisation.
 
 ### Clic droit sidebar
 

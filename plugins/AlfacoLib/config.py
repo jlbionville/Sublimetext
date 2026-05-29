@@ -36,7 +36,7 @@ class Configuration:
     def jira_auth(self):
         return (self.get("jira_login"), self.get("jira_password"))
 
-    def base_url(self, version=None):
-        org = self.get("default_organisation")
+    def base_url(self, version=None, org=None):
+        organisation = org if org else self.get("default_organisation")
         ver = version if version is not None else self.get("api_rest_version", "2")
-        return f"https://{org}.atlassian.net/rest/api/{ver}/"
+        return f"https://{organisation}.atlassian.net/rest/api/{ver}/"

@@ -3,6 +3,9 @@
 # Summary
 ${1:à compléter}
 
+# Organisation
+${organisation}
+
 # Project
 ${jira_key}
 
@@ -14,6 +17,9 @@ High
 
 # Labels
 important, urgent
+
+# Startdate
+${startdate}
 
 # Duedate
 ${duedate}

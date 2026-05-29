@@ -56,6 +56,7 @@ Ensuite : `Preferences → Package Settings → AlfacoAtlassian → Settings –
 | `jira_login` | string | `""` | Email du compte Atlassian. |
 | `jira_password` | string | `""` | Token API Atlassian. |
 | `default_organisation` | string | `""` | `url_key` initial. Modifié en runtime par `select_organisation`. |
+| `jira_startdate_field` | string | `"customfield_10015"` | Custom field Jira pour Start date (varie selon l'instance ; vide = désactivé). |
 | `api_rest_version` | string | `"3"` | `"2"` ou `"3"`. v3 attend descriptions au format ADF. |
 | `tls_verify` | bool | `true` | Vérification du certificat TLS. |
 | `path_json_files_folder` | string | `""` | Dossier de sauvegarde — vide = pas de sauvegarde. |
@@ -116,7 +117,7 @@ Depuis la v0.5.0, un second flux permet de créer un ticket depuis un buffer Mar
 
 `Ctrl+Alt+M` (Linux/Win) / `Cmd+Alt+M` (Mac) → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
 
-Champs réservés : `Summary`, `Project`, `Type`, `Priority`, `Labels`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.).
+Champs réservés : `Summary`, `Organisation`, `Project`, `Type`, `Priority`, `Labels`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.). `# Organisation` (= `url_key` du site Atlassian) ne fait pas partie du payload : il **route** le POST et l'emporte sur `default_organisation`. `# Startdate` (date du jour pré-remplie, optionnelle) est envoyée sur le custom field `jira_startdate_field` (défaut `customfield_10015`) ; vide ou réglage désactivé → champ non envoyé.
 
 Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](../../plugins/AlfacoLib/markdown_to_adf.py) (non supporté MVP : tables, images, blockquotes, listes imbriquées, strikethrough → texte brut).
 
@@ -126,7 +127,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 |---|---|---|
 | `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (duedate, project_key) |
 | `Cmd+Shift+J` | macOS | `init_json_jira` (idem) |
-| `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli |
+| `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli (⚠️ collision Windows avec AlfacoEditing — voir [troubleshooting.md](../troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)) |
 | `Cmd+Alt+M` | macOS | `init_markdown_jira` (idem) |
 | `Alt+M` | Linux / Windows | `create_jira_from_markdown` — parse + POST |
 | `Cmd+Shift+M` | macOS | `create_jira_from_markdown` (idem) |
@@ -136,7 +137,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 | `Alt+J` | Windows | `create_jira_issue` |
 | `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
 
-**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`startdate`, `duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
+**Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
 
 Voir aussi [`plugins/AlfacoAtlassian/Default (*).sublime-keymap`](../../plugins/AlfacoAtlassian/) pour la liste exhaustive (Linux / Windows / OSX).
 
