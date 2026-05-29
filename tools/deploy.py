@@ -119,6 +119,10 @@ def _filter_for_deploy(src: Path, name: str) -> bool:
         return False
     if name.endswith(".pyc"):
         return False
+    # Les settings du package ne sont jamais déployés : la config utilisateur
+    # vit dans <Packages>/User/ (posé par init-config), jamais écrasé par install.
+    if name.endswith(".sublime-settings"):
+        return False
     return True
 
 
@@ -167,6 +171,10 @@ def install(monorepo_root: Path, packages_dir: Path, only: str | None = None) ->
             continue
         _copy_plugin(plugin, packages_dir / plugin.name)
         done.append(plugin.name)
+    # Seed la config User/ depuis les templates (skip-if-exists : ne touche
+    # jamais un fichier déjà présent). Comme les settings du package ne sont
+    # plus déployés, c'est ici que l'utilisateur récupère ses défauts au 1er install.
+    init_config(monorepo_root, packages_dir, only=only)
     return done
 
 

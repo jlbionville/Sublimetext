@@ -8,6 +8,10 @@ Chaque plugin lit ses propres `.sublime-settings`. La résolution est gérée pa
 2. **Settings layers** passés au constructeur, dans l'ordre.
 3. **Default** explicite passé à `get(key, default=...)`.
 
+## Où vit la config
+
+Le fichier de settings **du package** (`plugins/<X>/alfaco-<X>.sublime-settings`) n'est **pas déployé** (`tools/deploy.py` l'exclut, comme `tests/`/`templates/`). Toute la config — défauts inclus — vit dans **`<Packages>/User/<setting>.sublime-settings`**, que `make install` **ne touche jamais**. C'est pourquoi `make install` lance aussi `init-config` en skip-if-exists : ton fichier `User/` est créé au 1er install puis jamais écrasé. Conséquence : sans fichier `User/`, le catalogue d'organisations est vide et `select_organisation` affiche son message « déclarez vos organisations » (pas de crash).
+
 ## Initialisation depuis les templates
 
 Chaque plugin qui a une config livre un template sous `plugins/<X>/templates/User/<setting>.sublime-settings`. La cible Makefile `init-config` les copie vers `<Packages>/User/` :
