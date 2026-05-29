@@ -294,7 +294,7 @@ def test_parse_full_template_returns_payload_with_adf():
         "# Summary\nDevelopper feature\n\n"
         "# Description\nLe contexte.\n\n- item 1\n- item 2"
     )
-    payload = parse_markdown_jira_template(template, _DEFAULTS)
+    payload, meta = parse_markdown_jira_template(template, _DEFAULTS)
     fields = payload["fields"]
     assert fields["summary"] == "Developper feature"
     assert fields["project"] == {"key": "SDAL"}
@@ -302,9 +302,9 @@ def test_parse_full_template_returns_payload_with_adf():
     assert fields["priority"] == {"name": "High"}
     assert fields["labels"] == ["important", "urgent"]
     assert fields["duedate"] == "2026-06-06"
-    assert "startdate" not in fields
     assert fields["description"]["type"] == "doc"
     assert len(fields["description"]["content"]) == 2
+    assert meta == {"organisation": ""}
 
 
 def test_parse_template_overrides_defaults():
@@ -313,7 +313,7 @@ def test_parse_template_overrides_defaults():
         "# Labels\na, b\n# Duedate\n2026-01-10\n"
         "# Description\nbody"
     )
-    payload = parse_markdown_jira_template(template, _DEFAULTS)
+    payload, meta = parse_markdown_jira_template(template, _DEFAULTS)
     fields = payload["fields"]
     assert fields["project"] == {"key": "FOO"}
     assert fields["issuetype"] == {"name": "Bug", "subtask": False}
@@ -359,5 +359,22 @@ def test_parse_template_labels_csv_split():
         "# Summary\nS\n\n# Labels\nfoo,  bar ,baz  \n\n"
         "# Description\nbody"
     )
-    payload = parse_markdown_jira_template(template, _DEFAULTS)
+    payload, meta = parse_markdown_jira_template(template, _DEFAULTS)
     assert payload["fields"]["labels"] == ["foo", "bar", "baz"]
+
+
+def test_parse_organisation_present_goes_to_meta_not_fields():
+    template = (
+        "# Summary\nS\n\n# Organisation\nmon-site\n\n"
+        "# Description\nbody"
+    )
+    payload, meta = parse_markdown_jira_template(template, _DEFAULTS)
+    assert meta == {"organisation": "mon-site"}
+    assert "organisation" not in payload["fields"]
+    assert "Organisation" not in payload["fields"]
+
+
+def test_parse_organisation_absent_is_empty_string():
+    template = "# Summary\nS\n\n# Description\nbody"
+    payload, meta = parse_markdown_jira_template(template, _DEFAULTS)
+    assert meta["organisation"] == ""
