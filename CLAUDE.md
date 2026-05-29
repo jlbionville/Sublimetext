@@ -32,6 +32,8 @@ make new-plugin NAME=X # scaffold plugins/AlfacoX/
 
 User config templates live under `plugins/<X>/templates/User/<setting>.sublime-settings` (excluded from deployment). They contain placeholders + JSONC comments — never real secrets.
 
+**Settings deployment**: the package default `plugins/<X>/alfaco-<X>.sublime-settings` is **not deployed** (`tools/deploy.py` excludes `*.sublime-settings`). All config lives in `<Packages>/User/`, which `make install` never overwrites — and `install` runs `init-config` (skip-if-exists) so the User file is seeded on first install. Without a `User/` file, `atlassian.organisations` is empty (graceful error), so `make init-config` is the required config step.
+
 Variable `PLUGIN=AlfacoEditing` to target a single plugin: `make link PLUGIN=AlfacoEditing`.
 
 `make link` detects WSL and forces `make install` (NTFS doesn't follow WSL symlinks). The Windows username is resolved via `cmd.exe` (handles the case where `$USER=ubuntu` but Windows user is `Jean`). Override with `SUBLIME_PACKAGES_DIR` if needed. See `docs/deployment.md`.

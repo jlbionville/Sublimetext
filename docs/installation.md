@@ -32,13 +32,15 @@ make install
 
 ## Première configuration
 
+> Les settings **du package** ne sont pas déployés : la config vit uniquement dans `<Packages>/User/`, que `make install` ne touche jamais (il y lance `init-config` en skip-if-exists). Tu ne perds donc plus ta config en réinstallant.
+
 1. Initialiser les fichiers `User/` depuis les templates versionnés :
 
    ```bash
    make init-config
    ```
 
-   Cette cible copie `plugins/<X>/templates/User/*.sublime-settings` vers `<Packages>/User/`. Elle **ne remplace pas** un fichier existant — relancer avec `make init-config-force` si besoin.
+   Cette cible copie `plugins/<X>/templates/User/*.sublime-settings` vers `<Packages>/User/`. Elle **ne remplace pas** un fichier existant — relancer avec `make init-config-force` si besoin. (`make install` fait déjà ce seed automatiquement au 1er install.)
 
 2. Ouvrir `Preferences → Package Settings → AlfacoAtlassian → Settings – User` et remplir les valeurs (le template contient des placeholders + commentaires inline) :
 
