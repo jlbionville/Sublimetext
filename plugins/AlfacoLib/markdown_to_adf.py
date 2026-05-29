@@ -151,8 +151,8 @@ def _markdown_to_adf(md_text):
 
 
 KNOWN_FIELDS = [
-    "Summary", "Project", "Type", "Priority", "Labels",
-    "Duedate", "Description",
+    "Summary", "Organisation", "Project", "Type", "Priority", "Labels",
+    "Startdate", "Duedate", "Description",
 ]
 
 
@@ -197,17 +197,17 @@ def _split_fields(text):
 
 
 def parse_markdown_jira_template(text, defaults):
-    """Parse un template Markdown Jira en payload `{fields: {...}}` complet.
+    """Parse un template Markdown Jira en `(payload, meta)`.
 
     Args:
         text: contenu Markdown du template (cf. spec pour le format).
         defaults: dict avec `project_key`, `duedate`, `type`, `priority`,
-            `labels` utilisés comme fallback si le champ correspondant est
-            absent du template.
+            `labels`, `startdate_field` utilisés comme fallback / config.
 
     Returns:
-        dict `{"fields": {...}}` prêt à JSON-dump et POST sur l'API Jira v3
-        (description en ADF).
+        Tuple `(payload, meta)` :
+            payload: `{"fields": {...}}` prêt à JSON-dump et POST (API v3, ADF).
+            meta: `{"organisation": "<url_key>" | ""}` — routage, hors payload.
 
     Raises:
         ValueError: champ obligatoire absent, champ inconnu, project_key
@@ -242,14 +242,21 @@ def parse_markdown_jira_template(text, defaults):
 
     duedate = fields_md.get("Duedate") or defaults.get("duedate", "")
 
-    return {
-        "fields": {
-            "summary": summary,
-            "description": _markdown_to_adf(description_md),
-            "duedate": duedate,
-            "issuetype": {"name": issue_type, "subtask": False},
-            "project": {"key": project_key},
-            "priority": {"name": priority},
-            "labels": labels,
-        }
+    fields = {
+        "summary": summary,
+        "description": _markdown_to_adf(description_md),
+        "duedate": duedate,
+        "issuetype": {"name": issue_type, "subtask": False},
+        "project": {"key": project_key},
+        "priority": {"name": priority},
+        "labels": labels,
     }
+
+    startdate = (fields_md.get("Startdate") or "").strip()
+    startdate_field = defaults.get("startdate_field", "")
+    if startdate and startdate_field:
+        fields[startdate_field] = startdate
+
+    organisation = (fields_md.get("Organisation") or "").strip()
+
+    return {"fields": fields}, {"organisation": organisation}

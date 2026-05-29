@@ -5,6 +5,7 @@
     "jira_login": "",
     "jira_password": "",
     "default_organisation": "",
+    "jira_startdate_field": "customfield_10015",
     "atlassian": {
         "organisations": {
             "business projects": { "url_key": "business-projects", "jira": true, "confluence": true }

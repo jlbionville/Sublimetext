@@ -29,17 +29,18 @@ class CreateJiraFromMarkdownCommand(sublime_plugin.TextCommand):
             "type": "Task",
             "priority": "High",
             "labels": ["important", "urgent"],
+            "startdate_field": cfg.get("jira_startdate_field", "customfield_10015"),
         }
 
         try:
-            payload = parse_markdown_jira_template(text, defaults)
+            payload, meta = parse_markdown_jira_template(text, defaults)
         except ValueError as e:
             _atlassian_plugin.log.error(f"parse_markdown_jira_template : {e}")
             sublime.error_message(f"AlfacoAtlassian (Markdown) : {e}")
             return
 
         contenu = _json.dumps(payload, ensure_ascii=False, indent=4)
-        url = cfg.base_url() + "issue/"
+        url = cfg.base_url(org=meta["organisation"] or None) + "issue/"
         headers = cfg.get("headers", {"Content-type": "application/json", "Accept": "application/json"})
         _atlassian_plugin.log.info(f"POST {url} ({len(contenu)} bytes) [from Markdown]")
         sublime.status_message(f"AlfacoAtlassian : POST {url}…")
