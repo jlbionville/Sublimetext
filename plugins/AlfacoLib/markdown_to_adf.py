@@ -151,8 +151,8 @@ def _markdown_to_adf(md_text):
 
 
 KNOWN_FIELDS = [
-    "Summary", "Project", "Type", "Priority", "Labels",
-    "Duedate", "Description",
+    "Summary", "Organisation", "Project", "Type", "Priority", "Labels",
+    "Startdate", "Duedate", "Description",
 ]
 
 

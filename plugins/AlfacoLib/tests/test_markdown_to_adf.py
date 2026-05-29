@@ -232,10 +232,10 @@ def test_block_code_block_preserves_indentation():
 
 
 def test_known_fields_constants():
-    """Les 8 champs réservés du template."""
+    """Les 9 champs réservés du template (Organisation = routage, Startdate optionnel)."""
     assert KNOWN_FIELDS == [
-        "Summary", "Project", "Type", "Priority", "Labels",
-        "Duedate", "Description",
+        "Summary", "Organisation", "Project", "Type", "Priority", "Labels",
+        "Startdate", "Duedate", "Description",
     ]
 
 
@@ -248,10 +248,12 @@ def test_split_fields_minimal_template():
 def test_split_fields_all_fields():
     template = (
         "# Summary\nS\n\n"
+        "# Organisation\nmon-site\n\n"
         "# Project\nPRJ\n\n"
         "# Type\nTask\n\n"
         "# Priority\nHigh\n\n"
         "# Labels\nimportant, urgent\n\n"
+        "# Startdate\n2026-05-29\n\n"
         "# Duedate\n2026-06-06\n\n"
         "# Description\nbody"
     )
