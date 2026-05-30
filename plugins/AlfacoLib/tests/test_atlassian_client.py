@@ -15,6 +15,7 @@ from AlfacoLib.atlassian_client import (  # noqa: E402
     wrap_description_as_adf,
     _basic_auth_header,
 )
+from AlfacoLib import atlassian_client  # noqa: E402
 
 
 def _fake_urlopen_cm(status, body):
@@ -211,3 +212,51 @@ def test_list_projects_raises_on_http_error(monkeypatch):
         assert "unauth" in str(e)
     else:
         assert False, "RuntimeError attendue"
+
+
+def test_parse_issue_type_names_from_project_object():
+    data = {
+        "key": "GDQ",
+        "issueTypes": [
+            {"id": "1", "name": "Tâche", "subtask": False},
+            {"id": "2", "name": "Sous-tâche", "subtask": True},
+            {"id": "3", "name": "Story", "subtask": False},
+        ],
+    }
+    assert atlassian_client.parse_issue_type_names(data) == [
+        "Tâche",
+        "Sous-tâche",
+        "Story",
+    ]
+
+
+def test_parse_issue_type_names_deduplicates_by_name_preserving_order():
+    data = {
+        "issueTypes": [
+            {"id": "10105", "name": "Tâche"},
+            {"id": "10179", "name": "Story"},
+            {"id": "10180", "name": "Tâche"},
+            {"id": "10181", "name": "Epic"},
+        ]
+    }
+    assert atlassian_client.parse_issue_type_names(data) == [
+        "Tâche",
+        "Story",
+        "Epic",
+    ]
+
+
+def test_parse_issue_type_names_accepts_direct_list():
+    data = [{"name": "Bug"}, {"name": "Task"}]
+    assert atlassian_client.parse_issue_type_names(data) == ["Bug", "Task"]
+
+
+def test_parse_issue_type_names_empty_or_missing():
+    assert atlassian_client.parse_issue_type_names({}) == []
+    assert atlassian_client.parse_issue_type_names({"issueTypes": []}) == []
+    assert atlassian_client.parse_issue_type_names(None) == []
+
+
+def test_parse_issue_type_names_ignores_entries_without_name():
+    data = {"issueTypes": [{"id": "1"}, {"name": "Task"}, {"name": ""}]}
+    assert atlassian_client.parse_issue_type_names(data) == ["Task"]
