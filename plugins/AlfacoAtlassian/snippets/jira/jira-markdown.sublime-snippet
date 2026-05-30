@@ -10,7 +10,7 @@ ${organisation}
 ${jira_key}
 
 # Type
-Task
+${type}
 
 # Priority
 High
