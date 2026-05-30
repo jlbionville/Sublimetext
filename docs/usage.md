@@ -15,6 +15,7 @@ Le détail par plugin est dans [plugins/](plugins/). Cette page consolide les wo
 Au lieu du buffer JSON (étapes 3-5), un flux Markdown est disponible (détails dans [plugins/alfaco-atlassian.md](plugins/alfaco-atlassian.md#workflow-markdown-alternatif-au-json)) :
 
 1. **Initialiser** — palette `init_markdown_jira` (ou `Ctrl+Alt+M` Linux / `Cmd+Alt+M` macOS ; ⚠️ collision Windows, voir [troubleshooting.md](troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)). Ouvre un scratch Markdown avec template pré-rempli (`project_key` courant + `duedate` à J+10).
+   - *Alternative typée* : `select_jira_issue_type` (`Ctrl+J Ctrl+T`) propose les types du projet courant et ouvre le buffer avec `# Type` déjà rempli.
 2. **Rédiger** — corps en Markdown (headings, listes, **emphase**, `code`, liens, blocs de code). Champs réservés via `# Summary`, `# Organisation` (site Atlassian, prioritaire sur `default_organisation`), `# Project`, `# Type`, `# Priority`, `# Labels`, `# Startdate` (date du jour, optionnelle → `customfield_10015`), `# Duedate`, `# Description`.
 3. **POSTer** — palette `create_jira_from_markdown` (ou `Alt+M` Linux/Windows / `Cmd+Shift+M` macOS). Le corps est converti en ADF puis envoyé.
 
@@ -34,7 +35,7 @@ Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
 
 ### AlfacoAtlassian
 
-`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `insert_current_project`, `insert_current_organisation`, `set_jira_project_in_snippet`, `open_jira_projects`.
+`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `insert_current_project`, `insert_current_organisation`, `select_jira_issue_type`, `set_jira_project_in_snippet`, `open_jira_projects`.
 
 ### AlfacoEditing
 

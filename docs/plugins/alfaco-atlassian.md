@@ -98,6 +98,7 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 | `set_jira_project_in_snippet` | Remplace `"key": ""` par `"key": "<courant>"` dans le buffer. |
 | `insert_current_project` | Insère le `project_key` courant au curseur (rien + message si non défini). |
 | `insert_current_organisation` | Insère l'organisation courante (`default_organisation`) au curseur. |
+| `select_jira_issue_type` | Popup des types d'issues du projet courant (`GET /project/{KEY}?expand=issueTypes`, noms dédupliqués) ; à la sélection, ouvre un buffer Markdown pré-rempli avec ce type. |
 | `open_jira_projects` | Affiche le `jira_login` en console (debug). |
 
 ### Snippets
@@ -137,6 +138,7 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 | `Ctrl+J Ctrl+P` / `Cmd+J Cmd+P` | tous | `select_jira_project` (popup choix projet, basé sur l'org courante) |
 | `Ctrl+J O` / `Cmd+J O` | tous | `insert_current_organisation` (insère l'org courante au curseur) |
 | `Ctrl+J P` / `Cmd+J P` | tous | `insert_current_project` (insère le projet courant au curseur) |
+| `Ctrl+J Ctrl+T` / `Cmd+J Cmd+T` | tous | `select_jira_issue_type` (popup des types du projet, ouvre le buffer Markdown) |
 | `F2` | Linux | macro `addjira` — insère le snippet inline dans le buffer courant (sans dates) |
 | `Ctrl+Alt+W` | Windows | snippet `{"fields": ...}` wrapper |
 | `Alt+J` | Windows | `create_jira_issue` |
