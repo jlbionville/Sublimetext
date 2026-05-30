@@ -127,3 +127,34 @@ def list_projects(url, auth, headers, verify=True, timeout=DEFAULT_TIMEOUT):
             f"GET {url} -> {response.status_code} : {response.text[:200]}"
         )
     return [f"{p['key']}-{p['name']}" for p in response.json()]
+
+
+def parse_issue_type_names(data):
+    """Extrait les noms de types d'issues d'une réponse Jira.
+
+    `data` est l'objet projet décodé (dict) issu de
+    `GET /project/{key}?expand=issueTypes`, avec une clé `issueTypes` (liste).
+    Tolère aussi une liste de types passée directement.
+
+    Retourne la liste des noms, dédupliquée (premier vu gagné) et dans l'ordre
+    d'apparition. Inclut les types `subtask`. Ignore les entrées sans `name`
+    non vide. Retourne `[]` si `data` est None/vide/mal formé.
+    """
+    if isinstance(data, dict):
+        types = data.get("issueTypes") or []
+    elif isinstance(data, list):
+        types = data
+    else:
+        return []
+
+    names = []
+    seen = set()
+    for t in types:
+        if not isinstance(t, dict):
+            continue
+        name = t.get("name")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        names.append(name)
+    return names

@@ -4,6 +4,7 @@
     { "keys": ["ctrl+j", "ctrl+p"], "command": "select_jira_project" },
     { "keys": ["ctrl+j", "o"], "command": "insert_current_organisation" },
     { "keys": ["ctrl+j", "p"], "command": "insert_current_project" },
+    { "keys": ["ctrl+j", "ctrl+t"], "command": "select_jira_issue_type" },
     {
         "keys": ["ctrl+shift+j"],
         "command": "init_json_jira",

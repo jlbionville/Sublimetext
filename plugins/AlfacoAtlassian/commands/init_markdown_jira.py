@@ -24,6 +24,7 @@ class InitMarkdownJiraCommand(sublime_plugin.TextCommand):
         args["startdate"] = today.strftime("%Y-%m-%d")
         args["duedate"] = (today + timedelta(days=10)).strftime("%Y-%m-%d")
         args["jira_key"] = _atlassian_plugin.config.get("project_key", "")
+        args.setdefault("type", "Task")
 
         _atlassian_plugin.log.info(
             f"init_markdown_jira : template inséré (project_key={args['jira_key']!r})"
