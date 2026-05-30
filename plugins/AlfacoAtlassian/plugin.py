@@ -32,3 +32,5 @@ from AlfacoAtlassian.commands.init_json_jira import InitJsonJiraCommand  # noqa:
 from AlfacoAtlassian.commands.set_jira_project_in_snippet import SetJiraProjectInSnippetCommand  # noqa: E402, F401
 from AlfacoAtlassian.commands.init_markdown_jira import InitMarkdownJiraCommand  # noqa: E402, F401
 from AlfacoAtlassian.commands.create_jira_from_markdown import CreateJiraFromMarkdownCommand  # noqa: E402, F401
+from AlfacoAtlassian.commands.insert_current_project import InsertCurrentProjectCommand  # noqa: E402, F401
+from AlfacoAtlassian.commands.insert_current_organisation import InsertCurrentOrganisationCommand  # noqa: E402, F401

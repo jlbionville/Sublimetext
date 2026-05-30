@@ -80,7 +80,7 @@ Copie [`plugins/AlfacoEditing/templates/User/alfaco-editing.sublime-settings`](.
 | Touches | Commande |
 |---|---|
 | `Ctrl+Alt+A` | `date_selection` |
-| `Ctrl+Alt+M` | `modify_setting_from_selection` (⚠️ collision Windows avec `init_markdown_jira` d'AlfacoAtlassian — voir [troubleshooting.md](../troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)) |
+| `Ctrl+Alt+M` | `modify_setting_from_selection` |
 
 ### macOS
 

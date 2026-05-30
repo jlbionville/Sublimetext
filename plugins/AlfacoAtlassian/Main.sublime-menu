@@ -16,6 +16,8 @@
                             { "caption": "Initialiser JSON Jira", "command": "init_json_jira" },
                             { "caption": "Initialiser Markdown Jira", "command": "init_markdown_jira" },
                             { "caption": "Créer ticket Jira (depuis Markdown)", "command": "create_jira_from_markdown" },
+                            { "caption": "Insérer organisation courante", "command": "insert_current_organisation" },
+                            { "caption": "Insérer projet courant", "command": "insert_current_project" },
                             { "caption": "Open Jira projects (debug)", "command": "open_jira_projects" }
                         ]
                     }

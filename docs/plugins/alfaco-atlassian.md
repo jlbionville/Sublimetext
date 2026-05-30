@@ -96,6 +96,8 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 | `create_jira_issue` | `POST` du buffer JSON vers `/issue/`, sauvegarde réponse + payload. |
 | `init_json_jira` | Buffer scratch avec snippet `issue` pré-rempli. |
 | `set_jira_project_in_snippet` | Remplace `"key": ""` par `"key": "<courant>"` dans le buffer. |
+| `insert_current_project` | Insère le `project_key` courant au curseur (rien + message si non défini). |
+| `insert_current_organisation` | Insère l'organisation courante (`default_organisation`) au curseur. |
 | `open_jira_projects` | Affiche le `jira_login` en console (debug). |
 
 ### Snippets
@@ -115,7 +117,7 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 
 Depuis la v0.5.0, un second flux permet de créer un ticket depuis un buffer Markdown au lieu d'un buffer JSON.
 
-`Ctrl+Alt+M` (Linux/Win) / `Cmd+Alt+M` (Mac) → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
+`Ctrl+M` (Linux/Win) / `Cmd+M` (Mac) — **uniquement dans un buffer Markdown** (sinon `Ctrl+M` garde son rôle natif « aller au crochet ») — ou via `Tools → Alfaco → Atlassian → Initialiser Markdown Jira` → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
 
 Champs réservés : `Summary`, `Organisation`, `Project`, `Type`, `Priority`, `Labels`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.). `# Organisation` (= `url_key` du site Atlassian) ne fait pas partie du payload : il **route** le POST et l'emporte sur `default_organisation`. `# Startdate` (date du jour pré-remplie, optionnelle) est envoyée sur le custom field `jira_startdate_field` (défaut `customfield_10015`) ; vide ou réglage désactivé → champ non envoyé.
 
@@ -127,15 +129,20 @@ Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](..
 |---|---|---|
 | `Ctrl+Shift+J` | Linux / Windows | `init_json_jira` — nouveau buffer avec snippet `jira` pré-rempli (duedate, project_key) |
 | `Cmd+Shift+J` | macOS | `init_json_jira` (idem) |
-| `Ctrl+Alt+M` | Linux / Windows | `init_markdown_jira` — buffer Markdown scratch + template pré-rempli (⚠️ collision Windows avec AlfacoEditing — voir [troubleshooting.md](../troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)) |
-| `Cmd+Alt+M` | macOS | `init_markdown_jira` (idem) |
+| `Ctrl+M` | Linux / Windows | `init_markdown_jira` — **contexte Markdown uniquement** (préserve `move_to brackets` ailleurs) |
+| `Cmd+M` | macOS | `init_markdown_jira` (contexte Markdown) |
 | `Alt+M` | Linux / Windows | `create_jira_from_markdown` — parse + POST |
 | `Cmd+Shift+M` | macOS | `create_jira_from_markdown` (idem) |
+| `Ctrl+J Ctrl+O` / `Cmd+J Cmd+O` | tous | `select_organisation` (popup choix organisation) |
+| `Ctrl+J Ctrl+P` / `Cmd+J Cmd+P` | tous | `select_jira_project` (popup choix projet, basé sur l'org courante) |
+| `Ctrl+J O` / `Cmd+J O` | tous | `insert_current_organisation` (insère l'org courante au curseur) |
+| `Ctrl+J P` / `Cmd+J P` | tous | `insert_current_project` (insère le projet courant au curseur) |
 | `F2` | Linux | macro `addjira` — insère le snippet inline dans le buffer courant (sans dates) |
-| `Ctrl+J Ctrl+L` | Windows | `select_jira_project` (chord) |
 | `Ctrl+Alt+W` | Windows | snippet `{"fields": ...}` wrapper |
 | `Alt+J` | Windows | `create_jira_issue` |
 | `Ctrl+Alt+J` | Windows | `pretty_json` (package externe) |
+
+Mnémo des chords `Ctrl+J` : **avec** `Ctrl` sur la 2ᵉ touche = « choisir » (popup), **sans** = « insérer » la valeur courante.
 
 **Navigation dans le snippet** (après `Ctrl+Shift+J` ou tabTrigger `issue`+Tab) : `Tab` saute entre `summary` puis `description` ; sortie par `Esc` ou `$0` (après l'accolade fermante). Les autres champs (`duedate`, `jira_key`) sont remplis automatiquement par `init_json_jira` ; `labels` est préfixé `["important", "urgent"]`.
 
