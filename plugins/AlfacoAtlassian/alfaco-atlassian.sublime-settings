@@ -6,6 +6,7 @@
     "jira_password": "",
     "default_organisation": "",
     "jira_startdate_field": "customfield_10015",
+    "jira_parent_types": ["Epic", "Story"],
     "atlassian": {
         "organisations": {
             "business projects": { "url_key": "business-projects", "jira": true, "confluence": true }
