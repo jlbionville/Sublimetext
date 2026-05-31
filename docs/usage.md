@@ -16,7 +16,8 @@ Au lieu du buffer JSON (étapes 3-5), un flux Markdown est disponible (détails 
 
 1. **Initialiser** — palette `init_markdown_jira` (ou `Ctrl+Alt+M` Linux / `Cmd+Alt+M` macOS ; ⚠️ collision Windows, voir [troubleshooting.md](troubleshooting.md#conflit-de-raccourci-ctrlaltm-entre-plugins-windows)). Ouvre un scratch Markdown avec template pré-rempli (`project_key` courant + `duedate` à J+10).
    - *Alternative typée* : `select_jira_issue_type` (`Ctrl+J Ctrl+T`) propose les types du projet courant et ouvre le buffer avec `# Type` déjà rempli.
-2. **Rédiger** — corps en Markdown (headings, listes, **emphase**, `code`, liens, blocs de code). Champs réservés via `# Summary`, `# Organisation` (site Atlassian, prioritaire sur `default_organisation`), `# Project`, `# Type`, `# Priority`, `# Labels`, `# Startdate` (date du jour, optionnelle → `customfield_10015`), `# Duedate`, `# Description`.
+2. **Rédiger** — corps en Markdown (headings, listes, **emphase**, `code`, liens, blocs de code). Champs réservés via `# Summary`, `# Organisation` (site Atlassian, prioritaire sur `default_organisation`), `# Project`, `# Type`, `# Priority`, `# Labels`, `# Parent` (Epic/Story de rattachement, optionnel), `# Startdate` (date du jour, optionnelle → `customfield_10015`), `# Duedate`, `# Description`.
+   - *Rattacher à un parent* : `select_jira_parent` (`Ctrl+J Ctrl+R`) propose les Epics/Stories du projet et remplit `# Parent` ; à défaut, saisir la clé à la main sous `# Parent`.
 3. **POSTer** — palette `create_jira_from_markdown` (ou `Alt+M` Linux/Windows / `Cmd+Shift+M` macOS). Le corps est converti en ADF puis envoyé.
 
 ## Workflow d'édition (AlfacoEditing)

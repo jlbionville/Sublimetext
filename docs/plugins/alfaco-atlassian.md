@@ -57,6 +57,7 @@ Ensuite : `Preferences → Package Settings → AlfacoAtlassian → Settings –
 | `jira_password` | string | `""` | Token API Atlassian. |
 | `default_organisation` | string | `""` | `url_key` initial. Modifié en runtime par `select_organisation`. |
 | `jira_startdate_field` | string | `"customfield_10015"` | Custom field Jira pour Start date (varie selon l'instance ; vide = désactivé). |
+| `jira_parent_types` | array | `["Epic", "Story"]` | Types d'issues proposés par `select_jira_parent` comme parent possible. |
 | `api_rest_version` | string | `"3"` | `"2"` ou `"3"`. v3 attend descriptions au format ADF. |
 | `tls_verify` | bool | `true` | Vérification du certificat TLS. |
 | `path_json_files_folder` | string | `""` | Dossier de sauvegarde — vide = pas de sauvegarde. |
@@ -120,7 +121,7 @@ Depuis la v0.5.0, un second flux permet de créer un ticket depuis un buffer Mar
 
 `Ctrl+M` (Linux/Win) / `Cmd+M` (Mac) — **uniquement dans un buffer Markdown** (sinon `Ctrl+M` garde son rôle natif « aller au crochet ») — ou via `Tools → Alfaco → Atlassian → Initialiser Markdown Jira` → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
 
-Champs réservés : `Summary`, `Organisation`, `Project`, `Type`, `Priority`, `Labels`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.). `# Organisation` (= `url_key` du site Atlassian) ne fait pas partie du payload : il **route** le POST et l'emporte sur `default_organisation`. `# Startdate` (date du jour pré-remplie, optionnelle) est envoyée sur le custom field `jira_startdate_field` (défaut `customfield_10015`) ; vide ou réglage désactivé → champ non envoyé.
+Champs réservés : `Summary`, `Organisation`, `Project`, `Type`, `Priority`, `Labels`, `Parent`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `# Parent` (optionnel) rattache l'issue créée à une Epic ou une Story : la clé saisie est envoyée comme `parent` (`{"key": "<KEY>"}`). La commande `select_jira_parent` (`Ctrl+J Ctrl+R`) propose les Epics/Stories du projet et remplit ce champ. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.). `# Organisation` (= `url_key` du site Atlassian) ne fait pas partie du payload : il **route** le POST et l'emporte sur `default_organisation`. `# Startdate` (date du jour pré-remplie, optionnelle) est envoyée sur le custom field `jira_startdate_field` (défaut `customfield_10015`) ; vide ou réglage désactivé → champ non envoyé.
 
 Détails et limites du parser : voir [`plugins/AlfacoLib/markdown_to_adf.py`](../../plugins/AlfacoLib/markdown_to_adf.py) (non supporté MVP : tables, images, blockquotes, listes imbriquées, strikethrough → texte brut).
 
