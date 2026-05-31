@@ -35,3 +35,4 @@ from AlfacoAtlassian.commands.create_jira_from_markdown import CreateJiraFromMar
 from AlfacoAtlassian.commands.insert_current_project import InsertCurrentProjectCommand  # noqa: E402, F401
 from AlfacoAtlassian.commands.insert_current_organisation import InsertCurrentOrganisationCommand  # noqa: E402, F401
 from AlfacoAtlassian.commands.select_jira_issue_type import SelectJiraIssueTypeCommand  # noqa: E402, F401
+from AlfacoAtlassian.commands.select_jira_parent import SelectJiraParentCommand, SetMarkdownParentCommand  # noqa: E402, F401
