@@ -19,6 +19,7 @@
                             { "caption": "Créer ticket Jira (depuis Markdown)", "command": "create_jira_from_markdown" },
                             { "caption": "Insérer organisation courante", "command": "insert_current_organisation" },
                             { "caption": "Insérer projet courant", "command": "insert_current_project" },
+                            { "caption": "Choisir le parent (Epic/Story)", "command": "select_jira_parent" },
                             { "caption": "Open Jira projects (debug)", "command": "open_jira_projects" }
                         ]
                     }
