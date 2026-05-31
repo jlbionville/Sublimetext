@@ -18,6 +18,9 @@ High
 # Labels
 important, urgent
 
+# Parent
+${parent}
+
 # Startdate
 ${startdate}
 
