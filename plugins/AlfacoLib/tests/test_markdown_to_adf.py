@@ -233,10 +233,10 @@ def test_block_code_block_preserves_indentation():
 
 
 def test_known_fields_constants():
-    """Les 9 champs réservés du template (Organisation = routage, Startdate optionnel)."""
+    """Les 10 champs réservés du template (Organisation = routage, Startdate/Parent optionnels)."""
     assert KNOWN_FIELDS == [
         "Summary", "Organisation", "Project", "Type", "Priority", "Labels",
-        "Startdate", "Duedate", "Description",
+        "Parent", "Startdate", "Duedate", "Description",
     ]
 
 
@@ -254,6 +254,7 @@ def test_split_fields_all_fields():
         "# Type\nTask\n\n"
         "# Priority\nHigh\n\n"
         "# Labels\nimportant, urgent\n\n"
+        "# Parent\nMMPO-2\n\n"
         "# Startdate\n2026-05-29\n\n"
         "# Duedate\n2026-06-06\n\n"
         "# Description\nbody"
@@ -410,3 +411,27 @@ def test_parse_startdate_empty_value_omitted():
     template = "# Summary\nS\n\n# Startdate\n\n\n# Description\nbody"
     payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
     assert "customfield_10015" not in payload["fields"]
+
+
+def test_parse_parent_present_goes_to_fields():
+    template = "# Summary\nS\n\n# Parent\nMMPO-2\n\n# Description\nbody"
+    payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
+    assert payload["fields"]["parent"] == {"key": "MMPO-2"}
+
+
+def test_parse_parent_absent_field_omitted():
+    template = "# Summary\nS\n\n# Description\nbody"
+    payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
+    assert "parent" not in payload["fields"]
+
+
+def test_parse_parent_empty_value_omitted():
+    template = "# Summary\nS\n\n# Parent\n\n\n# Description\nbody"
+    payload, _ = parse_markdown_jira_template(template, _DEFAULTS)
+    assert "parent" not in payload["fields"]
+
+
+def test_split_fields_accepts_parent():
+    template = "# Summary\nS\n\n# Parent\nMMPO-2\n\n# Description\nbody"
+    result = _split_fields(template)
+    assert result["Parent"] == "MMPO-2"

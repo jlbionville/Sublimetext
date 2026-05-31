@@ -152,7 +152,7 @@ def _markdown_to_adf(md_text):
 
 KNOWN_FIELDS = [
     "Summary", "Organisation", "Project", "Type", "Priority", "Labels",
-    "Startdate", "Duedate", "Description",
+    "Parent", "Startdate", "Duedate", "Description",
 ]
 
 
@@ -256,6 +256,10 @@ def parse_markdown_jira_template(text, defaults):
     startdate_field = defaults.get("startdate_field", "")
     if startdate and startdate_field:
         fields[startdate_field] = startdate
+
+    parent = (fields_md.get("Parent") or "").strip()
+    if parent:
+        fields["parent"] = {"key": parent}
 
     organisation = (fields_md.get("Organisation") or "").strip()
 
