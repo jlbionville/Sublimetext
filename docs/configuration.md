@@ -50,6 +50,7 @@ Référence complète des clés dans [plugins/alfaco-atlassian.md](plugins/alfac
 | `default_organisation` | string | `""` | URL key de `https://<X>.atlassian.net/`. Mutée en runtime par `select_organisation`. |
 | `api_rest_version` | string | `"3"` | `"2"` ou `"3"`. |
 | `jira_startdate_field` | string | `"customfield_10015"` | Custom field Jira pour Start date (flux Markdown). Varie selon l'instance ; vide (`""`) = Start date jamais envoyée. |
+| `jira_parent_types` | array | `["Epic", "Story"]` | Types d'issues proposés par `select_jira_parent` comme parent. Élargir (ex. ajouter `"Tâche"`) pour autoriser d'autres parents. |
 | `tls_verify` | bool | `true` | Désactiver derrière proxy d'entreprise. |
 | `path_json_files_folder` | string | `""` | Dossier de sauvegarde des payloads/réponses. Doit exister. |
 | `headers` | object | `{Content-type: application/json, Accept: application/json}` | Headers HTTP par défaut. |
