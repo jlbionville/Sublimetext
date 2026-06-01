@@ -18,6 +18,7 @@ Au lieu du buffer JSON (étapes 3-5), un flux Markdown est disponible (détails 
    - *Alternative typée* : `select_jira_issue_type` (`Ctrl+J Ctrl+T`) propose les types du projet courant et ouvre le buffer avec `# Type` déjà rempli.
 2. **Rédiger** — corps en Markdown (headings, listes, **emphase**, `code`, liens, blocs de code). Champs réservés via `# Summary`, `# Organisation` (site Atlassian, prioritaire sur `default_organisation`), `# Project`, `# Type`, `# Priority`, `# Labels`, `# Parent` (Epic/Story de rattachement, optionnel), `# Startdate` (date du jour, optionnelle → `customfield_10015`), `# Duedate`, `# Description`.
    - *Rattacher à un parent* : `select_jira_parent` (`Ctrl+J Ctrl+R`) propose les Epics/Stories du projet et remplit `# Parent` ; à défaut, saisir la clé à la main sous `# Parent`.
+   - *Déplacer un ticket existant* : `reparent_jira_issue` (`Ctrl+J Ctrl+M`) demande la clé d'un ticket déjà créé et le rattache à une Epic/Story choisie dans un popup.
 3. **POSTer** — palette `create_jira_from_markdown` (ou `Alt+M` Linux/Windows / `Cmd+Shift+M` macOS). Le corps est converti en ADF puis envoyé.
 
 ## Workflow d'édition (AlfacoEditing)
@@ -36,7 +37,7 @@ Détails dans [plugins/alfaco-editing.md](plugins/alfaco-editing.md).
 
 ### AlfacoAtlassian
 
-`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `insert_current_project`, `insert_current_organisation`, `select_jira_issue_type`, `select_jira_parent`, `set_jira_project_in_snippet`, `open_jira_projects`.
+`select_organisation`, `select_jira_project`, `create_jira_issue`, `init_json_jira`, `init_markdown_jira`, `create_jira_from_markdown`, `insert_current_project`, `insert_current_organisation`, `select_jira_issue_type`, `select_jira_parent`, `reparent_jira_issue`, `set_jira_project_in_snippet`, `open_jira_projects`.
 
 ### AlfacoEditing
 

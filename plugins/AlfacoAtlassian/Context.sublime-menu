@@ -11,7 +11,8 @@
             { "caption": "sélectionner organisation", "command": "select_organisation" },
             { "caption": "insérer organisation courante", "command": "insert_current_organisation" },
             { "caption": "insérer projet courant", "command": "insert_current_project" },
-            { "caption": "choisir le parent (Epic/Story)", "command": "select_jira_parent" }
+            { "caption": "choisir le parent (Epic/Story)", "command": "select_jira_parent" },
+            { "caption": "déplacer un ticket sous un parent", "command": "reparent_jira_issue" }
         ]
     }
 ]

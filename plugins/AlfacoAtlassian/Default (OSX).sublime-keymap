@@ -17,5 +17,7 @@
     { "keys": ["super+j", "super+p"], "command": "select_jira_project" },
     { "keys": ["super+j", "o"], "command": "insert_current_organisation" },
     { "keys": ["super+j", "p"], "command": "insert_current_project" },
-    { "keys": ["super+j", "super+r"], "command": "select_jira_parent" }
+    { "keys": ["super+j", "super+t"], "command": "select_jira_issue_type" },
+    { "keys": ["super+j", "super+r"], "command": "select_jira_parent" },
+    { "keys": ["super+j", "super+m"], "command": "reparent_jira_issue" }
 ]
