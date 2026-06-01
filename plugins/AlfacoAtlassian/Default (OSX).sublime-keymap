@@ -16,5 +16,6 @@
     { "keys": ["super+j", "super+o"], "command": "select_organisation" },
     { "keys": ["super+j", "super+p"], "command": "select_jira_project" },
     { "keys": ["super+j", "o"], "command": "insert_current_organisation" },
-    { "keys": ["super+j", "p"], "command": "insert_current_project" }
+    { "keys": ["super+j", "p"], "command": "insert_current_project" },
+    { "keys": ["super+j", "super+r"], "command": "select_jira_parent" }
 ]

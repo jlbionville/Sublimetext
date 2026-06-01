@@ -10,7 +10,8 @@
             { "caption": "sélectionner projet Jira", "command": "select_jira_project" },
             { "caption": "sélectionner organisation", "command": "select_organisation" },
             { "caption": "insérer organisation courante", "command": "insert_current_organisation" },
-            { "caption": "insérer projet courant", "command": "insert_current_project" }
+            { "caption": "insérer projet courant", "command": "insert_current_project" },
+            { "caption": "choisir le parent (Epic/Story)", "command": "select_jira_parent" }
         ]
     }
 ]

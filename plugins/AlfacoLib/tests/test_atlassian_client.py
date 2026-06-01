@@ -260,3 +260,41 @@ def test_parse_issue_type_names_empty_or_missing():
 def test_parse_issue_type_names_ignores_entries_without_name():
     data = {"issueTypes": [{"id": "1"}, {"name": "Task"}, {"name": ""}]}
     assert atlassian_client.parse_issue_type_names(data) == ["Task"]
+
+
+def test_parse_parent_choices_extracts_key_and_label():
+    data = {
+        "issues": [
+            {"key": "MMPO-2", "fields": {"summary": "Sync Obsidian",
+                                         "issuetype": {"name": "Epic"}}},
+            {"key": "MMPO-8", "fields": {"summary": "Emplacement équipements",
+                                         "issuetype": {"name": "Story"}}},
+        ]
+    }
+    assert atlassian_client.parse_parent_choices(data) == [
+        ("MMPO-2", "MMPO-2 — Sync Obsidian (Epic)"),
+        ("MMPO-8", "MMPO-8 — Emplacement équipements (Story)"),
+    ]
+
+
+def test_parse_parent_choices_empty():
+    assert atlassian_client.parse_parent_choices({"issues": []}) == []
+    assert atlassian_client.parse_parent_choices({}) == []
+    assert atlassian_client.parse_parent_choices(None) == []
+
+
+def test_parse_parent_choices_ignores_entries_without_key():
+    data = {"issues": [
+        {"fields": {"summary": "x", "issuetype": {"name": "Epic"}}},
+        {"key": "MMPO-1", "fields": {"summary": "ok", "issuetype": {"name": "Epic"}}},
+    ]}
+    assert atlassian_client.parse_parent_choices(data) == [
+        ("MMPO-1", "MMPO-1 — ok (Epic)"),
+    ]
+
+
+def test_parse_parent_choices_tolerates_missing_summary_or_type():
+    data = {"issues": [{"key": "MMPO-9", "fields": {}}]}
+    assert atlassian_client.parse_parent_choices(data) == [
+        ("MMPO-9", "MMPO-9 —  ()"),
+    ]

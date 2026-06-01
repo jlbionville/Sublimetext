@@ -43,6 +43,12 @@
     // Start date (le champ du template Markdown sera alors ignoré).
     "jira_startdate_field": "customfield_10015",
 
+    // === Types de parent (popup "choisir le parent") ===
+
+    // Types d'issues proposés par la commande select_jira_parent comme parent
+    // possible (Ctrl+J Ctrl+R). Le champ # Parent du template reste prioritaire.
+    "jira_parent_types": ["Epic", "Story"],
+
     // === Persistance des payloads / réponses ===
 
     // Dossier où `create_jira_issue` sauvegarde la réponse HTTP et le

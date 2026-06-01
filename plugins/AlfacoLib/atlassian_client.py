@@ -129,6 +129,34 @@ def list_projects(url, auth, headers, verify=True, timeout=DEFAULT_TIMEOUT):
     return [f"{p['key']}-{p['name']}" for p in response.json()]
 
 
+def parse_parent_choices(data):
+    """Extrait les parents candidats d'une réponse Jira `search`.
+
+    `data` est l'objet décodé du `GET .../search?jql=...`, de forme
+    `{"issues": [{"key", "fields": {"summary", "issuetype": {"name"}}}]}`.
+    Retourne une liste de tuples `(key, label)` avec
+    `label = "KEY — résumé (Type)"`, dans l'ordre de la réponse.
+    Ignore les entrées sans `key`. Retourne `[]` si `data` vide/mal formé.
+    """
+    if not isinstance(data, dict):
+        return []
+    issues = data.get("issues") or []
+    choices = []
+    for issue in issues:
+        if not isinstance(issue, dict):
+            continue
+        key = issue.get("key")
+        if not key:
+            continue
+        fields = issue.get("fields") or {}
+        summary = fields.get("summary") or ""
+        issuetype = fields.get("issuetype") or {}
+        type_name = issuetype.get("name") or ""
+        label = f"{key} — {summary} ({type_name})"
+        choices.append((key, label))
+    return choices
+
+
 def parse_issue_type_names(data):
     """Extrait les noms de types d'issues d'une réponse Jira.
 
