@@ -19,6 +19,7 @@
     { "keys": ["ctrl+j", "p"], "command": "insert_current_project" },
     { "keys": ["ctrl+j", "ctrl+t"], "command": "select_jira_issue_type" },
     { "keys": ["ctrl+j", "ctrl+r"], "command": "select_jira_parent" },
+    { "keys": ["ctrl+j", "ctrl+m"], "command": "reparent_jira_issue" },
     {
         "keys": ["f2"],
         "command": "run_macro_file",

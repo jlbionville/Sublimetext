@@ -20,6 +20,7 @@
                             { "caption": "Insérer organisation courante", "command": "insert_current_organisation" },
                             { "caption": "Insérer projet courant", "command": "insert_current_project" },
                             { "caption": "Choisir le parent (Epic/Story)", "command": "select_jira_parent" },
+                            { "caption": "Déplacer un ticket sous un parent", "command": "reparent_jira_issue" },
                             { "caption": "Open Jira projects (debug)", "command": "open_jira_projects" }
                         ]
                     }
