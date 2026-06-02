@@ -16,6 +16,7 @@ import sublime_plugin
 from AlfacoAtlassian import plugin as _atlassian_plugin
 from AlfacoLib.atlassian_client import call_rest, wrap_description_as_adf
 from AlfacoLib.io import save_file, build_response_path, build_payload_path
+from AlfacoAtlassian.commands._created_popup import show_created_popup
 
 
 class CreateJiraIssueCommand(sublime_plugin.TextCommand):
@@ -60,21 +61,33 @@ class CreateJiraIssueCommand(sublime_plugin.TextCommand):
             _atlassian_plugin.log.error(f"POST {url} → {response.status_code} : {response.text[:300]}")
             sublime.status_message(f"AlfacoAtlassian : POST {url} → {response.status_code} (voir buffer réponse)")
 
-        new_view = self.view.window().new_file()
-        new_view.set_name(f"Jira response {response.status_code}")
-        new_view.run_command("insert", {"characters": response.text})
+        # Extraction de la clé (succès = HTTP < 400 ET clé présente).
+        jira_key = None
+        if response.status_code < 400:
+            try:
+                jira_key = response.json()["key"]
+            except (KeyError, ValueError):
+                jira_key = None
 
         folder = cfg.get("path_json_files_folder")
         if folder:
             timestamp = time.strftime("%Y%m%d-%H%M%S")
             save_file(response.text, build_response_path(folder, timestamp))
-            try:
-                jira_key = response.json()["key"]
+            if jira_key:
                 save_file(contenu, build_payload_path(folder, jira_key))
                 _atlassian_plugin.log.info(f"ticket créé : {jira_key} (payload + réponse sauvegardés dans {folder})")
-                sublime.status_message(f"AlfacoAtlassian : ticket {jira_key} créé")
-            except (KeyError, ValueError):
+            else:
                 _atlassian_plugin.log.warn(
                     f"Réponse sans 'key' (probablement échec — code {response.status_code}) "
                     "— payload non sauvegardé."
                 )
+
+        if jira_key:
+            org = cfg.get("default_organisation")
+            show_created_popup(self.view, org, jira_key)
+            sublime.status_message(f"AlfacoAtlassian : ticket {jira_key} créé")
+        else:
+            # Échec : on conserve l'onglet JSON pour diagnostic.
+            new_view = self.view.window().new_file()
+            new_view.set_name(f"Jira response {response.status_code}")
+            new_view.run_command("insert", {"characters": response.text})
