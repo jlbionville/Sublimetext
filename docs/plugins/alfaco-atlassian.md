@@ -82,7 +82,7 @@ Au redémarrage, ces valeurs reviennent à celles du fichier — c'est attendu.
 2. **Sélectionner le projet** : `select_jira_project` (popup `KEY-Nom`). Linux `Ctrl+J L` / Windows `Ctrl+J L`.
 3. **Initialiser un buffer JSON** : `init_json_jira` (Windows `Super+N`). Ouvre un buffer scratch avec le snippet `issue` pré-rempli (`project.key` courante, `duedate` à J+10).
 4. **Éditer le payload** dans le buffer.
-5. **POST** : `create_jira_issue` (Windows `Alt+J`). La réponse s'ouvre dans un nouveau buffer ; le payload et la réponse sont archivés sous `<path_json_files_folder>/<KEY>.json` et `<KEY>_response_<timestamp>.json`.
+5. **POST** : `create_jira_issue` (Windows `Alt+J`). En cas de succès, un **popup** affiche la clé du ticket (lien cliquable → ouvre l'issue dans le navigateur) et son projet ; en cas d'échec, la réponse s'ouvre dans un nouvel onglet pour diagnostic. Le payload et la réponse sont archivés sous `<path_json_files_folder>/<KEY>.json` et `<KEY>_response_<timestamp>.json`.
 
 ### Workflow Confluence
 
@@ -94,7 +94,7 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 |---|---|
 | `select_organisation` | Popup d'organisations (catalogue `atlassian.organisations`). |
 | `select_jira_project` | `GET /project/`, popup `KEY-Nom`, stocke `project_key`. |
-| `create_jira_issue` | `POST` du buffer JSON vers `/issue/`, sauvegarde réponse + payload. |
+| `create_jira_issue` | `POST` du buffer JSON vers `/issue/`, sauvegarde réponse + payload. Succès → popup (clé cliquable + projet) ; échec → onglet réponse. |
 | `init_json_jira` | Buffer scratch avec snippet `issue` pré-rempli. |
 | `set_jira_project_in_snippet` | Remplace `"key": ""` par `"key": "<courant>"` dans le buffer. |
 | `insert_current_project` | Insère le `project_key` courant au curseur (rien + message si non défini). |
@@ -121,7 +121,7 @@ Pas de commande dédiée à la création — utiliser les snippets via tabTrigge
 
 Depuis la v0.5.0, un second flux permet de créer un ticket depuis un buffer Markdown au lieu d'un buffer JSON.
 
-`Ctrl+M` (Linux/Win) / `Cmd+M` (Mac) — **uniquement dans un buffer Markdown** (sinon `Ctrl+M` garde son rôle natif « aller au crochet ») — ou via `Tools → Alfaco → Atlassian → Initialiser Markdown Jira` → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST.
+`Ctrl+M` (Linux/Win) / `Cmd+M` (Mac) — **uniquement dans un buffer Markdown** (sinon `Ctrl+M` garde son rôle natif « aller au crochet ») — ou via `Tools → Alfaco → Atlassian → Initialiser Markdown Jira` → ouvre un buffer Markdown scratch avec le template (project_key courant + dates auto). Tab navigue summary → description. Une fois rempli, `Alt+M` (Linux/Win) / `Cmd+Shift+M` (Mac) parse, convertit le corps Markdown en ADF (paragraphes, headings, listes, **emphase**, `code`, [liens](url), code blocks) et POST. En cas de succès, un **popup** affiche la clé du ticket (lien cliquable → ouvre l'issue dans le navigateur) et son projet ; en cas d'échec, la réponse s'ouvre dans un nouvel onglet pour diagnostic.
 
 Champs réservés : `Summary`, `Organisation`, `Project`, `Type`, `Priority`, `Labels`, `Parent`, `Startdate`, `Duedate`, `Description`. Un `# UnknownField` produit une erreur explicite. `# Parent` (optionnel) rattache l'issue créée à une Epic ou une Story : la clé saisie est envoyée comme `parent` (`{"key": "<KEY>"}`). La commande `select_jira_parent` (`Ctrl+J Ctrl+R`) propose les Epics/Stories du projet et remplit ce champ. `Summary` et `Description` sont obligatoires ; les autres ont des fallbacks (`project_key` courant, today + 10 jours, etc.). `# Organisation` (= `url_key` du site Atlassian) ne fait pas partie du payload : il **route** le POST et l'emporte sur `default_organisation`. `# Startdate` (date du jour pré-remplie, optionnelle) est envoyée sur le custom field `jira_startdate_field` (défaut `customfield_10015`) ; vide ou réglage désactivé → champ non envoyé.
 

@@ -8,7 +8,7 @@ Le détail par plugin est dans [plugins/](plugins/). Cette page consolide les wo
 2. **Choisir le projet** — palette `select_jira_project` (ou `Ctrl+J+L` Windows).
 3. **Initialiser un buffer JSON** — palette `init_json_jira` (ou `Super+N` Windows). Ouvre un scratch avec le snippet pré-rempli (`project_key` courante, `duedate` à J+10).
 4. **Éditer le JSON** dans le buffer.
-5. **POSTer** — palette `create_jira_issue` (ou `Alt+J` Windows). La réponse s'affiche dans un nouveau buffer, le payload est sauvegardé sous `<path_json_files_folder>/<KEY>.json`.
+5. **POSTer** — palette `create_jira_issue` (ou `Alt+J` Windows). En cas de succès, un **popup** affiche la clé du ticket (lien cliquable → ouvre l'issue dans le navigateur) et son projet ; le payload est sauvegardé sous `<path_json_files_folder>/<KEY>.json`. En cas d'échec, la réponse s'ouvre dans un nouvel onglet pour diagnostic.
 
 ### Variante Markdown
 
@@ -19,7 +19,7 @@ Au lieu du buffer JSON (étapes 3-5), un flux Markdown est disponible (détails 
 2. **Rédiger** — corps en Markdown (headings, listes, **emphase**, `code`, liens, blocs de code). Champs réservés via `# Summary`, `# Organisation` (site Atlassian, prioritaire sur `default_organisation`), `# Project`, `# Type`, `# Priority`, `# Labels`, `# Parent` (Epic/Story de rattachement, optionnel), `# Startdate` (date du jour, optionnelle → `customfield_10015`), `# Duedate`, `# Description`.
    - *Rattacher à un parent* : `select_jira_parent` (`Ctrl+J Ctrl+R`) propose les Epics/Stories du projet et remplit `# Parent` ; à défaut, saisir la clé à la main sous `# Parent`.
    - *Déplacer un ticket existant* : `reparent_jira_issue` (`Ctrl+J Ctrl+M`) demande la clé d'un ticket déjà créé et le rattache à une Epic/Story choisie dans un popup.
-3. **POSTer** — palette `create_jira_from_markdown` (ou `Alt+M` Linux/Windows / `Cmd+Shift+M` macOS). Le corps est converti en ADF puis envoyé.
+3. **POSTer** — palette `create_jira_from_markdown` (ou `Alt+M` Linux/Windows / `Cmd+Shift+M` macOS). Le corps est converti en ADF puis envoyé. En cas de succès, un **popup** affiche la clé du ticket (lien cliquable → navigateur) et son projet ; en cas d'échec, la réponse s'ouvre dans un nouvel onglet.
 
 ## Workflow d'édition (AlfacoEditing)
 
