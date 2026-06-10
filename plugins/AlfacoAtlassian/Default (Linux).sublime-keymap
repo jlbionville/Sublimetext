@@ -1,20 +1,14 @@
 [
     {
         "keys": ["ctrl+shift+j"],
-        "command": "init_json_jira",
-        "args": { "name": "Packages/AlfacoAtlassian/snippets/jira/jira.sublime-snippet" }
-    },
-    {
-        "keys": ["ctrl+m"],
-        "command": "init_markdown_jira",
-        "context": [{ "key": "selector", "operator": "equal", "operand": "text.html.markdown" }]
+        "command": "init_markdown_jira"
     },
     {
         "keys": ["alt+m"],
         "command": "create_jira_from_markdown"
     },
-    { "keys": ["ctrl+j", "ctrl+o"], "command": "select_organisation" },
-    { "keys": ["ctrl+j", "ctrl+p"], "command": "select_jira_project" },
+    { "keys": ["alt+c", "o"], "command": "select_organisation" },
+    { "keys": ["alt+c", "p"], "command": "select_jira_project" },
     { "keys": ["ctrl+j", "o"], "command": "insert_current_organisation" },
     { "keys": ["ctrl+j", "p"], "command": "insert_current_project" },
     { "keys": ["ctrl+j", "ctrl+t"], "command": "select_jira_issue_type" },
