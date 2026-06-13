@@ -1,0 +1,4 @@
+<snippet>
+    <content><![CDATA[aws ec2 describe-volumes --filters "Name=attachment.instance-id,Values=${instance_id}" --region ${region:eu-west-3} --query 'Volumes[].{ID:VolumeId,Size:Size,Type:VolumeType,State:State}' --output table]]></content>
+    <description>EC2 — Volumes attachés à une instance</description>
+</snippet>

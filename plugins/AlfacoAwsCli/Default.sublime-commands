@@ -1,0 +1,15 @@
+[
+    {
+        "caption": "AlfacoAwsCli: Insérer un template",
+        "command": "alfaco_aws_cli_insert_template"
+    },
+    {
+        "caption": "AlfacoAwsCli: Enregistrer la sélection comme snippet",
+        "command": "alfaco_aws_cli_save_snippet"
+    },
+    {
+        "caption": "AlfacoAwsCli: Ouvrir les settings (User)",
+        "command": "open_file",
+        "args": { "file": "${packages}/User/alfaco-aws-cli.sublime-settings" }
+    }
+]

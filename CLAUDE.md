@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A **monorepo** of 4 Sublime Text 4 plugins (the "Alfaco suite"), refactored from a single monolithic package. Each plugin is its own deployable Sublime package with its own commands, settings, keymaps, snippets, macros, and menus.
+A **monorepo** of 5 Sublime Text 4 plugins (the "Alfaco suite"), refactored from a single monolithic package. Each plugin is its own deployable Sublime package with its own commands, settings, keymaps, snippets, macros, and menus.
 
 | Plugin | Purpose |
 |---|---|
@@ -12,6 +12,7 @@ A **monorepo** of 4 Sublime Text 4 plugins (the "Alfaco suite"), refactored from
 | `AlfacoAtlassian` | Jira/Confluence REST workflows: select org/project, create issues depuis JSON ou Markdown (templates). |
 | `AlfacoEditing` | Editor utilities: text-to-table, `<start>`/`<end>` markers, date insertion, tag handling. |
 | `AlfacoCompletion` | Static Python autocompletion (demo `EventListener`). |
+| `AlfacoAwsCli` | AWS CLI command templates from a quick panel (placeholders `${nom}`, modes `snippet`/`guided`, selection→params, batch, `.sublime-snippet` import/export). **Standalone — no `AlfacoLib` dependency.** |
 
 Code, comments and UI captions are in **French** — keep that style when editing.
 

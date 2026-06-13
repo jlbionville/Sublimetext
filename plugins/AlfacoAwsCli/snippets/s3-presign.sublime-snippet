@@ -1,0 +1,4 @@
+<snippet>
+    <content><![CDATA[aws s3 presign s3://${bucket}/${key} --expires-in ${expires:3600}]]></content>
+    <description>S3 — URL présignée</description>
+</snippet>

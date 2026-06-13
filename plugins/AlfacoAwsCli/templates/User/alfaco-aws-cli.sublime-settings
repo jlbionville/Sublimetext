@@ -1,0 +1,107 @@
+// Template utilisateur pour AlfacoAwsCli.
+// Copier dans <Packages>/User/alfaco-aws-cli.sublime-settings via :
+//
+//     make init-config
+//
+// (la cible Makefile ne remplace pas un fichier existant — safe à relancer).
+//
+// C'est ce fichier (et non le défaut du package, non déployé) qui fournit
+// la liste de templates en production : éditez-le pour l'adapter.
+{
+    // ── Comportement ─────────────────────────────────────────────────────
+    // "snippet" : insère la commande avec des champs navigables au Tab
+    // "guided"  : demande chaque valeur dans un input panel, puis insère
+    "placeholder_mode": "guided",
+
+    // Affiche la description et un aperçu de la commande dans le menu
+    "show_descriptions": true,
+
+    // Ajoute un saut de ligne après la commande insérée
+    "insert_trailing_newline": false,
+
+    // Si du texte est sélectionné, ses tokens (séparés par des espaces,
+    // guillemets supportés) remplissent les placeholders dans l'ordre.
+    "selection_as_parameters": true,
+
+    // Répertoires contenant des fichiers .sublime-snippet à proposer dans
+    // le menu, en plus des templates ci-dessous. ${packages} = dossier
+    // Packages de Sublime ; ~ et variables d'environnement supportés.
+    "snippet_directories":
+    [
+        "${packages}/AlfacoAwsCli/snippets"
+    ],
+
+    // ── Templates ────────────────────────────────────────────────────────
+    // Syntaxe des placeholders : ${nom} ou ${nom:valeur_par_defaut}
+    // Chaque entrée : caption (obligatoire), command (obligatoire), description
+    "templates":
+    [
+        // ── EC2 ──────────────────────────────────────────────────────────
+        {
+            "caption": "EC2 — Describe instances (par ID)",
+            "description": "Détails d'une ou plusieurs instances",
+            "command": "aws ec2 describe-instances --instance-ids ${instance_id} --region ${region:eu-west-3} --output ${output:table}"
+        },
+        {
+            "caption": "EC2 — Describe instances (par tag)",
+            "description": "Filtrer les instances par tag Name",
+            "command": "aws ec2 describe-instances --filters \"Name=tag:Name,Values=${tag_value}\" --region ${region:eu-west-3} --query 'Reservations[].Instances[].{ID:InstanceId,State:State.Name,IP:PrivateIpAddress}' --output table"
+        },
+        {
+            "caption": "EC2 — Start instance",
+            "description": "Démarrer une instance",
+            "command": "aws ec2 start-instances --instance-ids ${instance_id} --region ${region:eu-west-3}"
+        },
+        {
+            "caption": "EC2 — Stop instance",
+            "description": "Arrêter une instance",
+            "command": "aws ec2 stop-instances --instance-ids ${instance_id} --region ${region:eu-west-3}"
+        },
+
+        // ── Snapshots EBS ────────────────────────────────────────────────
+        {
+            "caption": "EBS — Create snapshot",
+            "description": "Snapshot d'un volume EBS avec description",
+            "command": "aws ec2 create-snapshot --volume-id ${volume_id} --description \"${description:snapshot manuel}\" --region ${region:eu-west-3}"
+        },
+        {
+            "caption": "EBS — List snapshots (owner self)",
+            "description": "Snapshots du compte, triés par date",
+            "command": "aws ec2 describe-snapshots --owner-ids self --region ${region:eu-west-3} --query 'sort_by(Snapshots,&StartTime)[].{ID:SnapshotId,Vol:VolumeId,Date:StartTime,State:State}' --output table"
+        },
+
+        // ── S3 ───────────────────────────────────────────────────────────
+        {
+            "caption": "S3 — List objects",
+            "description": "Lister le contenu d'un bucket/préfixe",
+            "command": "aws s3 ls s3://${bucket}/${prefix} --recursive --human-readable --summarize"
+        },
+        {
+            "caption": "S3 — Sync local → bucket",
+            "description": "Synchroniser un dossier local vers S3 (dry-run par défaut)",
+            "command": "aws s3 sync ${local_path:.} s3://${bucket}/${prefix} --dryrun"
+        },
+        {
+            "caption": "S3 — Copy object",
+            "description": "Copier un fichier vers/depuis S3",
+            "command": "aws s3 cp ${source} s3://${bucket}/${key}"
+        },
+
+        // ── AWS Backup ───────────────────────────────────────────────────
+        {
+            "caption": "Backup — List backup jobs",
+            "description": "Jobs de sauvegarde récents avec état",
+            "command": "aws backup list-backup-jobs --by-state ${state:COMPLETED} --region ${region:eu-west-3} --query 'BackupJobs[].{Id:BackupJobId,Resource:ResourceArn,State:State,Created:CreationDate}' --output table"
+        },
+        {
+            "caption": "Backup — List recovery points",
+            "description": "Points de restauration d'un vault",
+            "command": "aws backup list-recovery-points-by-backup-vault --backup-vault-name ${vault_name} --region ${region:eu-west-3} --output table"
+        },
+        {
+            "caption": "Backup — Start backup job",
+            "description": "Sauvegarde à la demande d'une ressource",
+            "command": "aws backup start-backup-job --backup-vault-name ${vault_name} --resource-arn ${resource_arn} --iam-role-arn ${iam_role_arn} --region ${region:eu-west-3}"
+        }
+    ]
+}
