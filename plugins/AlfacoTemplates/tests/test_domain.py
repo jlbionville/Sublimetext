@@ -1,4 +1,4 @@
-"""Tests du domaine AlfacoAwsCli : Template et Placeholder."""
+"""Tests du domaine AlfacoTemplates : Template et Placeholder."""
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -7,7 +7,7 @@ sys.modules.setdefault("sublime", MagicMock())
 sys.modules.setdefault("sublime_plugin", MagicMock())
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from AlfacoAwsCli.domain import Placeholder, Template  # noqa: E402
+from AlfacoTemplates.domain import Placeholder, Template  # noqa: E402
 
 
 def test_placeholder_prompt_without_default():

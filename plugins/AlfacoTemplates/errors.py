@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Codes d'erreur applicatifs et libellés UI du plugin AlfacoAwsCli.
+"""Codes d'erreur applicatifs et libellés UI du plugin AlfacoTemplates.
 
 Convention des codes : ``DOMAINE_DESCRIPTION``. Les libellés humains
 vivent dans :data:`ERROR_CATALOG` ; :func:`error_message` les formate.

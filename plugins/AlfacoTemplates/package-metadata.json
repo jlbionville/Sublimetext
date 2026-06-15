@@ -1,0 +1,8 @@
+{
+    "name": "AlfacoTemplates",
+    "version": "0.1.0",
+    "description": "Plugin Sublime Text d'insertion de templates de commandes (suite Alfaco)",
+    "sublime_text": ">=4000",
+    "platforms": ["*"],
+    "dependencies_alfaco": []
+}

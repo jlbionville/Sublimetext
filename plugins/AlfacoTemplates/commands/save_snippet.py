@@ -6,8 +6,8 @@ import os
 import sublime
 import sublime_plugin
 
-from AlfacoAwsCli import constants, engine
-from AlfacoAwsCli.errors import (
+from AlfacoTemplates import constants, engine
+from AlfacoTemplates.errors import (
     SAVE_DONE_LABEL,
     SAVE_OVERWRITE_QUESTION,
     SAVE_PROMPT_DESCRIPTION,
@@ -19,7 +19,7 @@ from AlfacoAwsCli.errors import (
 logger = logging.getLogger(__name__)
 
 
-class AlfacoAwsCliSaveSnippetCommand(sublime_plugin.WindowCommand):
+class AlfacoTemplatesSaveSnippetCommand(sublime_plugin.WindowCommand):
     """Enregistre la sélection comme fichier .sublime-snippet.
 
     Flux : sélection → description → nom de fichier (slug pré-rempli)

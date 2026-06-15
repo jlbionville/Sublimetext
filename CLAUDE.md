@@ -12,7 +12,7 @@ A **monorepo** of 5 Sublime Text 4 plugins (the "Alfaco suite"), refactored from
 | `AlfacoAtlassian` | Jira/Confluence REST workflows: select org/project, create issues depuis JSON ou Markdown (templates). |
 | `AlfacoEditing` | Editor utilities: text-to-table, `<start>`/`<end>` markers, date insertion, tag handling. |
 | `AlfacoCompletion` | Static Python autocompletion (demo `EventListener`). |
-| `AlfacoAwsCli` | AWS CLI command templates from a quick panel (placeholders `${nom}`, modes `snippet`/`guided`, selection→params, batch, `.sublime-snippet` import/export). **Standalone — no `AlfacoLib` dependency.** |
+| `AlfacoTemplates` | Command templates from a quick panel (placeholders `${nom}`, modes `snippet`/`guided`, selection→params, batch, `.sublime-snippet` import/export). Ships AWS CLI templates as default examples; fully configurable. **Standalone — no `AlfacoLib` dependency.** |
 
 Code, comments and UI captions are in **French** — keep that style when editing.
 

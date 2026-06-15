@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Logique applicative d'AlfacoAwsCli : placeholders, sélection, snippets.
+"""Logique applicative d'AlfacoTemplates : placeholders, sélection, snippets.
 
 Conversion ``${nom}`` → snippet Sublime, tokenisation de la sélection,
 remplissage des commandes (guidé / batch), génération et chargement des

@@ -1,4 +1,4 @@
-"""Tests de la logique applicative AlfacoAwsCli (engine)."""
+"""Tests de la logique applicative AlfacoTemplates (engine)."""
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -7,8 +7,8 @@ sys.modules.setdefault("sublime", MagicMock())
 sys.modules.setdefault("sublime_plugin", MagicMock())
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from AlfacoAwsCli.domain import Template  # noqa: E402
-from AlfacoAwsCli import engine  # noqa: E402
+from AlfacoTemplates.domain import Template  # noqa: E402
+from AlfacoTemplates import engine  # noqa: E402
 
 
 class _Settings:

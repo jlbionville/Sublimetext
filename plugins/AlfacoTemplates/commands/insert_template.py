@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
-"""Commande principale : choisir un template AWS CLI puis l'insérer.
+"""Commande principale : choisir un template puis l'insérer.
 
-Déclenchée par clic droit, menu Tools → Alfaco → AWS CLI, ou Command
+Déclenchée par clic droit, menu Tools → Alfaco → Templates, ou Command
 Palette. Gère les deux modes de placeholders (``snippet`` / ``guided``),
 la sélection → paramètres et le mode batch (une commande par ligne).
 """
@@ -11,9 +11,9 @@ from typing import List
 import sublime
 import sublime_plugin
 
-from AlfacoAwsCli import constants, engine
-from AlfacoAwsCli.domain import Placeholder, Template
-from AlfacoAwsCli.errors import (
+from AlfacoTemplates import constants, engine
+from AlfacoTemplates.domain import Placeholder, Template
+from AlfacoTemplates.errors import (
     BATCH_SUMMARY_LABEL,
     ErrorCode,
     error_message,
@@ -22,7 +22,7 @@ from AlfacoAwsCli.errors import (
 logger = logging.getLogger(__name__)
 
 
-class AlfacoAwsCliInsertTemplateCommand(sublime_plugin.WindowCommand):
+class AlfacoTemplatesInsertTemplateCommand(sublime_plugin.WindowCommand):
     """Affiche le quick panel des templates puis insère la sélection.
 
     Déclenchée par : clic droit, menu Tools, Command Palette.
@@ -75,7 +75,7 @@ class AlfacoAwsCliInsertTemplateCommand(sublime_plugin.WindowCommand):
         self.window.show_quick_panel(
             items,
             self._on_template_chosen,
-            placeholder="Template AWS CLI…",
+            placeholder="Choisir un template…",
         )
 
     def is_enabled(self) -> bool:
@@ -150,7 +150,7 @@ class AlfacoAwsCliInsertTemplateCommand(sublime_plugin.WindowCommand):
                 text += "\n"
             texts.append(text)
 
-        view.run_command("alfaco_aws_cli_replace_regions", {"texts": texts})
+        view.run_command("alfaco_templates_replace_regions", {"texts": texts})
         summary = BATCH_SUMMARY_LABEL.format(
             plugin=constants.PLUGIN_NAME,
             count=total,
@@ -195,7 +195,7 @@ class AlfacoAwsCliInsertTemplateCommand(sublime_plugin.WindowCommand):
         command = engine.fill_command(template, values)
         if self._trailing_newline:
             command += "\n"
-        view.run_command("alfaco_aws_cli_insert_text", {"text": command})
+        view.run_command("alfaco_templates_insert_text", {"text": command})
 
     # ── Mode snippet : champs Tab natifs ─────────────────────────────────
 

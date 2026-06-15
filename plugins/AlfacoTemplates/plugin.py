@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-"""Entry point du plugin AwsCli (suite Alfaco).
+"""Entry point du plugin Templates (suite Alfaco).
 
-Plugin autonome : insère des templates de commandes AWS CLI depuis un
+Plugin autonome : insère des templates de commandes depuis un
 quick panel, avec gestion des placeholders (modes ``snippet`` / ``guided``),
 sélection → paramètres, mode batch et import/export de fichiers
 ``.sublime-snippet``. Toute la config vit dans
-``alfaco-aws-cli.sublime-settings`` (User/), zéro valeur métier en dur.
+``alfaco-templates.sublime-settings`` (User/), zéro valeur métier en dur.
 
-Contrairement aux autres plugins consommateurs, AlfacoAwsCli ne dépend
+Contrairement aux autres plugins consommateurs, AlfacoTemplates ne dépend
 pas d'``AlfacoLib`` (rien à voir avec Atlassian) et lit ses settings via
 ``sublime.load_settings`` à chaque exécution, pour refléter à chaud les
 éditions de la liste de templates.
@@ -18,10 +18,10 @@ import importlib
 
 import sublime  # noqa: F401  (réservé pour usages futurs)
 
-from AlfacoAwsCli import constants as _constants
-from AlfacoAwsCli import errors as _errors
-from AlfacoAwsCli import domain as _domain
-from AlfacoAwsCli import engine as _engine
+from AlfacoTemplates import constants as _constants
+from AlfacoTemplates import errors as _errors
+from AlfacoTemplates import domain as _domain
+from AlfacoTemplates import engine as _engine
 
 # Sublime ne cascade pas les reloads des sous-modules d'un package : on les
 # recharge explicitement au chargement du plugin (mêmes raisons que les
@@ -35,7 +35,7 @@ def plugin_loaded():
 
 
 # Déclenche la découverte des classes *Command par Sublime.
-from AlfacoAwsCli.commands.insert_template import AlfacoAwsCliInsertTemplateCommand  # noqa: E402, F401
-from AlfacoAwsCli.commands.insert_text import AlfacoAwsCliInsertTextCommand  # noqa: E402, F401
-from AlfacoAwsCli.commands.replace_regions import AlfacoAwsCliReplaceRegionsCommand  # noqa: E402, F401
-from AlfacoAwsCli.commands.save_snippet import AlfacoAwsCliSaveSnippetCommand  # noqa: E402, F401
+from AlfacoTemplates.commands.insert_template import AlfacoTemplatesInsertTemplateCommand  # noqa: E402, F401
+from AlfacoTemplates.commands.insert_text import AlfacoTemplatesInsertTextCommand  # noqa: E402, F401
+from AlfacoTemplates.commands.replace_regions import AlfacoTemplatesReplaceRegionsCommand  # noqa: E402, F401
+from AlfacoTemplates.commands.save_snippet import AlfacoTemplatesSaveSnippetCommand  # noqa: E402, F401

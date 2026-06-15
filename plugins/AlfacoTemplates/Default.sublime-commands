@@ -1,0 +1,15 @@
+[
+    {
+        "caption": "AlfacoTemplates: Insérer un template",
+        "command": "alfaco_templates_insert_template"
+    },
+    {
+        "caption": "AlfacoTemplates: Enregistrer la sélection comme snippet",
+        "command": "alfaco_templates_save_snippet"
+    },
+    {
+        "caption": "AlfacoTemplates: Ouvrir les settings (User)",
+        "command": "open_file",
+        "args": { "file": "${packages}/User/alfaco-templates.sublime-settings" }
+    }
+]

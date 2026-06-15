@@ -1,0 +1,11 @@
+[
+    { "caption": "-", "id": "alfaco_templates_separator" },
+    {
+        "caption": "Templates : insérer un template…",
+        "command": "alfaco_templates_insert_template"
+    },
+    {
+        "caption": "Templates : enregistrer la sélection comme snippet…",
+        "command": "alfaco_templates_save_snippet"
+    }
+]

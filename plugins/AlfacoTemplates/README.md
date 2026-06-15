@@ -1,14 +1,16 @@
-# AlfacoAwsCli — plugin Sublime Text 4 (suite Alfaco)
+# AlfacoTemplates — plugin Sublime Text 4 (suite Alfaco)
 
-Insère des templates de commandes **AWS CLI** (EC2, S3, EBS snapshots, AWS Backup…)
-depuis un menu déroulant, avec gestion des placeholders.
+Insère des **templates de commandes** depuis un menu déroulant, avec gestion
+des placeholders. Les templates livrés par défaut sont des commandes **AWS CLI**
+(EC2, S3, EBS snapshots, AWS Backup…), mais la liste est 100 % configurable :
+n'importe quelle commande (shell, kubectl, git…) peut y être ajoutée.
 
 Plugin **autonome** : il ne dépend pas d'`AlfacoLib`.
 
 ## Fonctionnalités
 
 - Menu déroulant (quick panel) listant les templates, avec description et aperçu de la commande
-- Accessible par **clic droit**, **Tools → Alfaco → AWS CLI** ou **Command Palette**
+- Accessible par **clic droit**, **Tools → Alfaco → Templates** ou **Command Palette**
 - Liste des templates **100 % configurable** dans les préférences du plugin
 - Placeholders `${nom}` ou `${nom:valeur_par_defaut}` avec deux modes :
 
@@ -64,7 +66,8 @@ En plus des templates JSON, le menu propose les fichiers **`.sublime-snippet`**
 ```jsonc
 "snippet_directories":
 [
-    "${packages}/AlfacoAwsCli/snippets",   // défaut (livré avec 2 exemples)
+    "${packages}/User/snippets",           // cible d'écriture, jamais redéployée
+    "${packages}/AlfacoTemplates/snippets",   // exemples livrés (lecture seule)
     "~/mes-snippets-aws",                   // ~ supporté
     "$HOME/projets/equipe/snippets"         // variables d'env supportées
 ]
@@ -90,34 +93,37 @@ Format d'un fichier :
 ### Enregistrer la sélection comme snippet
 
 Sélectionnez une commande dans l'éditeur → clic droit →
-**AWS CLI : enregistrer la sélection comme snippet…** (aussi dans
-Tools → Alfaco → AWS CLI et la Command Palette). Le plugin demande :
+**Templates : enregistrer la sélection comme snippet…** (aussi dans
+Tools → Alfaco → Templates et la Command Palette). Le plugin demande :
 
 1. la **description** (deviendra la caption dans le menu) ;
 2. le **nom du fichier**, pré-rempli avec un slug de la description
    (ex. « S3 — URL présignée » → `s3-url-presignee.sublime-snippet`).
 
 Le fichier est écrit dans le **premier** répertoire de `snippet_directories`
-(créé s'il n'existe pas), puis ouvert pour relecture. Si un fichier du même
-nom existe, une **confirmation explicite** est demandée avant écrasement.
+(créé s'il n'existe pas), puis ouvert pour relecture. Par défaut c'est
+`${packages}/User/snippets`, **jamais écrasé par un déploiement**
+(`make install`) : vos snippets enregistrés survivent aux mises à jour du
+package. Si un fichier du même nom existe, une **confirmation explicite** est
+demandée avant écrasement.
 
 ## Installation (monorepo)
 
 ```bash
-make install PLUGIN=AlfacoAwsCli       # copie le plugin + seed la config User/
+make install PLUGIN=AlfacoTemplates       # copie le plugin + seed la config User/
 # ou, hors WSL :
-make link PLUGIN=AlfacoAwsCli          # symlink (mode dev)
+make link PLUGIN=AlfacoTemplates          # symlink (mode dev)
 ```
 
 `make install` exécute `init-config` : la liste de templates par défaut est
-copiée dans `<Packages>/User/alfaco-aws-cli.sublime-settings` (sans écraser
+copiée dans `<Packages>/User/alfaco-templates.sublime-settings` (sans écraser
 un fichier existant). C'est ce fichier User qui fournit les templates en
 production — le défaut du package n'est volontairement **pas** déployé.
 
 ## Utilisation
 
-1. Clic droit dans un fichier → **AWS CLI : insérer un template…**
-   (ou `Tools → Alfaco → AWS CLI → Insérer un template…`)
+1. Clic droit dans un fichier → **Templates : insérer un template…**
+   (ou `Tools → Alfaco → Templates → Insérer un template…`)
 2. Filtrer/choisir le template (recherche floue native du quick panel).
 3. Selon le mode :
    - `guided` : renseigner chaque placeholder (Entrée pour valider, Échap pour annuler).
@@ -125,7 +131,7 @@ production — le défaut du package n'est volontairement **pas** déployé.
 
 ## Configuration
 
-`Preferences → Package Settings → AlfacoAwsCli → Settings – User`
+`Preferences → Package Settings → AlfacoTemplates → Settings – User`
 
 ```jsonc
 {
@@ -153,7 +159,7 @@ Règles :
 ## Structure du package
 
 ```
-AlfacoAwsCli/
+AlfacoTemplates/
 ├── .python-version                  # force le plugin host Python 3.8 (ST4)
 ├── plugin.py                        # entry-point : plugin_loaded + import des commandes
 ├── constants.py                     # clés de settings, valeurs par défaut
@@ -165,14 +171,14 @@ AlfacoAwsCli/
 │   ├── insert_text.py
 │   ├── replace_regions.py
 │   └── save_snippet.py
-├── alfaco-aws-cli.sublime-settings  # défaut du package (non déployé)
+├── alfaco-templates.sublime-settings  # défaut du package (non déployé)
 ├── templates/User/                  # config seedée dans <Packages>/User/ par init-config
-│   └── alfaco-aws-cli.sublime-settings
+│   └── alfaco-templates.sublime-settings
 ├── snippets/                        # snippets livrés par défaut
 │   ├── ec2-describe-volumes.sublime-snippet
 │   └── s3-presign.sublime-snippet
 ├── Context.sublime-menu             # entrée clic droit
-├── Main.sublime-menu                # Tools → Alfaco → AWS CLI + Preferences
+├── Main.sublime-menu                # Tools → Alfaco → Templates + Preferences
 ├── Default.sublime-commands         # entrées Command Palette
 ├── package-metadata.json            # métadonnées suite (non déployé)
 └── tests/                           # pytest hors-Sublime (logique pure)

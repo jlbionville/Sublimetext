@@ -7,9 +7,19 @@ sys.modules.setdefault("sublime", MagicMock())
 sys.modules.setdefault("sublime_plugin", MagicMock())
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
-from AlfacoAwsCli import engine  # noqa: E402
-from AlfacoAwsCli.constants import DEFAULT_PLACEHOLDER_MODE  # noqa: E402
-from AlfacoAwsCli.domain import Template  # noqa: E402
+from AlfacoTemplates import engine  # noqa: E402
+from AlfacoTemplates.constants import DEFAULT_PLACEHOLDER_MODE, DEFAULT_SNIPPET_DIRS  # noqa: E402
+from AlfacoTemplates.domain import Template  # noqa: E402
+
+
+# ── DEFAULT_SNIPPET_DIRS (cible d'écriture persistante) ─────────────────────
+
+
+def test_default_snippet_dirs_write_target_is_user_dir():
+    # 1er répertoire = cible d'écriture du « save snippet » : doit pointer sur
+    # User/, jamais écrasé par make install. Régression à ne pas réintroduire.
+    assert DEFAULT_SNIPPET_DIRS[0] == "${packages}/User/snippets"
+    assert "${packages}/AlfacoTemplates/snippets" in DEFAULT_SNIPPET_DIRS
 
 
 class _Settings:

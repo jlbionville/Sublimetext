@@ -1,8 +1,0 @@
-{
-    "name": "AlfacoAwsCli",
-    "version": "0.1.0",
-    "description": "Plugin Sublime Text AWS CLI Templates (suite Alfaco)",
-    "sublime_text": ">=4000",
-    "platforms": ["*"],
-    "dependencies_alfaco": []
-}

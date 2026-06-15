@@ -1,0 +1,39 @@
+[
+    {
+        "id": "tools",
+        "children": [
+            {
+                "caption": "Alfaco",
+                "id": "alfaco",
+                "children": [
+                    {
+                        "caption": "Templates",
+                        "id": "alfaco-templates",
+                        "children": [
+                            { "caption": "Insérer un template…", "command": "alfaco_templates_insert_template" },
+                            { "caption": "Enregistrer la sélection comme snippet…", "command": "alfaco_templates_save_snippet" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "preferences",
+        "children": [
+            {
+                "id": "package-settings",
+                "children": [
+                    {
+                        "caption": "AlfacoTemplates",
+                        "id": "alfaco-templates",
+                        "children": [
+                            { "caption": "Settings – Default", "args": { "file": "${packages}/AlfacoTemplates/alfaco-templates.sublime-settings" }, "command": "open_file" },
+                            { "caption": "Settings – User", "args": { "file": "${packages}/User/alfaco-templates.sublime-settings" }, "command": "open_file" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

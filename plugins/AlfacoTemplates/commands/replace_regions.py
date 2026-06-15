@@ -6,7 +6,7 @@ import sublime
 import sublime_plugin
 
 
-class AlfacoAwsCliReplaceRegionsCommand(sublime_plugin.TextCommand):
+class AlfacoTemplatesReplaceRegionsCommand(sublime_plugin.TextCommand):
     """Remplace chaque région de sélection par son texte (mode batch).
 
     ``texts[i]`` remplace la i-ème région non vide. Le remplacement se

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-"""Constantes de configuration du plugin AlfacoAwsCli.
+"""Constantes de configuration du plugin AlfacoTemplates.
 
 Clés du fichier de settings, valeurs par défaut et identifiants du
 package. Aucune logique ici — uniquement la source de vérité des noms.
 """
 
-PLUGIN_NAME = "AlfacoAwsCli"
-SETTINGS_FILE = "alfaco-aws-cli.sublime-settings"
+PLUGIN_NAME = "AlfacoTemplates"
+SETTINGS_FILE = "alfaco-templates.sublime-settings"
 
 # Clés du fichier de settings (source de vérité de la configuration)
 KEY_TEMPLATES = "templates"
@@ -25,7 +25,13 @@ DEFAULT_PLACEHOLDER_MODE = "snippet"
 DEFAULT_SHOW_DESCRIPTIONS = True
 DEFAULT_TRAILING_NEWLINE = False
 DEFAULT_SELECTION_AS_PARAMS = True
-DEFAULT_SNIPPET_DIRS = [PACKAGES_VAR + "/" + PLUGIN_NAME + "/snippets"]
+# Le 1er répertoire est la cible d'écriture (« enregistrer la sélection comme
+# snippet ») : on pointe sur <Packages>/User/snippets, jamais écrasé par un
+# déploiement. Le dossier du package (exemples livrés) reste en lecture seule.
+DEFAULT_SNIPPET_DIRS = [
+    PACKAGES_VAR + "/User/snippets",
+    PACKAGES_VAR + "/" + PLUGIN_NAME + "/snippets",
+]
 
 MODE_SNIPPET = "snippet"
 MODE_GUIDED = "guided"

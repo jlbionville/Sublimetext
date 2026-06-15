@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Entités du domaine AlfacoAwsCli : Template et Placeholder (Python pur).
+"""Entités du domaine AlfacoTemplates : Template et Placeholder (Python pur).
 
 Aucune dépendance à l'API Sublime — ce module est testable hors Sublime.
 """
@@ -30,7 +30,7 @@ class Placeholder:
 
 
 class Template:
-    """Template de commande AWS CLI (depuis les settings ou un fichier snippet)."""
+    """Template de commande (depuis les settings ou un fichier snippet)."""
 
     SOURCE_SETTINGS = "settings"
     SOURCE_SNIPPET = "snippet"

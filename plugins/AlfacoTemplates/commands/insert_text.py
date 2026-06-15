@@ -6,7 +6,7 @@ import sublime
 import sublime_plugin
 
 
-class AlfacoAwsCliInsertTextCommand(sublime_plugin.TextCommand):
+class AlfacoTemplatesInsertTextCommand(sublime_plugin.TextCommand):
     """Insère du texte brut à chaque curseur (utilisée par le mode guidé)."""
 
     def run(self, edit: sublime.Edit, text: str) -> None:
