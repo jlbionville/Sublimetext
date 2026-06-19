@@ -1,0 +1,18 @@
+{
+    // AlfacoShell — exécuter la sélection comme commande shell.
+    // Précédence du préfixe : exec_prefix > exec_by_platform[os] > défaut intégré.
+
+    // Override global (tous OS). Décommenter pour forcer un préfixe unique.
+    // "exec_prefix": ["wsl.exe", "-e", "bash", "-c"],
+
+    // Override par plateforme (clés Sublime : "windows" | "osx" | "linux").
+    // Seules les clés présentes priment ; les autres OS gardent le défaut intégré.
+    "exec_by_platform": {
+        "windows": ["wsl.exe", "-e", "bash", "-lc"],
+        "osx": ["/bin/zsh", "-lc"],
+        "linux": ["bash", "-lc"]
+    },
+
+    // Timeout du process (secondes).
+    "timeout_seconds": 120
+}
