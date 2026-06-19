@@ -1,0 +1,38 @@
+[
+    {
+        "id": "tools",
+        "children": [
+            {
+                "caption": "Alfaco",
+                "id": "alfaco",
+                "children": [
+                    {
+                        "caption": "Shell",
+                        "id": "alfaco-shell",
+                        "children": [
+                            { "caption": "Exécuter la sélection", "command": "alfaco_shell_run_selection" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "id": "preferences",
+        "children": [
+            {
+                "id": "package-settings",
+                "children": [
+                    {
+                        "caption": "AlfacoShell",
+                        "id": "alfaco-shell",
+                        "children": [
+                            { "caption": "Settings – Default", "args": { "file": "${packages}/AlfacoShell/alfaco-shell.sublime-settings" }, "command": "open_file" },
+                            { "caption": "Settings – User", "args": { "file": "${packages}/User/alfaco-shell.sublime-settings" }, "command": "open_file" }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+]

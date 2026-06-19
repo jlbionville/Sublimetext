@@ -1,0 +1,7 @@
+{
+    "name": "AlfacoShell",
+    "version": "1.0.0",
+    "description": "Plugin Sublime Text d'exécution de la sélection comme commande shell (suite Alfaco)",
+    "sublime_text": ">=4000",
+    "platforms": ["*"]
+}

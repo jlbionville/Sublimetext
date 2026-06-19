@@ -1,0 +1,6 @@
+[
+    // Aucun binding par défaut : l'espace de touches est partagé entre tous les
+    // plugins Alfaco (risque de collision, cf. CLAUDE.md). Décommenter/adapter
+    // pour ajouter un raccourci en plus de la palette.
+    // { "keys": ["ctrl+alt+a"], "command": "alfaco_shell_run_selection" }
+]

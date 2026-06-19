@@ -1,0 +1,11 @@
+[
+    {
+        "caption": "AlfacoShell: Exécuter la sélection",
+        "command": "alfaco_shell_run_selection"
+    },
+    {
+        "caption": "AlfacoShell: Ouvrir les settings (User)",
+        "command": "open_file",
+        "args": { "file": "${packages}/User/alfaco-shell.sublime-settings" }
+    }
+]

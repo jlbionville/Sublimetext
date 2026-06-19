@@ -1,0 +1,7 @@
+[
+    { "caption": "-", "id": "alfaco_shell_separator" },
+    {
+        "caption": "Shell : exécuter la sélection",
+        "command": "alfaco_shell_run_selection"
+    }
+]
