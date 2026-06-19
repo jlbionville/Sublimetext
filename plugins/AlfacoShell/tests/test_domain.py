@@ -1,4 +1,5 @@
 """Tests du domain pur d'AlfacoShell — exécutables hors Sublime : pytest."""
+import json
 import sys
 from pathlib import Path
 from unittest.mock import MagicMock
@@ -8,7 +9,7 @@ sys.modules.setdefault("sublime_plugin", MagicMock())
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from AlfacoShell.constants import DEFAULT_EXEC_BY_PLATFORM  # noqa: E402
-from AlfacoShell.domain import resolve_exec_argv  # noqa: E402
+from AlfacoShell.domain import prettify, resolve_exec_argv  # noqa: E402
 
 
 class _Cfg(dict):
@@ -62,3 +63,19 @@ def test_exec_prefix_overrides_everything():
     )
     argv = resolve_exec_argv("ls", cfg, "osx")
     assert argv == ["wsl.exe", "-e", "bash", "-c", "ls"]
+
+
+# ── prettify ────────────────────────────────────────────────────────────────
+
+def test_prettify_formats_valid_json():
+    out = prettify('{"a":1}')
+    assert json.loads(out) == {"a": 1}
+    assert "\n" in out  # indenté
+
+
+def test_prettify_passes_through_non_json():
+    assert prettify("plain text") == "plain text"
+
+
+def test_prettify_empty_returns_input():
+    assert prettify("   ") == "   "

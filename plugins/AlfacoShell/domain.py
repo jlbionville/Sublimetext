@@ -5,6 +5,8 @@ Ne dépend ni de Sublime, ni d'aucune I/O. Construit l'argv d'exécution
 selon la plateforme, joliifie la sortie et formate le résultat du buffer.
 100 % testable hors de l'éditeur.
 """
+import json
+
 from .constants import (
     DEFAULT_EXEC_BY_PLATFORM,
     FALLBACK_PLATFORM,
@@ -33,3 +35,14 @@ def resolve_exec_argv(command_text, settings_like, platform):
             platform, DEFAULT_EXEC_BY_PLATFORM[FALLBACK_PLATFORM]
         )
     return list(prefix) + [command_text]
+
+
+def prettify(raw):
+    """JSON indenté si parsable, sinon texte brut inchangé."""
+    stripped = raw.strip()
+    if not stripped:
+        return raw
+    try:
+        return json.dumps(json.loads(stripped), indent=2, ensure_ascii=False)
+    except (ValueError, TypeError):
+        return raw
