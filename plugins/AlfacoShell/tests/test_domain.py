@@ -9,7 +9,7 @@ sys.modules.setdefault("sublime_plugin", MagicMock())
 sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from AlfacoShell.constants import DEFAULT_EXEC_BY_PLATFORM  # noqa: E402
-from AlfacoShell.domain import prettify, resolve_exec_argv  # noqa: E402
+from AlfacoShell.domain import format_result, prettify, resolve_exec_argv  # noqa: E402
 
 
 class _Cfg(dict):
@@ -79,3 +79,23 @@ def test_prettify_passes_through_non_json():
 
 def test_prettify_empty_returns_input():
     assert prettify("   ") == "   "
+
+
+# ── format_result ────────────────────────────────────────────────────────────
+
+def test_format_result_includes_exit_code_and_stderr():
+    res = format_result('{"k":1}', "warn", 2)
+    assert "--- exit code: 2 ---" in res
+    assert "--- stderr ---" in res
+    assert '"k": 1' in res  # corps prettifié
+
+
+def test_format_result_omits_stderr_when_empty():
+    res = format_result("ok", "", 0)
+    assert "--- stderr ---" not in res
+    assert res.endswith("--- exit code: 0 ---")
+
+
+def test_format_result_omits_empty_body():
+    res = format_result("   ", "", 0)
+    assert res == "--- exit code: 0 ---"

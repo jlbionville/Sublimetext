@@ -46,3 +46,15 @@ def prettify(raw):
         return json.dumps(json.loads(stripped), indent=2, ensure_ascii=False)
     except (ValueError, TypeError):
         return raw
+
+
+def format_result(stdout, stderr, returncode):
+    """Texte du buffer : corps prettifié, bloc stderr (si présent), exit code."""
+    parts = []
+    body = prettify(stdout)
+    if body.strip():
+        parts.append(body)
+    if stderr.strip():
+        parts.append("--- stderr ---\n" + stderr.rstrip())
+    parts.append("--- exit code: {} ---".format(returncode))
+    return "\n".join(parts)
